@@ -1,0 +1,2 @@
+# LaravelAdminPackage
+Laravel admin package
