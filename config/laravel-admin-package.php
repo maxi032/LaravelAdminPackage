@@ -17,6 +17,11 @@ return [
                 'id' => 3,
                 'name' => 'Română',
                 'code' => 'ro',
+            ],
+            [
+                'id' => 4,
+                'name' => 'Français',
+                'code' => 'fr',
             ]
         ]
 ];
