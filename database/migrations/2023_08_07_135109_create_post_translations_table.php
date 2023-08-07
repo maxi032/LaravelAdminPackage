@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('category_translations')) {
-            Schema::create('category_translations', function (Blueprint $table) {
+        if (!Schema::hasTable('post_translations')) {
+            Schema::create('post_translations', function (Blueprint $table) {
                 $table->id();
-                $table->unsignedBigInteger('category_id');
-                $table->foreign('category_id')->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
+                $table->unsignedBigInteger('post_id');
+                $table->foreign('post_id')->references('id')->on('posts')->onUpdate('cascade')->onDelete('cascade');
                 $table->string('title','150');
                 $table->string('slug','150');
+                $table->text('excerpt')->nullable();
                 $table->longText('content');
                 $table->string('language','2');
                 $table->timestamps();
@@ -31,8 +32,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (Schema::hasTable('category_translations')) {
-            Schema::dropIfExists('category_translations');
+        if (Schema::hasTable('post_translations')) {
+            Schema::dropIfExists('post_translations');
         }
     }
 };

@@ -16,6 +16,7 @@ class LaravelAdminPackageServiceProvider extends ServiceProvider
         });
 
         $this->app->register(ThemeServiceProvider::class);
+        $this->app->register(RepositoryServiceProvider::class);
     }
 
     public function boot(): void

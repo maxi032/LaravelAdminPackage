@@ -16,9 +16,11 @@ class CategoryTableSeeder extends Seeder
      */
     public function run(): void
     {
+        $sortOrder=0;
         $downloads = Category::firstOrCreate([
             'parent_id' => null,
             'type_id'   => CategoryType::where('type', 'downloads')->first()->id,
+            'sort_order'   => $sortOrder,
             'status'    => false,
         ], [
             'created_at' => Carbon::now(),
@@ -27,6 +29,7 @@ class CategoryTableSeeder extends Seeder
         $blog_articles = Category::firstOrCreate([
             'parent_id' => null,
             'type_id'   => CategoryType::where('type', 'blog_articles')->first()->id,
+            'sort_order' => ++$sortOrder,
             'status'    => false,
         ], [
             'created_at' => Carbon::now(),
@@ -35,6 +38,7 @@ class CategoryTableSeeder extends Seeder
         $faq = Category::firstOrCreate([
             'parent_id' => null,
             'type_id'   => CategoryType::where('type', 'faq')->first()->id,
+            'sort_order' => ++$sortOrder,
             'status'    => false,
         ], [
             'created_at' => Carbon::now(),
@@ -43,6 +47,7 @@ class CategoryTableSeeder extends Seeder
         $products = Category::firstOrCreate([
             'parent_id' => null,
             'type_id'   => CategoryType::where('type', 'products')->first()->id,
+            'sort_order' => ++$sortOrder,
             'status'    => false,
         ], [
             'created_at' => Carbon::now(),

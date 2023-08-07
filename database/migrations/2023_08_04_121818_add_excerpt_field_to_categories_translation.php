@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         if (!Schema::hasColumn('category_translations', 'excerpt')) {
             Schema::table('category_translations', function ($table) {
-                $table->string('excerpt', 255)->after('title')->nullable();
+                $table->text('excerpt')->after('title')->nullable();
             });
         }
     }

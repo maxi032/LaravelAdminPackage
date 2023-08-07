@@ -4,6 +4,7 @@ namespace Maxi032\LaravelAdminPackage\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CategoryTranslation extends Model
@@ -16,11 +17,19 @@ class CategoryTranslation extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'category_id',
-        'title',
-        'excerpt',
-        'slug',
+        'category_id' ,
         'content',
-        'language'
+        'excerpt',
+        'language',
+        'slug',
+        'title'
     ];
+
+    /**
+     * @return BelongsTo
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

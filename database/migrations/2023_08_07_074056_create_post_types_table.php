@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('category_types')) {
-            Schema::create('category_types', function (Blueprint $table) {
+        if (!Schema::hasTable('post_types')) {
+            Schema::create('post_types', function (Blueprint $table) {
                 $table->id();
                 $table->string('type', 50)->unique()->nullable();
                 $table->boolean('status')->default(false);
@@ -27,8 +27,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (Schema::hasTable('category_types')) {
-            Schema::dropIfExists('category_types');
+        if (Schema::hasTable('post_types')) {
+            Schema::dropIfExists('post_types');
         }
     }
 };

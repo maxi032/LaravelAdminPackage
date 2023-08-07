@@ -21,9 +21,25 @@ class Category extends Model
         'type_id',
         'status'
     ];
+
+    /**
+     * @return HasMany
+     */
     public function post(): HasMany
     {
         return $this->hasMany(Post::class);
+    }
+
+    /**
+     * Get category by type
+     *
+     * @param $query
+     * @param $type
+     * @return mixed
+     */
+    public function scopeByType($query, $type): mixed
+    {
+        return $query->where('type', $type);
     }
 
 }
