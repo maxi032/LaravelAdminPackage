@@ -10,7 +10,7 @@ interface PostRepositoryInterface
 
     public function deletePost($postId);
 
-    public function createPost(array $postAttributes);
+    public function createPostWithTranslations(array $dataArr);
 
     public function updatePost(int $postId, array $postAttributes);
 

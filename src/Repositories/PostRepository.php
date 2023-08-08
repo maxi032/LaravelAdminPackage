@@ -17,9 +17,32 @@ class PostRepository implements PostRepositoryInterface
         Post::destroy($postId);
     }
 
-    public function createPost(array $postAttributes)
+    public function createPostWithTranslations(array $dataArr)
     {
-        return Post::create($postAttributes);
+        try {
+            \DB::transaction(function () use ($dataArr) {
+                // Create the post using the create method
+                $post = Post::create([
+                    'type_id' => $dataArr['type_id'],
+                    'status' => $dataArr['status'],
+                ]);
+
+                // Save translations for the post
+                $translationsData = $dataArr['contentTranslations'];
+
+                foreach ($translationsData as $locale => $translationData) {
+                    $post->translations()->create([
+                        'code' => $locale,
+                        'content' => $translationData['content'],
+                    ]);
+                }
+            });
+
+            // The transaction was successful
+            return response()->json(['type'=>'success','message' => 'Post created successfully!']);
+        } catch (\Exception $e) {
+            return response()->json(['type'=>'error','message' => $e->getMessage()]);
+        }
     }
 
     public function updatePost($postId, array $postAttributes)
