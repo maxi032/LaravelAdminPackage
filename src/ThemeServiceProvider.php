@@ -16,8 +16,6 @@ class ThemeServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/views' // load views from the package
         ];
 
-        //dd($views);
-
         $this->loadViewsFrom($views, LaravelAdminPackageServiceProvider::getAdmPackageName());
         View::composer('*', function ($view) {
             $view->with(Str::camel(LaravelAdminPackageServiceProvider::getAdmPackageName()), LaravelAdminPackageServiceProvider::getAdmPackageName());
