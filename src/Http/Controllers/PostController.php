@@ -25,13 +25,13 @@ class PostController extends AdminController
 
 
     /**
-     * Show the application dashboard.
+     * Show the Posts crud form.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function create()
     {
-        return view('laravel-admin-package::dashboard');
+        return view('laravel-admin-package::crud');
     }
 
     public function store(PostRequest $request)

@@ -5,10 +5,10 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ __('Crud title') }}</div>
+                    <div class="card-header">{{ __('Dashboard title') }} package crud</div>
 
                     <div class="card-body">
-                        {{ __('Card body') }}
+                        {{ __('Card body') }} package crud
                     </div>
                 </div>
             </div>
