@@ -1,0 +1,16 @@
+// import all of CoreUI's CSS
+@import "@coreui/coreui/scss/coreui";
+@import "vendors/simplebar";
+
+@import "_variables";
+
+// core ui icons
+@import "@coreui/icons/css/all.min.css";
+
+// import layout
+@import "_layout";
+
+// import custom
+@import "_custom";
+@import "_layout";
+
