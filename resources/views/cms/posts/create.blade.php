@@ -196,7 +196,6 @@
                 // Initialize the toast using CoreUI
                 let toast = new coreui.Toast(toastContainer, toastOptions);
                 toast.show();
-
             });
         </script>
     @endif

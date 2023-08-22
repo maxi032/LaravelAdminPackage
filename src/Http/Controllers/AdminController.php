@@ -14,6 +14,6 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return view('laravel-admin-package::dashboard');
+       return view('laravel-admin-package::dashboard');
     }
 }
