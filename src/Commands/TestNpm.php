@@ -4,6 +4,7 @@ namespace Maxi032\LaravelAdminPackage\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Process;
+use JetBrains\PhpStorm\NoReturn;
 
 class TestNpm extends Command
 {

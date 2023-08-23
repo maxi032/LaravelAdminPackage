@@ -56,7 +56,7 @@
 
                                                 @error('translations.title.' . $language['code'])
                                                 <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
+                                        <strong>{!!  trimValidationMessage($message) !!}</strong>
                                     </span>
                                                 @enderror
                                             </div>
@@ -76,7 +76,7 @@
 
                                                 @error('translations.slug.' . $language['code'])
                                                 <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
+                                        <strong>{!!  trimValidationMessage($message) !!}</strong>
                                     </span>
                                                 @enderror
                                             </div>
@@ -93,7 +93,7 @@
 
                                                 @error('translations.excerpt.' . $language['code'])
                                                 <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
+                                         <strong>{!!  trimValidationMessage($message) !!}</strong>
                                     </span>
                                                 @enderror
                                             </div>
@@ -110,7 +110,7 @@
 
                                                 @error('translations.content.' . $language['code'])
                                                 <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
+                                         <strong>{!!  trimValidationMessage($message) !!}</strong>
                                     </span>
                                                 @enderror
                                             </div>
@@ -133,24 +133,6 @@
         </div>
     </div>
 
-
-    <p class="d-inline-flex gap-1">
-        <a class="btn btn-primary" data-coreui-toggle="collapse" href="#collapseExample" role="button"
-           aria-expanded="false" aria-controls="collapseExample">
-            Link with href
-        </a>
-        <button class="btn btn-primary" type="button" data-coreui-toggle="collapse"
-                data-coreui-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-            Button with data-coreui-target
-        </button>
-    </p>
-    <div class="collapse" id="collapseExample">
-        <div class="card card-body">
-            Some placeholder content for the collapse component. This panel is hidden by default but revealed when the
-            user activates the relevant trigger.
-        </div>
-    </div>
-
 @endsection
 @push('footer-scripts')
     @if ($errors->any())
@@ -169,17 +151,17 @@
                     position: 'top-0 end-0',
                     dismiss: {
                         show: true,
-                        timeout: 25000
+                        timeout: 3000,
                     }
                 };
 
                 let toastContainer = $('<div>', {
-                    class: 'toast',
+                    class: 'toast bg-danger bg-gradient text-white ',
                     role: 'alert',
                     'aria-live': 'assertive',
                     'aria-atomic': 'true'
                 }).append(
-                    $('<div>', {class: 'toast-header'}).append(
+                    $('<div>', {class: 'toast-header bg-danger text-white'}).append(
                         $('<strong>', {class: 'me-auto', text: 'Error'}),
                         $('<button>', {
                             type: 'button',
@@ -190,7 +172,6 @@
                     ),
                     $('<div>', {class: 'toast-body', html: errorMessage})
                 );
-
 
                 $('header').append(toastContainer);
                 // Initialize the toast using CoreUI

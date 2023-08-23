@@ -34,7 +34,7 @@ class Category extends Model
      * Get category by type
      *
      * @param $query
-     * @param string $type
+     * @param $type
      * @return mixed
      */
     public function scopeByType($query, $type): mixed

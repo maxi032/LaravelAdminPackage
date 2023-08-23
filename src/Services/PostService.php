@@ -12,6 +12,7 @@ class PostService
         $this->postRepository = $postRepository;
     }
 
+
     /**
      * @param array $dataArr
      * @return mixed

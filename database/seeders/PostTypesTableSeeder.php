@@ -10,7 +10,7 @@ use \Maxi032\LaravelAdminPackage\Models\PostType;
 class PostTypesTableSeeder extends Seeder
 {
     /**
-     * Run the database seeder for PostType.
+     * Run the database seeds.
      */
     public function run(): void
     {

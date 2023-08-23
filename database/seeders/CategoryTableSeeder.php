@@ -16,39 +16,39 @@ class CategoryTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $sortOrder = 0;
+        $sortOrder=0;
         $downloads = Category::firstOrCreate([
-            'parent_id'  => null,
-            'type_id'    => CategoryType::where('type', 'downloads')->first()->id,
-            'sort_order' => $sortOrder,
-            'status'     => false,
+            'parent_id' => null,
+            'type_id'   => CategoryType::where('type', 'downloads')->first()->id,
+            'sort_order'   => $sortOrder,
+            'status'    => false,
         ], [
             'created_at' => Carbon::now(),
         ]);
 
         $blog_articles = Category::firstOrCreate([
-            'parent_id'  => null,
-            'type_id'    => CategoryType::where('type', 'blog_articles')->first()->id,
+            'parent_id' => null,
+            'type_id'   => CategoryType::where('type', 'blog_articles')->first()->id,
             'sort_order' => ++$sortOrder,
-            'status'     => false,
+            'status'    => false,
         ], [
             'created_at' => Carbon::now(),
         ]);
 
         $faq = Category::firstOrCreate([
-            'parent_id'  => null,
-            'type_id'    => CategoryType::where('type', 'faq')->first()->id,
+            'parent_id' => null,
+            'type_id'   => CategoryType::where('type', 'faq')->first()->id,
             'sort_order' => ++$sortOrder,
-            'status'     => false,
+            'status'    => false,
         ], [
             'created_at' => Carbon::now(),
         ]);
 
         $products = Category::firstOrCreate([
-            'parent_id'  => null,
-            'type_id'    => CategoryType::where('type', 'products')->first()->id,
+            'parent_id' => null,
+            'type_id'   => CategoryType::where('type', 'products')->first()->id,
             'sort_order' => ++$sortOrder,
-            'status'     => false,
+            'status'    => false,
         ], [
             'created_at' => Carbon::now(),
         ]);

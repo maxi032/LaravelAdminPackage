@@ -12,6 +12,11 @@ class CategoryRepository implements CategoryRepositoryInterface
         return Category::findOrFail($categoryId);
     }
 
+    public function deleteCategory($categoryId): void
+    {
+        Category::destroy($categoryId);
+    }
+
     public function createCategory(array $categoryAttributes)
     {
         return Category::create($categoryAttributes);
@@ -35,10 +40,5 @@ class CategoryRepository implements CategoryRepositoryInterface
     public function getCategoryOfType($categoryType)
     {
         return Category::ByType($categoryType);
-    }
-
-    public function deleteCategory($categoryId): void
-    {
-        Category::destroy($categoryId);
     }
 }

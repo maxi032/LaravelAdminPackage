@@ -17,7 +17,7 @@ class CategoryTranslation extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'category_id',
+        'category_id' ,
         'content',
         'excerpt',
         'language',

@@ -11,7 +11,7 @@ class CategoryType extends Model
     use HasFactory, SoftDeletes;
 
     /**
-     * The attributes that are mass assignable
+     * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */

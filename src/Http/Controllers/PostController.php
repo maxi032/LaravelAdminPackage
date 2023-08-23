@@ -10,9 +10,7 @@ use \Illuminate\Http\RedirectResponse;
 class PostController extends AdminController
 {
     private PostService $postService;
-
-    public function __construct(PostService $postService)
-    {
+    public function __construct(PostService $postService){
         $this->postService = $postService;
     }
 
@@ -23,7 +21,7 @@ class PostController extends AdminController
      */
     public function index()
     {
-        return view('laravel-admin-package::cms.posts.index');
+       return view('laravel-admin-package::cms.posts.index');
     }
 
 
@@ -48,9 +46,9 @@ class PostController extends AdminController
         $savedPost = $this->postService->createPostWithTranslations($request->validated());
         return ($savedPost && json_decode($savedPost->getContent())->type === 'error') ?
             redirect()->route('admin:posts.create')
-                ->with(['message' => json_decode($savedPost->getContent())->message]) :
+            ->with(['message'=>json_decode($savedPost->getContent())->message]):
             redirect()->route('admin:posts.index')
-                ->with(['message' => json_decode($savedPost->getContent())->message]);
+                ->with(['message'=>json_decode($savedPost->getContent())->message]);
     }
 
     public function edit(): View

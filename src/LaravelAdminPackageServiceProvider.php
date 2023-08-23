@@ -9,7 +9,6 @@ use Maxi032\LaravelAdminPackage\Commands\TestNpm;
 class LaravelAdminPackageServiceProvider extends ServiceProvider
 {
     static string $admPackage = 'laravel-admin-package';
-
     public function register(): void
     {
         // Bind the data to the container using the singleton method
@@ -30,7 +29,7 @@ class LaravelAdminPackageServiceProvider extends ServiceProvider
             $this->publishResources();
         }
 
-        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'maxi032-' . self::getAdmPackageName() . '-translations');
+        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'maxi032-'.self::getAdmPackageName().'-translations');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         Route::middleware('api')->prefix('api')->group(function () {
@@ -60,44 +59,44 @@ class LaravelAdminPackageServiceProvider extends ServiceProvider
     public function publishResources(): void
     {
         $this->publishes([
-            __DIR__ . '/../resources/lang' => resource_path('lang/vendor/maxi032-' . self::getAdmPackageName() . '-translations'),
-        ], self::getAdmPackageName() . '-translations');
+            __DIR__ . '/../resources/lang' => resource_path('lang/vendor/maxi032-'.self::getAdmPackageName().'-translations'),
+        ], self::getAdmPackageName().'-translations');
 
         // Publish migrations
         $this->publishes([
-            __DIR__ . '/../database/migrations' => database_path('migrations'),
-        ], 'maxi032-' . self::getAdmPackageName() . '-migrations');
+            __DIR__.'/../database/migrations' => database_path('migrations'),
+        ], 'maxi032-'.self::getAdmPackageName().'-migrations');
 
         // Publish seeders
         $this->publishes([
-            __DIR__ . '/../database/seeders' => database_path('seeders'),
-        ], 'maxi032-' . self::getAdmPackageName() . '-seeders');
+            __DIR__.'/../database/seeders' => database_path('seeders'),
+        ], 'maxi032-'.self::getAdmPackageName().'-seeders');
 
 
         // Publish the configuration file
         $this->publishes([
-            __DIR__ . '/../config/' . self::getAdmPackageName() . '.php' => config_path(self::getAdmPackageName() . '.php'),
-        ], 'maxi032-' . self::getAdmPackageName() . '-config');
+            __DIR__.'/../config/'.self::getAdmPackageName().'.php' => config_path(self::getAdmPackageName().'.php'),
+        ], 'maxi032-'.self::getAdmPackageName().'-config');
 
         // Publish the views files
         $this->publishes([
-            __DIR__ . '/../resources/views' => resource_path('views/vendor/maxi032/' . self::getAdmPackageName()),
-        ], 'maxi032-' . self::getAdmPackageName() . '-views');
+            __DIR__.'/../resources/views' => resource_path('views/vendor/maxi032/'.self::getAdmPackageName()),
+        ],'maxi032-'.self::getAdmPackageName().'-views');
 
         // publish coreui-css
         $this->publishes([
-            __DIR__ . '/../resources/sass' => resource_path('sass/maxi032/' . self::getAdmPackageName()),
-        ], 'maxi032-' . self::getAdmPackageName() . '-coreui');
+            __DIR__.'/../resources/sass' => resource_path('sass/maxi032/'.self::getAdmPackageName()),
+        ],'maxi032-'.self::getAdmPackageName().'-coreui');
 
         // publish images
         $this->publishes([
-            __DIR__ . '/../resources/img' => resource_path('sass/maxi032/' . self::getAdmPackageName() . '/coreui/img'),
-        ], 'maxi032-' . self::getAdmPackageName() . '-coreui_img');
+            __DIR__.'/../resources/img' => resource_path('sass/maxi032/'.self::getAdmPackageName().'/coreui/img'),
+        ],'maxi032-'.self::getAdmPackageName().'-coreui_img');
 
         // publish js (bootstrap) for coreui
         $this->publishes([
-            __DIR__ . '/../resources/js' => resource_path('js/maxi032/' . self::getAdmPackageName()),
-        ], 'maxi032-' . self::getAdmPackageName() . '-coreui_bootstrap');
+            __DIR__.'/../resources/js' => resource_path('js/maxi032/'.self::getAdmPackageName()),
+        ],'maxi032-'.self::getAdmPackageName().'-coreui_bootstrap');
 
     }
 }

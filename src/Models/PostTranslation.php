@@ -14,12 +14,12 @@ class PostTranslation extends Model
     protected $guarded = [];
 
     protected $fillable = [
-        'content',
-        'excerpt',
-        'language',
         'post_id',
-        'slug',
         'title',
+        'slug',
+        'excerpt',
+        'content',
+        'language',
     ];
 
 

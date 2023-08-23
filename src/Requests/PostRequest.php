@@ -39,7 +39,7 @@ class PostRequest extends FormRequest
             'translations.slug.*'    => 'required|max:50',
             'translations.content.*' => 'required',
             //'type_id' => 'required|exists:Maxi032\LaravelAdminPackage\Models\PostType,id'
-            'type_id'                => 'required'
+            'type_id' => 'required'
         ];
     }
 
@@ -50,35 +50,31 @@ class PostRequest extends FormRequest
             'translations.slug.*'    => 'required|max:50',
             'translations.content.*' => 'required',
             //'type_id' => 'required|exists:Maxi032\LaravelAdminPackage\Models\PostType,id'
-            'type_id'                => 'required'
+            'type_id' => 'required'
         ];
     }
 
     public function messages(): array
     {
-        $messages = [];
-        $languages = config('laravel-admin-package.allowed_languages');
-        foreach ($this->rules() as $fields => $rules) {
-            if (Str::startsWith($fields, 'translations.')) {
-                $fieldRules = collect(explode('|', $rules));
-                $field = substr($fields, 13, -2);
-                $fieldRules->each(function ($ruleItem) use ($field, $languages, &$messages) {
-                    foreach ($languages as $languageKey => $language) {
-                        switch ($ruleItem) {
-                            case 'required':
-                                $messages['translations.' . $field . '.' . $language['code'] . '.' . $ruleItem] = ucfirst($language['code']) . ': ' . trans('validation.required', ['attribute' => $field]);
-                                break;
-                        }
-                    }
-                    return $messages;
-                });
-
-                // dd($messages);
-                return $messages;
-            }
-        }
-
-        return $messages;
+       $messages = [];
+       $languages = config('laravel-admin-package.allowed_languages');
+       foreach($this->rules() as $fields=>$rules){
+          if(Str::startsWith($fields,'translations.')){
+           $fieldRules = collect(explode('|',$rules));
+           $field = substr($fields,13, -2);
+              $fieldRules->each(function ($ruleItem) use ($field, $languages, &$messages) {
+                  foreach($languages as $languageKey => $language) {
+                      switch($ruleItem) {
+                          case 'required':
+                            $messages['translations.' . $field . '.' . $language['code'] . '.' . $ruleItem] = ucfirst($language['code']).': '.trans('validation.required', ['attribute' => $field]);
+                          break;
+                      }
+                  }
+                  return $messages;
+              });
+          }
+       }
+       return $messages;
     }
 
 }

@@ -10,20 +10,20 @@
     @vite('resources/sass/maxi032/laravel-admin-package/coreui/admin_app.scss')
 </head>
 <body>
-@include($laravelAdminPackage.'::cms.partials.sidebar')
+    @include($laravelAdminPackage.'::cms.partials.sidebar')
 
-<div class="wrapper d-flex flex-column min-vh-100 bg-light">
-    @include($laravelAdminPackage.'::cms.partials.header')
-    <div class="body flex-grow-1 px-3">
-        <div class="container-lg">
-            @yield('content')
+    <div class="wrapper d-flex flex-column min-vh-100 bg-light">
+        @include($laravelAdminPackage.'::cms.partials.header')
+        <div class="body flex-grow-1 px-3">
+            <div class="container-lg">
+                @yield('content')
+            </div>
         </div>
+        @include($laravelAdminPackage.'::cms.partials.footer')
     </div>
-    @include($laravelAdminPackage.'::cms.partials.footer')
-</div>
 
-@vite('resources/js/maxi032/laravel-admin-package/coreui/admin_app.js')
+    @vite('resources/js/maxi032/laravel-admin-package/coreui/admin_app.js')
 
-@stack('footer-scripts')
+    @stack('footer-scripts')
 </body>
 </html>

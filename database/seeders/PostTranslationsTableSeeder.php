@@ -5,7 +5,11 @@ namespace Database\Seeders;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use Maxi032\LaravelAdminPackage\Models\Category;
+use Maxi032\LaravelAdminPackage\Models\CategoryTranslation;
+use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Models\Post;
+use Maxi032\LaravelAdminPackage\Models\PostTranslation;
 use Faker\Factory as FakerFactory;
 
 class PostTranslationsTableSeeder extends Seeder

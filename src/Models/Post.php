@@ -60,7 +60,7 @@ class Post extends Model
     }
 
     /**
-     * Get all translations of a post
+     * Get all translations of post
      *
      * @return HasMany
      */

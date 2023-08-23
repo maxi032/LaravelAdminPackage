@@ -24,7 +24,6 @@ class PostRepository implements PostRepositoryInterface
     {
         $languages = config('laravel-admin-package.allowed_languages');
         try {
-            // DB::transaction itself will throw an exception but this is safer
             \DB::transaction(function () use ($dataArr, $languages) {
                 // Create the post using the create method
                 $post = Post::create([
@@ -39,7 +38,7 @@ class PostRepository implements PostRepositoryInterface
                 $translationsToInsert = [];
                 foreach ($translationsData as $field => $fieldValues) {
                     $i = 0;
-                    foreach ($languages as $lang => $language) {
+                    foreach($languages as $lang => $language){
                         $translationsToInsert[$i]['post_id'] = $post->id;
                         $translationsToInsert[$i]['title'] = $translationsData['title'][$language['code']];
                         $translationsToInsert[$i]['slug'] = $translationsData['slug'][$language['code']];

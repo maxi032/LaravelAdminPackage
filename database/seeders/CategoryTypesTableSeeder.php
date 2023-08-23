@@ -10,7 +10,7 @@ use \Maxi032\LaravelAdminPackage\Models\CategoryType;
 class CategoryTypesTableSeeder extends Seeder
 {
     /**
-     * Run the database seeds for CategoryType.
+     * Run the database seeds.
      */
     public function run(): void
     {
