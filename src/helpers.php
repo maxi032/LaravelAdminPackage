@@ -26,4 +26,11 @@ if (! function_exists('trimValidationMessage')) {
     {
         return Str::substr($message, 4);
     }
+
+    if (! function_exists('getLanguages')) {
+        function getLanguages()
+        {
+            return config('laravel-admin-package.allowed_languages');
+        }
+    }
 }

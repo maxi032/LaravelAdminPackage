@@ -6,6 +6,7 @@ use \Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use JetBrains\PhpStorm\NoReturn;
@@ -35,7 +36,7 @@ class PostRequest extends FormRequest
     public function createRules(): array
     {
         return [
-            'translations.title.*'   => 'required|max:50',
+            'translations.title.*'   => 'required|max:40',
             'translations.slug.*'    => 'required|max:50',
             'translations.content.*' => 'required',
             //'type_id' => 'required|exists:Maxi032\LaravelAdminPackage\Models\PostType,id'
@@ -57,24 +58,52 @@ class PostRequest extends FormRequest
     public function messages(): array
     {
        $messages = [];
-       $languages = config('laravel-admin-package.allowed_languages');
+       $languages = getLanguages();
        foreach($this->rules() as $fields=>$rules){
           if(Str::startsWith($fields,'translations.')){
            $fieldRules = collect(explode('|',$rules));
            $field = substr($fields,13, -2);
               $fieldRules->each(function ($ruleItem) use ($field, $languages, &$messages) {
+                  $ruleName = ($pos = strpos($ruleItem, ':')) !== false ? substr($ruleItem, 0, $pos) : $ruleItem;
+                  $criteriaValue = ($pos = strpos($ruleItem, ':')) !== false ? substr($ruleItem, $pos+1, strlen($ruleItem)) : '';
                   foreach($languages as $languageKey => $language) {
-                      switch($ruleItem) {
-                          case 'required':
-                            $messages['translations.' . $field . '.' . $language['code'] . '.' . $ruleItem] = ucfirst($language['code']).': '.trans('validation.required', ['attribute' => $field]);
-                          break;
+                      if(is_array(trans('validation.'.$ruleName))){
+                          foreach(trans('validation.'.$ruleName) as $arrayRuleKey => $arrk) {
+                              $messages['translations.' . $field . '.' . $language['code'] . '.'.$ruleName] = match ($arrayRuleKey) {
+                                  'array' => (Lang::has('validation.'.$ruleName.'.array')) ? ucfirst($language['code']) . ': ' . Lang::get('validation.' . $ruleName.'.array', ['attribute' => $field, $ruleName => $criteriaValue]):null,
+                                  'file' => (Lang::has('validation.'.$ruleName.'.file')) ? ucfirst($language['code']) . ': ' . Lang::get('validation.' . $ruleName.'.filer', ['attribute' => $field, $ruleName => $criteriaValue]):null,
+                                  'numeric' => (Lang::has('validation.'.$ruleName.'.numeric')) ? ucfirst($language['code']) . ': ' . Lang::get('validation.' . $ruleName.'.numeric', ['attribute' => $field, $ruleName => $criteriaValue]):null,
+                                  'string' => (Lang::has('validation.'.$ruleName.'.string')) ? ucfirst($language['code']) . ': ' . Lang::get('validation.' . $ruleName.'.string', ['attribute' => $field, $ruleName => $criteriaValue]):null,
+                              };
+                          }
+                      } else {
+                          $messages['translations.' . $field . '.' . $language['code'] . '.' . $ruleName] = ucfirst($language['code']) . ': ' . trans('validation.' . $ruleName, ['attribute' => $field, $ruleName => $criteriaValue]);
                       }
                   }
+
                   return $messages;
               });
           }
        }
+
+     //  dd($messages);
        return $messages;
+    }
+
+    public function attributes()
+    {
+        $attributes = [];
+       foreach($this->rules() as $fields=>$rules){
+           if(Str::startsWith($fields,'translations.')) {
+               $field = substr($fields,13, -2);
+               foreach (getLanguages() as $languageKey => $language ) {
+                   $attributes[$field][$language['code']] = trans($field);
+               }
+           } else{
+               $attributes[$field] = trans($field);
+           }
+       }
+        return $attributes;
     }
 
 }
