@@ -30,5 +30,8 @@
             "name": "Bogdan Comarniceanu",
             "email": "maxxyro@yahoo.com"
         }
-    ]
+    ],
+    "require-dev": {
+        "barryvdh/laravel-ide-helper": "2.13.x-dev"
+    }
 }

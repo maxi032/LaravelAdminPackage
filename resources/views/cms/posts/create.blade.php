@@ -1,9 +1,9 @@
 @extends($laravelAdminPackage.'::layouts.admin_layout')
 
 @section('content')
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-8">
                 <div class="card mb-4">
                     <div class="card-header">{{ __('Add post') }}</div>
 
@@ -13,7 +13,7 @@
                                 {{ session('message') }}
                             </div>
                         @endif
-                        <form id="createOrEditForm" class="validationForm"
+                        <form id="createOrEditForm" class="validationForm" enctype="multipart/form-data"
                               method="{{ Str::endsWith(Route::currentRouteName(), '.create') ? 'POST' : 'PUT' }}"
                               action="{{ Str::endsWith(Route::currentRouteName(), '.create') ? route('admin:posts.store') : route('admin:posts.update') }}">
                             @csrf
@@ -28,99 +28,69 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                             @enderror
-                            <nav>
-                                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+
+                            <div class="d-flex align-items-start">
+                                <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist"
+                                     aria-orientation="vertical">
                                     @foreach(config($laravelAdminPackage.'.allowed_languages') as $languageKey => $language)
-                                        <button class="@if($loop->first) active @endif nav-link"
-                                                id="nav-{{$language['code']}}-tab" data-bs-toggle="tab"
-                                                data-bs-target="#nav-{{$language['code']}}" type="button" role="tab"
-                                                aria-controls="nav-{{$language['code']}}"
-                                                aria-selected="false">{{$language['name']}}</button>
+                                        <button class="nav-link @if($loop->first) active @endif"
+                                                id="v-pills-{{ $language['code'] }}-tab" data-coreui-toggle="pill"
+                                                data-coreui-target="#v-pills-{{ $language['code'] }}" type="button"
+                                                role="tab" aria-controls="v-pills-{{ $language['code'] }}"
+                                                aria-selected="@if($loop->first) true @else false @endif">{{ strtoupper($language['code']) }}</button>
                                     @endforeach
                                 </div>
-                            </nav>
-                            <div class="tab-content p-3 border border-top-0" id="nav-tabContent">
-                                @foreach(config($laravelAdminPackage.'.allowed_languages') as $languageKey => $language)
-                                    <div class="tab-pane fade @if($loop->first)show active @endif"
-                                         id="nav-{{$language['code']}}" role="tabpanel"
-                                         aria-labelledby="nav-{{$language['code']}}-tab">
-                                        <div class="row mb-3">
-                                            <label for="translations['title'][{{$language['code']}}]"
-                                                   class="col-md-4 col-form-label text-md-end">{{ __('Title') }}</label>
+                                <div class="flex-grow-1 tab-content" id="v-pills-tabContent">
+                                    @foreach(config($laravelAdminPackage.'.allowed_languages') as $languageKey => $language)
+                                        <div class="tab-pane fade @if($loop->first) show active @endif"
+                                             id="v-pills-{{ $language['code'] }}" role="tabpanel"
+                                             aria-labelledby="v-pills-{{ $language['code'] }}-tab" tabindex="0">
+                                            <div class="row g-2">
+                                                <div class="col-md-11 offset-md-1">
+                                                    <div class="form-floating mb-3">
+                                                        <input type="text" value="{{ old('translations.title.'.$language['code']) }}"
+                                                               autocomplete="translations['title'][{{$language['code']}}]"
+                                                               autofocus  name="translations[title][{{$language['code']}}]" placeholder="Enter a title" class="form-control @error('translations.title.'.$language['code']) is-invalid @enderror" id="title_{{$language['code']}}">
+                                                        <label for="title_{{$language['code']}}">@if(!$errors->has('translations.title.' . $language['code'])) {{ __('Title') }} @endif @error('translations.title.' . $language['code']){!!  trimValidationMessage($message) !!} @enderror</label>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                            <div class="col-md-6">
-                                                <input id="title_{{$language['code']}}" type="text"
-                                                       class="form-control @error('translations.title.'.$language['code']) is-invalid @enderror"
-                                                       name="translations[title][{{$language['code']}}]"
-                                                       value="{{ old('translations.title.'.$language['code']) }}">
+                                            <div class="row g-2">
+                                                <div class="col-md-11 offset-md-1">
+                                                    <div class="form-floating mb-3">
+                                                        <input type="text" value="{{ old('translations.slug.'.$language['code']) }}"
+                                                               autocomplete="translations['slug'][{{$language['code']}}]"
+                                                               autofocus  name="translations[slug][{{$language['code']}}]" placeholder="Enter a slug" class="form-control @error('translations.slug.'.$language['code']) is-invalid @enderror" id="slug_{{$language['code']}}">
+                                                        <label for="slug_{{$language['code']}}">@if(!$errors->has('translations.slug.' . $language['code'])) {{ __('Slug') }} @endif @error('translations.slug.' . $language['code']){!!  trimValidationMessage($message) !!} @enderror</label>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                                @error('translations.title.' . $language['code'])
-                                                <span class="invalid-feedback" role="alert">
-                                        <strong>{!!  trimValidationMessage($message) !!}</strong>
-                                    </span>
-                                                @enderror
+                                            <div class="row g-2">
+                                                <div class="col-md-11 offset-md-1">
+                                                    <div class="form-floating mb-3">
+                                                        <textarea  name="translations[excerpt][{{$language['code']}}]" id="excerpt_{{$language['code']}}" class="form-control" cols="7" rows="9">{{ old('translations.excerpt.'.$language['code']) }}</textarea>
+                                                        <label for="excerpt_{{$language['code']}}">@if(!$errors->has('translations.excerpt.' . $language['code'])) {{ __('Excerpt') }} @endif @error('translations.excerpt.' . $language['code']){!!  trimValidationMessage($message) !!} @enderror</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row g-2">
+                                                <div class="col-md-11 offset-md-1">
+                                                    <div class="form-floating mb-3">
+                                                        <textarea  name="translations[content][{{$language['code']}}]" id="content_{{$language['code']}}" class="form-control editor" cols="7" rows="9">{{ old('translations.content.'.$language['code']) }}</textarea>
+                                                        <label for="content_{{$language['code']}}">@if(!$errors->has('translations.content.' . $language['code'])) {{ __('Content') }} @endif @error('translations.content.' . $language['code']){!!  trimValidationMessage($message) !!} @enderror</label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-
-                                        <div class="row mb-3">
-                                            <label for="translations[slug][{{$language['code']}}]"
-                                                   class="col-md-4 col-form-label text-md-end">{{ __('slug') }}</label>
-
-                                            <div class="col-md-6">
-                                                <input id="slug_{{$language['code']}}" type="text"
-                                                       class="form-control @error('translations.slug.'.$language['code']) is-invalid @enderror"
-                                                       name="translations[slug][{{$language['code']}}]"
-                                                       value="{{ old('translations.slug.'.$language['code']) }}"
-                                                       autocomplete="translations['slug'][{{$language['code']}}]"
-                                                       autofocus>
-
-                                                @error('translations.slug.' . $language['code'])
-                                                <span class="invalid-feedback" role="alert">
-                                        <strong>{!!  trimValidationMessage($message) !!}</strong>
-                                    </span>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <label for="translations['excerpt'][{{$language['code']}}]"
-                                                   class="col-md-4 col-form-label text-md-end">{{ __('Excerpt') }}</label>
-
-                                            <div class="col-md-6">
-                                                <textarea id="excerpt_{{$language['code']}}" class="form-control"
-                                                          name="translations[excerpt][{{$language['code']}}]"
-                                                          rows="3">{{ old('translations.excerpt.'.$language['code']) }}</textarea>
-
-                                                @error('translations.excerpt.' . $language['code'])
-                                                <span class="invalid-feedback" role="alert">
-                                         <strong>{!!  trimValidationMessage($message) !!}</strong>
-                                    </span>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <label for="translations['content'][{{$language['code']}}]"
-                                                   class="col-md-4 col-form-label text-md-end">{{ __('Content') }}</label>
-
-                                            <div class="col-md-6">
-                                                <textarea id="content_{{$language['code']}}" class="form-control"
-                                                          name="translations[content][{{$language['code']}}]"
-                                                          rows="3">{{ old('translations.content.'.$language['code']) }}</textarea>
-
-                                                @error('translations.content.' . $language['code'])
-                                                <span class="invalid-feedback" role="alert">
-                                         <strong>{!!  trimValidationMessage($message) !!}</strong>
-                                    </span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-
+                                    @endforeach
+                                </div>
                             </div>
+
                             <div class="row mb-0 mt-3">
-                                <div class="col-md-6 offset-md-4">
+                                <div class="text-center">
                                     <button type="submit" class="btn btn-primary">
                                         {{ __('Send') }}
                                     </button>
@@ -130,11 +100,29 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">{{ __('Other things') }}</div>
+                    <div class="card-body">
+                        other thing
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
     </div>
 
 @endsection
 @push('footer-scripts')
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <script>
+        var allEditors = document.querySelectorAll('.editor');
+        for (var i = 0; i < allEditors.length; ++i) {
+            ClassicEditor.create(allEditors[i], {
+                removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed'],
+            });
+        }
+    </script>
     @if ($errors->any())
         <script type="module">
             window.jQuery(document).ready(function () {
@@ -177,6 +165,7 @@
                 // Initialize the toast using CoreUI
                 let toast = new coreui.Toast(toastContainer, toastOptions);
                 toast.show();
+
             });
         </script>
     @endif

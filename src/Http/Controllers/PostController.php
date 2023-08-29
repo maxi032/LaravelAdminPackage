@@ -43,7 +43,7 @@ class PostController extends AdminController
      */
     public function store(PostRequest $request): RedirectResponse
     {
-        $savedPost = $this->postService->createPostWithTranslations($request->validated());
+        $savedPost = $this->postService->createPostWithTranslations($request->all());
         return ($savedPost && json_decode($savedPost->getContent())->type === 'error') ?
             redirect()->route('admin:posts.create')
             ->with(['message'=>json_decode($savedPost->getContent())->message]):

@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Maxi032\LaravelAdminPackage\Models\Post;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostRepositoryInterface;
 use \Illuminate\Http\JsonResponse;
+use Throwable;
 
 class PostRepository implements PostRepositoryInterface
 {
@@ -42,6 +43,7 @@ class PostRepository implements PostRepositoryInterface
                         $translationsToInsert[$i]['post_id'] = $post->id;
                         $translationsToInsert[$i]['title'] = $translationsData['title'][$language['code']];
                         $translationsToInsert[$i]['slug'] = $translationsData['slug'][$language['code']];
+                        $translationsToInsert[$i]['excerpt'] = $translationsData['excerpt'][$language['code']];
                         $translationsToInsert[$i]['content'] = $translationsData['content'][$language['code']];
                         $translationsToInsert[$i]['language'] = $language['code'];
                         $translationsToInsert[$i]['created_at'] = Carbon::now();
@@ -54,8 +56,8 @@ class PostRepository implements PostRepositoryInterface
 
             // The transaction was successful
             return response()->json(['type' => 'success', 'message' => 'Post created successfully!']);
-        } catch (\Exception $e) {
-            return response()->json(['type' => 'error', 'message' => $e->getMessage()]);
+        } catch (Throwable $e) {
+            return response()->json(['type' => 'error', 'message' => $e->getMessage().' at line '.$e->getLine()]);
         }
     }
 

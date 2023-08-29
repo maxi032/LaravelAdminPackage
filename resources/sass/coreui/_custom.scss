@@ -10,3 +10,11 @@
   position: absolute; top: 0; right: 0;
   margin:20px;
 }
+
+[id^="excerpt_"] {
+  height:7.5rem!important;
+}
+
+.ck-editor__editable {
+  min-height: 550px !important;
+}
