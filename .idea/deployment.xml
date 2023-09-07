@@ -9,6 +9,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="FillamentDemo">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="LaravelAdminPackage">
         <serverdata>
           <mappings>
@@ -31,6 +38,13 @@
         </serverdata>
       </paths>
       <paths name="cleanstatamic">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="fillamenttaskmanager">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
