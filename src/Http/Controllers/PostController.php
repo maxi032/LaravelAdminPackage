@@ -9,10 +9,7 @@ use \Illuminate\Http\RedirectResponse;
 
 class PostController extends AdminController
 {
-    private PostService $postService;
-    public function __construct(PostService $postService){
-        $this->postService = $postService;
-    }
+    public function __construct(private readonly PostService $postService){}
 
     /**
      * Show the application dashboard.
@@ -32,7 +29,8 @@ class PostController extends AdminController
      */
     public function create()
     {
-        return view('laravel-admin-package::cms/posts.create');
+      $postTypes = $this->postService->getPostTypesForDropdown();
+      return view('laravel-admin-package::cms/posts.update_or_create', compact('postTypes'));
     }
 
     /**

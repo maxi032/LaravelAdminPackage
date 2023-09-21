@@ -18,3 +18,21 @@
 .ck-editor__editable {
   min-height: 550px !important;
 }
+
+.nav-tabs .nav-link{
+  border:0!important;
+}
+
+.custom-tab.active {
+  background: transparent !important;
+  color: var(--cui-link-color) !important;
+  border:0;
+  border-bottom: 2px solid var(--cui-link-color) !important;
+  border-radius: 0px !important;
+}
+
+.card-header-text-lh {
+  line-height:1;
+  margin-top:10px;
+  display:inline-block;
+}

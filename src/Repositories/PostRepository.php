@@ -16,7 +16,7 @@ class PostRepository implements PostRepositoryInterface
         return Post::findOrFail($postId);
     }
 
-    public function deletePost($postId)
+    public function deletePost($postId): void
     {
         Post::destroy($postId);
     }
