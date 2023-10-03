@@ -33,7 +33,7 @@
                             @else
                                 <td>
                                     <div class="form-check form-switch form-switch-lg">
-                                        <input class="form-check-input" type="checkbox" id="statusSwitch{{ $post->id }}"
+                                        <input class="form-check-input" type="checkbox" data-id="{{ $post->id }}" id="statusSwitch{{ $post->id }}"
                                                @if($post->status == 1) checked @endif>
                                         <label class="form-check-label" for="statusSwitch{{ $post->id }}"></label>
                                     </div>
@@ -56,9 +56,8 @@
                 }
             });
             window.jQuery(document).ready(function () {
-                $("input[id^=statusSwitch]").on("change", function (e) {
-                    let elem = e.target.id;
-                    let postId = elem.replace('statusSwitch', '');
+                $("input[id^=statusSwitch]").on("change", function () {
+                    let postId =  $(this).data('id');
                     let status = $(this).prop('checked') === true ? 1 : 0;
 
                     $.ajax({
