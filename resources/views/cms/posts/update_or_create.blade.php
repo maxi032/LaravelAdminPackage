@@ -65,10 +65,6 @@
     </script>
     <script type="module">
         window.jQuery(document).ready(function () {
-            $("#saveButton").on("click", function () {
-                $('#updateOrCreateForm').submit();
-            });
-
             @if ($errors->any())
             // toast code
             let allErrors = @json($errors->all());

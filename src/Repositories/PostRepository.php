@@ -29,7 +29,7 @@ class PostRepository implements PostRepositoryInterface
                 // Create the post using the create method
                 $post = Post::create([
                     'type_id'    => $dataArr['type_id'],
-                    'status'     => $dataArr['status'] ?? 0,
+                    'status'     => $dataArr['status'] ? 1 : 0,
                     'sort_order' => $dataArr['sort_order'] ?? 0,
                 ]);
 
@@ -45,6 +45,9 @@ class PostRepository implements PostRepositoryInterface
                         $translationsToInsert[$i]['slug'] = $translationsData['slug'][$language['code']];
                         $translationsToInsert[$i]['excerpt'] = $translationsData['excerpt'][$language['code']];
                         $translationsToInsert[$i]['content'] = $translationsData['content'][$language['code']];
+                        $translationsToInsert[$i]['meta_title'] = $translationsData['meta_title'][$language['code']] ?? $translationsToInsert[$i]['title'];
+                        $translationsToInsert[$i]['meta_keywords'] = $translationsData['meta_keywords'][$language['code']];
+                        $translationsToInsert[$i]['meta_description'] = $translationsData['meta_description'][$language['code']];
                         $translationsToInsert[$i]['language'] = $language['code'];
                         $translationsToInsert[$i]['created_at'] = Carbon::now();
                         $i++;

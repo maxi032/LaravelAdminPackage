@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Relations\BelongsTo;
 use \Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Maxi032\LaravelAdminPackage\Enums\PostStatusEnum;
 
 class Post extends Model
 {
@@ -18,6 +20,13 @@ class Post extends Model
         'status',
         'type_id',
     ];
+
+    protected $appends = ['status_badge'];
+
+    public function statusbadge():Attribute
+    {
+        return Attribute::make(get:fn()=>PostStatusEnum::badgeClass($this->status));
+    }
 
     /**
      * @return BelongsTo

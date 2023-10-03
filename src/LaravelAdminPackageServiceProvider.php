@@ -5,7 +5,6 @@ namespace Maxi032\LaravelAdminPackage;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Maxi032\LaravelAdminPackage\Commands\TestNpm;
-
 class LaravelAdminPackageServiceProvider extends ServiceProvider
 {
     static string $admPackage = 'laravel-admin-package';

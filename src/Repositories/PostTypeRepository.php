@@ -18,4 +18,9 @@ class PostTypeRepository implements PostTypeRepositoryInterface
             return PostType::select('id', 'type')->pluck('type', 'id')->toArray();
         });
     }
+
+    public function getPostTypeById($id)
+    {
+        return PostType::find($id);
+    }
 }

@@ -19,6 +19,9 @@ class PostTranslation extends Model
         'slug',
         'excerpt',
         'content',
+        'meta_title',
+        'meta_keywords',
+        'meta_description',
         'language',
     ];
 
