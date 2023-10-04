@@ -5,6 +5,7 @@ namespace Maxi032\LaravelAdminPackage;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Maxi032\LaravelAdminPackage\Commands\TestNpm;
+use Maxi032\LaravelAdminPackage\Http\Middleware\RestrictToAjax;
 class LaravelAdminPackageServiceProvider extends ServiceProvider
 {
     static string $admPackage = 'laravel-admin-package';
@@ -17,6 +18,8 @@ class LaravelAdminPackageServiceProvider extends ServiceProvider
 
         $this->app->register(ThemeServiceProvider::class);
         $this->app->register(RepositoryServiceProvider::class);
+
+        app('router')->aliasMiddleware('restrict_to_ajax', RestrictToAjax::class);
     }
 
     public function boot(): void

@@ -2,6 +2,7 @@
 
 @section('content')
     <div class="container">
+        <h3 class="mb-4">{{ str_replace('_',' ',$postType) }}</h3>
         <div class="row">
             <div class="col-md-12">
                 <table id="posts" class="display nowrap table table-striped" style="width:100%">
