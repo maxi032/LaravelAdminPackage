@@ -15,9 +15,7 @@
     <div class="wrapper d-flex flex-column min-vh-100 bg-light">
         @include($laravelAdminPackage.'::cms.partials.header')
         <div class="body flex-grow-1 px-3">
-            <div class="container-lg">
                 @yield('content')
-            </div>
         </div>
         @include($laravelAdminPackage.'::cms.partials.footer')
     </div>

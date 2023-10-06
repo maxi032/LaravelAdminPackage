@@ -68,9 +68,11 @@ class PostController extends AdminController
 
     public function edit(Post $post)
     {
-        dd("Inside edit");
         $postTypes = $this->postService->getPostTypesForDropdown();
-        return view('laravel-admin-package::cms/posts.update_or_create', compact('postTypes'));
+        return view('laravel-admin-package::cms/posts.update_or_create', [
+            'postTypes' => $postTypes,
+            'post'      => $post
+        ]);
     }
 
     public function show(): Renderable
@@ -87,7 +89,6 @@ class PostController extends AdminController
      */
     public function store(PostRequest $request, PostTypeRepositoryInterface $postTypeRepository): RedirectResponse
     {
-
         $savedPost = $this->postService->createPostWithTranslations($request->all());
         $postType = $postTypeRepository->getPostTypeById($request->get('type_id'));
         return ($savedPost && json_decode($savedPost->getContent())->type === 'error') ?
@@ -97,11 +98,18 @@ class PostController extends AdminController
                 ->with(['message' => json_decode($savedPost->getContent())->message]);
     }
 
-    public function update(PostRequest $request, $id)
+    public function update(Post $post, PostTypeRepositoryInterface $postTypeRepository): RedirectResponse
     {
-
-        Message::find($id)->update($request->validated());
-        return redirect()->route('admin:posts.index');
+        // Manually create an instance of PostRequest
+        $postRequest = app(PostRequest::class);
+        $data = $postRequest->all();
+        $postType = $postTypeRepository->getPostTypeById($postRequest->get('type_id'));
+        $updatedPost = $this->postService->updatePostWithTranslations($data);
+        return ($updatedPost && json_decode($updatedPost->getContent())->type === 'error') ?
+            redirect()->route('admin:posts.edit',$post)
+                ->with(['message' => json_decode($updatedPost->getContent())->message]) :
+            redirect()->route('admin:posts.type.list', ['type' => $postType->type])
+                ->with(['message' => json_decode($updatedPost->getContent())->message]);
     }
 
     public function ajaxChangeStatus(Request $request): JsonResponse
@@ -112,7 +120,7 @@ class PostController extends AdminController
         $post->status = $status;
         $post->save();
 
-        return response()->json(['success'=>'Post was '.($post->status == 1) ? 'activated':'deactivated']);
+        return response()->json(['success' => 'Post was ' . ($post->status == 1) ? 'activated' : 'deactivated']);
     }
 
 }

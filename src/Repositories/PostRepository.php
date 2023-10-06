@@ -60,13 +60,52 @@ class PostRepository implements PostRepositoryInterface
             // The transaction was successful
             return response()->json(['type' => 'success', 'message' => 'Post created successfully!']);
         } catch (Throwable $e) {
-            return response()->json(['type' => 'error', 'message' => $e->getMessage().' at line '.$e->getLine()]);
+            return response()->json(['type' => 'error', 'message' => $e->getMessage().' in file '.$e->getFile().' at line '.$e->getLine()]);
         }
     }
 
-    public function updatePost($postId, array $postAttributes)
+    public function updatePostWithTranslations(array $dataArr): JsonResponse
     {
-        return Post::whereId($postId)->update($postAttributes);
+        $languages = config('laravel-admin-package.allowed_languages');
+        try {
+            \DB::transaction(function () use ($dataArr, $languages) {
+                // Find the post
+                $post = Post::find($dataArr['id'])->load('translations');
+                $post->type_id    = $dataArr['type_id'];
+                $post->status     = 1;
+                $post->sort_order = $dataArr['sort_order'] ?? 0;
+
+                // Save translations for the post
+                $translationsData = $dataArr['translations'];
+
+                $translationsToInsert = [];
+                foreach ($translationsData as $field => $fieldValues) {
+                    $i = 0;
+                    foreach($languages as $lang => $language){
+                        $translationsToInsert[$i]['post_id'] = $post->id;
+                        $translationsToInsert[$i]['title'] = $translationsData['title'][$language['code']];
+                        $translationsToInsert[$i]['slug'] = $translationsData['slug'][$language['code']];
+                        $translationsToInsert[$i]['excerpt'] = $translationsData['excerpt'][$language['code']];
+                        $translationsToInsert[$i]['content'] = $translationsData['content'][$language['code']];
+                        $translationsToInsert[$i]['meta_title'] = $translationsData['meta_title'][$language['code']] ?? $translationsToInsert[$i]['title'];
+                        $translationsToInsert[$i]['meta_keywords'] = $translationsData['meta_keywords'][$language['code']];
+                        $translationsToInsert[$i]['meta_description'] = $translationsData['meta_description'][$language['code']];
+                        $translationsToInsert[$i]['language'] = $language['code'];
+                        $translationsToInsert[$i]['updated__at'] = now();
+                        $i++;
+                    }
+                }
+
+                foreach($translationsToInsert as $k => $translation){
+                    $post->translations->where('language',$translationsToInsert[$k]['language'])->first()->update($translationsToInsert[$k]);
+                }
+            });
+
+            // The transaction was successful
+            return response()->json(['type' => 'success', 'message' => 'Post updated successfully!']);
+        } catch (Throwable $e) {
+            return response()->json(['type' => 'error', 'message' => $e->getMessage()]);
+        }
     }
 
     public function getActivePosts()

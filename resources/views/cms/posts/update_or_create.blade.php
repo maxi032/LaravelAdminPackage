@@ -7,23 +7,23 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
+                <form id="updateOrCreateForm" class="validationForm" enctype="multipart/form-data"
+                      action="{{ Str::endsWith(Route::currentRouteName(), '.create') ? route('admin:posts.store') : route('admin:posts.update', request()->segment(4)) }}"
+                      method="POST"
+                >
+                    @if(Str::endsWith(Route::currentRouteName(), '.edit'))
+                        <input type="hidden" name="id" value="{{ request()->segment(4) }}">
+                        @method('PUT')
+                    @endif
+                    @csrf
                 <div class="card mb-4">
                     <div class="card-header "><span class="card-header-text-lh">{{ __('Add post') }}</span>
-                        <button type="button" id="saveButton" class="btn btn-primary float-end">
+                        <button type="submit" id="saveButton" class="btn btn-primary float-end">
                             {{ __('Send') }}
                         </button>
                     </div>
 
                     <div class="card-body">
-                        @if(session('message'))
-                            <div class="alert alert-danger">
-                                {{ session('message') }}
-                            </div>
-                        @endif
-                        <form id="updateOrCreateForm" class="validationForm" enctype="multipart/form-data"
-                              method="{{ Str::endsWith(Route::currentRouteName(), '.create') ? 'POST' : 'PUT' }}"
-                              action="{{ Str::endsWith(Route::currentRouteName(), '.create') ? route('admin:posts.store') : route('admin:posts.update') }}">
-                            @csrf
 
                             @if(count($allowedTabs))
                                 <nav>
@@ -45,9 +45,10 @@
                                     @endforeach
                                 </div>
                             @endif
-                        </form>
+
                     </div>
                 </div>
+            </form>
             </div>
         </div>
     </div>
@@ -64,49 +65,49 @@
         }
     </script>
     <script type="module">
-        window.jQuery(document).ready(function () {
-            @if ($errors->any())
-            // toast code
-            let allErrors = @json($errors->all());
-            let errorMessage = '<ul>';
-            $.each(allErrors, function (index, err) {
-                errorMessage += '<li>' + err + '</li>';
-            });
-            errorMessage += '</ul>';
+        {{--window.jQuery(document).ready(function () {--}}
+        {{--    @if ($errors->any())--}}
+        {{--    // toast code--}}
+        {{--    let allErrors = @json($errors->all());--}}
+        {{--    let errorMessage = '<ul>';--}}
+        {{--    $.each(allErrors, function (index, err) {--}}
+        {{--        errorMessage += '<li>' + err + '</li>';--}}
+        {{--    });--}}
+        {{--    errorMessage += '</ul>';--}}
 
-            let toastOptions = {
-                html: errorMessage,
-                className: 'bg-danger text-light p-3',
-                position: 'top-0 end-0',
-                dismiss: {
-                    show: true,
-                    timeout: 3000,
-                }
-            };
+        {{--    let toastOptions = {--}}
+        {{--        html: errorMessage,--}}
+        {{--        className: 'bg-danger text-light p-3',--}}
+        {{--        position: 'top-0 end-0',--}}
+        {{--        dismiss: {--}}
+        {{--            show: true,--}}
+        {{--            timeout: 3000,--}}
+        {{--        }--}}
+        {{--    };--}}
 
-            let toastContainer = $('<div>', {
-                class: 'toast bg-danger bg-gradient text-white ',
-                role: 'alert',
-                'aria-live': 'assertive',
-                'aria-atomic': 'true'
-            }).append(
-                $('<div>', {class: 'toast-header bg-danger text-white'}).append(
-                    $('<strong>', {class: 'me-auto', text: 'Error'}),
-                    $('<button>', {
-                        type: 'button',
-                        class: 'btn-close',
-                        'data-bs-dismiss': 'toast',
-                        'aria-label': 'Close'
-                    })
-                ),
-                $('<div>', {class: 'toast-body', html: errorMessage})
-            );
+        {{--    let toastContainer = $('<div>', {--}}
+        {{--        class: 'toast bg-danger bg-gradient text-white ',--}}
+        {{--        role: 'alert',--}}
+        {{--        'aria-live': 'assertive',--}}
+        {{--        'aria-atomic': 'true'--}}
+        {{--    }).append(--}}
+        {{--        $('<div>', {class: 'toast-header bg-danger text-white'}).append(--}}
+        {{--            $('<strong>', {class: 'me-auto', text: 'Error'}),--}}
+        {{--            $('<button>', {--}}
+        {{--                type: 'button',--}}
+        {{--                class: 'btn-close',--}}
+        {{--                'data-bs-dismiss': 'toast',--}}
+        {{--                'aria-label': 'Close'--}}
+        {{--            })--}}
+        {{--        ),--}}
+        {{--        $('<div>', {class: 'toast-body', html: errorMessage})--}}
+        {{--    );--}}
 
-            $('header').append(toastContainer);
-            // Initialize the toast using CoreUI
-            let toast = new coreui.Toast(toastContainer, toastOptions);
-            toast.show();
-            @endif
-        });
+        {{--    $('header').append(toastContainer);--}}
+        {{--    // Initialize the toast using CoreUI--}}
+        {{--    let toast = new coreui.Toast(toastContainer, toastOptions);--}}
+        {{--    toast.show();--}}
+        {{--    @endif--}}
+        {{--});--}}
     </script>
 @endpush

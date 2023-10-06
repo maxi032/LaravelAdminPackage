@@ -1,7 +1,7 @@
 @extends($laravelAdminPackage.'::layouts.admin_layout')
 
 @section('content')
-    <div class="container">
+    <div class="container-xxl">
         <h3 class="mb-4">{{ str_replace('_',' ',$postType) }}</h3>
         <div class="row">
             <div class="col-md-12">
@@ -30,7 +30,7 @@
                             <td>{!! $post->translations->where('language',app()->getLocale())->first()->slug !!}</td>
                             <td>{!! $excerpt !!}</td>
                             @if(in_array($post->status,[$inactiveStatus, $activeStatus]))
-                                <td><span class="badge text-bg-{{ $post->status_badge }}">&nbsp;</span></td>
+                                <td></td>
                             @else
                                 <td>
                                     <div class="form-check form-switch form-switch-lg">
@@ -41,7 +41,11 @@
                                 </td>
                             @endif
                             <td>{{ \Carbon\Carbon::parse($post->created_at)->format('d-m-Y') }}</td>
-                            <td>&nbsp;</td>
+                            <td>
+                                <a role="button" class="btn btn-sm btn-primary" href="{{ route('admin:posts.edit',['post'=>$post]) }}"><span class="cil-notes"></span> Edit</a>
+                                <a role="button" class="btn btn-sm btn-warning" href="#"><span class="cil-trash"></span> Delete</a>
+                                <a role="button" class="btn btn-sm btn-light" href="#"><span class="cil-clone"></span> Duplicate</a>
+                            </td>
                         </tr>
                     @endforeach
                     </tbody>

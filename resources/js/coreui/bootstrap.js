@@ -13,8 +13,5 @@ $.ajaxSetup({
 });
 
 window.jQuery(document).ready(function () {
-    console.log("inside document ready");
-    $("#saveButton").on("click", function () {
-        $('#updateOrCreateForm').submit();
-    });
+    console.log("inside document ready from bootstrap.js");
 });

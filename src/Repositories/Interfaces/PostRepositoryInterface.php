@@ -12,7 +12,7 @@ interface PostRepositoryInterface
 
     public function createPostWithTranslations(array $dataArr);
 
-    public function updatePost(int $postId, array $postAttributes);
+    public function updatePostWithTranslations(array $dataArr);
 
     public function getActivePosts();
 

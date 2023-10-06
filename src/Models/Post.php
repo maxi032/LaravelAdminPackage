@@ -21,7 +21,7 @@ class Post extends Model
         'type_id',
     ];
 
-    protected $appends = ['status_badge'];
+    //protected $appends = ['status_badge'];
 
     public function statusbadge():Attribute
     {

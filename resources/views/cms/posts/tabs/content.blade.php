@@ -22,9 +22,12 @@
                      tabindex="0">
                     <div class="row g-2">
                         <div class="col-md-11 offset-md-1">
+                            @php
+                                $title = old('translations.title.'.$language['code']) ?? $post->translations->where('language',$language['code'])->first()->title
+                            @endphp
                             <div class="form-floating mb-3">
                                 <input type="text"
-                                       value="{{ old('translations.title.'.$language['code']) }}"
+                                       value="{{ $title }}"
                                        autocomplete="translations['title'][{{$language['code']}}]"
                                        autofocus
                                        name="translations[title][{{$language['code']}}]"
@@ -40,11 +43,14 @@
 
                     <div class="row g-2">
                         <div class="col-md-11 offset-md-1">
+                            @php
+                                $excerpt = old('translations.excerpt.'.$language['code']) ?? $post->translations->where('language',$language['code'])->first()->excerpt
+                            @endphp
                             <div class="form-floating mb-3">
                                                         <textarea name="translations[excerpt][{{$language['code']}}]"
                                                                   id="excerpt_{{$language['code']}}"
                                                                   class="form-control" cols="7"
-                                                                  rows="9">{{ old('translations.excerpt.'.$language['code']) }}</textarea>
+                                                                  rows="9">{{ $excerpt }}</textarea>
                                 <label for="excerpt_{{$language['code']}}">@if(!$errors->has('translations.excerpt.' . $language['code']))
                                         {{ __('Excerpt') }}
                                     @endif @error('translations.excerpt.' . $language['code']){!!  trimValidationMessage($message) !!} @enderror</label>
@@ -54,11 +60,14 @@
 
                     <div class="row g-2">
                         <div class="col-md-11 offset-md-1">
+                            @php
+                                $content = old('translations.content.'.$language['code']) ?? $post->translations->where('language',$language['code'])->first()->content
+                            @endphp
                             <div class="form-floating mb-3">
                                                         <textarea name="translations[content][{{$language['code']}}]"
                                                                   id="content_{{$language['code']}}"
                                                                   class="form-control editor" cols="7"
-                                                                  rows="9">{{ old('translations.content.'.$language['code']) }}</textarea>
+                                                                  rows="9">{{ $content }}</textarea>
                                 <label for="content_{{$language['code']}}">@if(!$errors->has('translations.content.' . $language['code']))
                                         {{ __('Content') }}
                                     @endif @error('translations.content.' . $language['code']){!!  trimValidationMessage($message) !!} @enderror</label>

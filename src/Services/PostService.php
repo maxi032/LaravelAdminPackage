@@ -21,6 +21,11 @@ class PostService
         return $this->postRepository->createPostWithTranslations($dataArr);
     }
 
+    public function updatePostWithTranslations(array $dataArr): mixed
+    {
+        return $this->postRepository->updatePostWithTranslations($dataArr);
+    }
+
     /**
      * Get all post types
      * @return mixed

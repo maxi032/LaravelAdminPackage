@@ -22,9 +22,12 @@
                      tabindex="0">
                     <div class="row g-2">
                         <div class="col-md-11 offset-md-1">
+                            @php
+                                $metaTitle = old('translations.meta_title.'.$language['code']) ?? $post->translations->where('language',$language['code'])->first()->meta_title
+                            @endphp
                             <div class="form-floating mb-3">
                                 <input type="text"
-                                       value="{{ old('translations.meta_title.'.$language['code']) }}"
+                                       value="{{ $metaTitle }}"
                                        autocomplete="translations['meta_title'][{{$language['code']}}]"
                                        autofocus
                                        name="translations[meta_title][{{$language['code']}}]"
@@ -40,9 +43,12 @@
 
                     <div class="row g-2">
                         <div class="col-md-11 offset-md-1">
+                            @php
+                                $slug = old('translations.slug.'.$language['code']) ?? $post->translations->where('language',$language['code'])->first()->slug
+                            @endphp
                             <div class="form-floating mb-3">
                                 <input type="text"
-                                       value="{{ old('translations.slug.'.$language['code']) }}"
+                                       value="{{ $slug }}"
                                        autocomplete="translations['slug'][{{$language['code']}}]"
                                        autofocus
                                        name="translations[slug][{{$language['code']}}]"
@@ -58,11 +64,14 @@
 
                     <div class="row g-2">
                         <div class="col-md-11 offset-md-1">
+                            @php
+                                $metaKeywords = old('translations.meta_keywords.'.$language['code']) ?? $post->translations->where('language',$language['code'])->first()->meta_keywords
+                            @endphp
                             <div class="form-floating mb-3">
                                                         <textarea name="translations[meta_keywords][{{$language['code']}}]"
                                                                   id="meta_keywords_{{$language['code']}}"
                                                                   class="form-control" cols="7"
-                                                                  rows="9">{{ old('translations.meta_keywords.'.$language['code']) }}</textarea>
+                                                                  rows="9">{{ $metaKeywords }}</textarea>
                                 <label for="meta_keywords_{{$language['code']}}">@if(!$errors->has('translations.meta_keywords.' . $language['code']))
                                         {{ __('Meta keywords') }}
                                     @endif @error('translations.meta_keywords.' . $language['code']){!!  trimValidationMessage($message) !!} @enderror</label>
@@ -72,11 +81,14 @@
 
                     <div class="row g-2">
                         <div class="col-md-11 offset-md-1">
+                            @php
+                                $metaDescription = old('translations.meta_description.'.$language['code']) ?? $post->translations->where('language',$language['code'])->first()->meta_description
+                            @endphp
                             <div class="form-floating mb-3">
                                                         <textarea name="translations[meta_description][{{$language['code']}}]"
                                                                   id="meta_descriprion_{{$language['code']}}"
                                                                   class="form-control" cols="7"
-                                                                  rows="9">{{ old('translations.meta_description.'.$language['code']) }}</textarea>
+                                                                  rows="9">{{ $metaDescription }}</textarea>
                                 <label for="meta_description_{{$language['code']}}">@if(!$errors->has('translations.meta_description.' . $language['code']))
                                         {{ __('Meta description') }}
                                     @endif @error('translations.meta_description.' . $language['code']){!!  trimValidationMessage($message) !!} @enderror</label>
