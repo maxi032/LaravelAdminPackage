@@ -1,12 +1,17 @@
 <?php
 namespace Maxi032\LaravelAdminPackage\Services;
 
+use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
 
 class PostService
 {
-    public function __construct(private readonly PostRepositoryInterface $postRepository, private readonly PostTypeRepositoryInterface $postTypeRepository)
+    public function __construct(
+        private readonly PostRepositoryInterface $postRepository,
+        private readonly PostTypeRepositoryInterface $postTypeRepository,
+        private readonly CategoryRepositoryInterface $categoryRepository
+    )
     {
 
     }
@@ -33,5 +38,10 @@ class PostService
     public function getPostTypesForDropdown(): mixed
     {
         return $this->postTypeRepository->getPostTypesForDropdown();
+    }
+
+    public function getCategoriesForDropdown($lang=null)
+    {
+        return $this->categoryRepository->getCategoriesForDropdown($lang);
     }
 }

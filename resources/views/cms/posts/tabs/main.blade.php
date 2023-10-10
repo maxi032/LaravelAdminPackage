@@ -28,4 +28,22 @@
             </div>
         </div>
     </div>
+    <div class="row g-2">
+        <div class="col-md-6">
+            <div class="form-check mt-4">
+                <label class="form-check-label mb-2 d-block" for="type_id">{{ __('Category') }}</label>
+                <select name="category_id" class="form-select w-25" aria-label="Category" required>
+                    <option value="">{{ __('Please select') }}</option>
+                    @foreach ($categories as $category)
+                        <option value="{{$category->id}}" {{ (old('category_id') == $category->id || (isset($post) && $post->category_id == $category->id)) ? 'selected' : '' }}>{{ $category->translations->first()->title }}</option>
+                    @endforeach
+                </select>
+                @error('category_id')
+                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                @enderror
+            </div>
+        </div>
+    </div>
 </div>

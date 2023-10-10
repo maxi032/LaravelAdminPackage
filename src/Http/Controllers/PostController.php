@@ -63,18 +63,23 @@ class PostController extends AdminController
     public function create(): Renderable
     {
         $postTypes = $this->postService->getPostTypesForDropdown();
+        $categories = $this->postService->getCategoriesForDropdown();
         return view('laravel-admin-package::cms/posts.update_or_create', [
-            'postTypes' => $postTypes,
-            'post' => null
+            'postTypes'  => $postTypes,
+            'post'       => null,
+            'categories' => $categories
         ]);
     }
 
     public function edit(Post $post)
     {
         $postTypes = $this->postService->getPostTypesForDropdown();
+        $categories = $this->postService->getCategoriesForDropdown();
+
         return view('laravel-admin-package::cms/posts.update_or_create', [
-            'postTypes' => $postTypes,
-            'post'      => $post
+            'postTypes'  => $postTypes,
+            'post'       => $post,
+            'categories' => $categories
         ]);
     }
 
@@ -109,7 +114,7 @@ class PostController extends AdminController
         $postType = $postTypeRepository->getPostTypeById($postRequest->get('type_id'));
         $updatedPost = $this->postService->updatePostWithTranslations($data);
         return ($updatedPost && json_decode($updatedPost->getContent())->type === 'error') ?
-            redirect()->route('admin:posts.edit',$post)
+            redirect()->route('admin:posts.edit', $post)
                 ->with(['message' => json_decode($updatedPost->getContent())->message]) :
             redirect()->route('admin:posts.type.list', ['type' => $postType->type])
                 ->with(['message' => json_decode($updatedPost->getContent())->message]);

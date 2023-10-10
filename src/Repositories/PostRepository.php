@@ -30,6 +30,7 @@ class PostRepository implements PostRepositoryInterface
                 // Create the post using the create method
                 $post = Post::create([
                     'type_id'    => $dataArr['type_id'],
+                    'category_id'=> $dataArr['category_id'],
                     'status'     => $dataArr['status'] ? 1 : 0,
                     'sort_order' => $dataArr['sort_order'] ?? 0,
                 ]);
@@ -40,7 +41,7 @@ class PostRepository implements PostRepositoryInterface
                 $translationsToInsert = [];
                 foreach ($translationsData as $field => $fieldValues) {
                     $i = 0;
-                    foreach($languages as $lang => $language){
+                    foreach ($languages as $lang => $language) {
                         $translationsToInsert[$i]['post_id'] = $post->id;
                         $translationsToInsert[$i]['title'] = $translationsData['title'][$language['code']];
                         $translationsToInsert[$i]['slug'] = $translationsData['slug'][$language['code']];
@@ -61,7 +62,7 @@ class PostRepository implements PostRepositoryInterface
             // The transaction was successful
             return response()->json(['type' => 'success', 'message' => 'Post created successfully!']);
         } catch (Throwable $e) {
-            return response()->json(['type' => 'error', 'message' => $e->getMessage().' in file '.$e->getFile().' at line '.$e->getLine()]);
+            return response()->json(['type' => 'error', 'message' => $e->getMessage() . ' in file ' . $e->getFile() . ' at line ' . $e->getLine()]);
         }
     }
 
@@ -72,8 +73,9 @@ class PostRepository implements PostRepositoryInterface
             \DB::transaction(function () use ($dataArr, $languages) {
                 // Find the post
                 $post = Post::find($dataArr['id'])->load('translations');
-                $post->type_id    = $dataArr['type_id'];
-                $post->status     = isset($dataArr['status']) ? 1 : 0;
+                $post->type_id = $dataArr['type_id'];
+                $post->category_id = $dataArr['category_id'];
+                $post->status = isset($dataArr['status']) ? 1 : 0;
                 $post->sort_order = $dataArr['sort_order'] ?? 0;
 
                 $translationsData = $dataArr['translations'];
@@ -82,7 +84,7 @@ class PostRepository implements PostRepositoryInterface
                 $translationsToInsert = [];
                 foreach ($translationsData as $field => $fieldValues) {
                     $i = 0;
-                    foreach($languages as $lang => $language){
+                    foreach ($languages as $lang => $language) {
                         $translationsToInsert[$i]['post_id'] = $post->id;
                         $translationsToInsert[$i][$field] = $fieldValues[$language['code']];
                         $translationsToInsert[$i]['language'] = $language['code'];
@@ -91,7 +93,7 @@ class PostRepository implements PostRepositoryInterface
                 }
 
                 // find the corresponding translation by language and update it
-                foreach($translationsToInsert as $k => $translation){
+                foreach ($translationsToInsert as $k => $translation) {
                     $post->translations->where('language', $translation['language'])->first()->update($translation);
                 }
                 $post->push();
@@ -100,8 +102,8 @@ class PostRepository implements PostRepositoryInterface
             // The transaction was successful
             return response()->json(['type' => 'success', 'message' => 'Post updated successfully!']);
         } catch (Throwable $e) {
-           Log::error($e->getMessage()." at line No : ". __LINE__." : File ".__FILE__);
-           return response()->json(['type' => 'error', 'message' => $e->getMessage()]);
+            Log::error($e->getMessage() . " at line No : " . __LINE__ . " : File " . __FILE__);
+            return response()->json(['type' => 'error', 'message' => $e->getMessage()]);
         }
     }
 

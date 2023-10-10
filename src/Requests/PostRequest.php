@@ -40,7 +40,8 @@ class PostRequest extends FormRequest
             'translations.slug.*'    => 'required|max:50',
             'translations.content.*' => 'required',
             //'type_id' => 'required|exists:Maxi032\LaravelAdminPackage\Models\PostType,id'
-            'type_id' => 'required'
+            'type_id' => 'required',
+            'category_id' => 'required'
         ];
     }
 
@@ -51,7 +52,8 @@ class PostRequest extends FormRequest
             'translations.slug.*'    => 'required|max:50',
             'translations.content.*' => 'required',
             //'type_id' => 'required|exists:Maxi032\LaravelAdminPackage\Models\PostType,id'
-            'type_id' => 'required'
+            'type_id' => 'required',
+            'category_id' => 'required'
         ];
     }
 
@@ -86,7 +88,6 @@ class PostRequest extends FormRequest
           }
        }
 
-     //  dd($messages);
        return $messages;
     }
 

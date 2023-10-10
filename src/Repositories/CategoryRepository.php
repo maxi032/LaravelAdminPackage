@@ -2,6 +2,8 @@
 
 namespace Maxi032\LaravelAdminPackage\Repositories;
 
+use Illuminate\Support\Facades\Cache;
+use JetBrains\PhpStorm\NoReturn;
 use Maxi032\LaravelAdminPackage\Models\Category;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
 
@@ -40,5 +42,18 @@ class CategoryRepository implements CategoryRepositoryInterface
     public function getCategoryOfType($categoryType)
     {
         return Category::ByType($categoryType);
+    }
+
+    public function getCategoriesForDropdown($lang=null)
+    {
+        return Cache::remember('CategoriesForDropdown', 600, function () use ($lang) {
+            return Category::with(['translations' => function ($query) use ($lang) {
+                if ($lang) {
+                    $query->where('language', $lang);
+                } else {
+                    $query->where('language', app()->getLocale());
+                }
+            }])->get();
+        });
     }
 }

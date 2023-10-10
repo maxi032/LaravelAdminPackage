@@ -17,4 +17,6 @@ interface CategoryRepositoryInterface
     public function getActiveCategories();
 
     public function getActiveCategoriesOfType(string $type);
+
+    public function getCategoriesForDropdown($lang=null);
 }

@@ -30,6 +30,11 @@ class Category extends Model
         return $this->hasMany(Post::class);
     }
 
+    public function type(): HasMany
+    {
+        return $this->hasMany(CategoryType::class);
+    }
+
     /**
      * Get category by type
      *
@@ -42,4 +47,20 @@ class Category extends Model
         return $query->where('type', $type);
     }
 
+    public function translations(): HasMany
+    {
+        return $this->hasMany(CategoryTranslation::class, 'category_id');
+    }
+
+    /**
+     * Get translations by language
+     *
+     * @param $query
+     * @param $language
+     * @return mixed
+     */
+    public function scopeByLanguage($query, $language): mixed
+    {
+        return $query->where('language', $language);
+    }
 }
