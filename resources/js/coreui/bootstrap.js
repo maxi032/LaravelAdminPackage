@@ -3,6 +3,7 @@ import 'bootstrap';
 import jQuery from 'jquery';
 
 window.$ = window.jQuery = jQuery;
+window.coreui = coreui;
 
 console.log('Ths is the version from packages/maxi032');
 
