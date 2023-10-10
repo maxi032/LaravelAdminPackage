@@ -63,7 +63,10 @@ class PostController extends AdminController
     public function create(): Renderable
     {
         $postTypes = $this->postService->getPostTypesForDropdown();
-        return view('laravel-admin-package::cms/posts.update_or_create', compact('postTypes'));
+        return view('laravel-admin-package::cms/posts.update_or_create', [
+            'postTypes' => $postTypes,
+            'post' => null
+        ]);
     }
 
     public function edit(Post $post)

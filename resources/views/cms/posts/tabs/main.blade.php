@@ -3,10 +3,10 @@
     <div class="row g-2">
         <div class="col-md-6">
             @php
-                $checked = (old('status') === 'on' || $post->status == 1)
+                $checked = (old('status') === 'on' || (isset($post->status) && $post->status == 1))
             @endphp
             <div class="form-check form-switch form-switch-xl mt-4">
-                <input class="form-check-input" type="checkbox" name="status" id="status" checked="{{ $checked  }}">
+                <input class="form-check-input" type="checkbox" name="status" id="status" {{ $checked ? 'checked' : '' }}>
                 <label class="form-check-label" for="status">{{ __('Status') }}</label>
             </div>
         </div>

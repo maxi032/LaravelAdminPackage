@@ -23,7 +23,7 @@
                     <div class="row g-2">
                         <div class="col-md-11 offset-md-1">
                             @php
-                                $title = old('translations.title.'.$language['code']) ?? $post->translations->where('language',$language['code'])->first()->title
+                                $title = old('translations.title.'.$language['code']) ?? $post?->translations->where('language', $language['code'])->first()->title
                             @endphp
                             <div class="form-floating mb-3">
                                 <input type="text"
@@ -44,7 +44,7 @@
                     <div class="row g-2">
                         <div class="col-md-11 offset-md-1">
                             @php
-                                $excerpt = old('translations.excerpt.'.$language['code']) ?? $post->translations->where('language',$language['code'])->first()->excerpt
+                                $excerpt = old('translations.excerpt.'.$language['code']) ?? $post?->translations->where('language', $language['code'])->first()->excerpt
                             @endphp
                             <div class="form-floating mb-3">
                                                         <textarea name="translations[excerpt][{{$language['code']}}]"
@@ -61,7 +61,7 @@
                     <div class="row g-2">
                         <div class="col-md-11 offset-md-1">
                             @php
-                                $content = old('translations.content.'.$language['code']) ?? $post->translations->where('language',$language['code'])->first()->content
+                                $content = old('translations.content.'.$language['code']) ?? $post?->translations->where('language', $language['code'])->first()->content
                             @endphp
                             <div class="form-floating mb-3">
                                                         <textarea name="translations[content][{{$language['code']}}]"

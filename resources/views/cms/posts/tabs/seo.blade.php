@@ -23,7 +23,7 @@
                     <div class="row g-2">
                         <div class="col-md-11 offset-md-1">
                             @php
-                                $metaTitle = old('translations.meta_title.'.$language['code']) ?? $post->translations->where('language',$language['code'])->first()->meta_title
+                                $metaTitle = old('translations.meta_title.'.$language['code']) ?? $post?->translations->where('language', $language['code'])->first()->meta_title
                             @endphp
                             <div class="form-floating mb-3">
                                 <input type="text"
@@ -44,7 +44,7 @@
                     <div class="row g-2">
                         <div class="col-md-11 offset-md-1">
                             @php
-                                $slug = old('translations.slug.'.$language['code']) ?? $post->translations->where('language',$language['code'])->first()->slug
+                                $slug = old('translations.slug.'.$language['code']) ?? $post?->translations->where('language', $language['code'])->first()->slug
                             @endphp
                             <div class="form-floating mb-3">
                                 <input type="text"
@@ -65,7 +65,7 @@
                     <div class="row g-2">
                         <div class="col-md-11 offset-md-1">
                             @php
-                                $metaKeywords = old('translations.meta_keywords.'.$language['code']) ?? $post->translations->where('language',$language['code'])->first()->meta_keywords
+                                $metaKeywords = old('translations.meta_keywords.'.$language['code']) ?? $post?->translations->where('language', $language['code'])->first()->meta_keywords
                             @endphp
                             <div class="form-floating mb-3">
                                                         <textarea name="translations[meta_keywords][{{$language['code']}}]"
@@ -82,7 +82,7 @@
                     <div class="row g-2">
                         <div class="col-md-11 offset-md-1">
                             @php
-                                $metaDescription = old('translations.meta_description.'.$language['code']) ?? $post->translations->where('language',$language['code'])->first()->meta_description
+                                $metaDescription = old('translations.meta_description.'.$language['code']) ?? $post?->translations->where('language', $language['code'])->first()->meta_description
                             @endphp
                             <div class="form-floating mb-3">
                                                         <textarea name="translations[meta_description][{{$language['code']}}]"
