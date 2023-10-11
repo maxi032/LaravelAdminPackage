@@ -9,8 +9,6 @@ use \Illuminate\Support\Collection;
 
 class BreadcrumbComposer
 {
-
-
     public function __construct(protected Request $request)
     {
 
