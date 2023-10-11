@@ -75,16 +75,20 @@
    <div class="container-fluid">
       <nav aria-label="breadcrumb">
          <ol class="breadcrumb my-0 ms-2">
-            <li class="breadcrumb-item">
-               <!-- if breadcrumb is single--><a href="#">Home</a>
-            </li>
-            <li class="breadcrumb-item">
-               <!-- if breadcrumb is single--><a href="#">Components</a>
-            </li>
-            <li class="breadcrumb-item">
-               <!-- if breadcrumb is single--><a href="#">Forms</a>
-            </li>
-            <li class="breadcrumb-item active"><span>Input group</span></li>
+            @foreach ($breadcrumbs as $key => $url)
+               @if(is_numeric($key))
+                  @continue
+               @endif
+               <li class="breadcrumb-item {{ $loop->last ? 'is-active' : '' }}">
+                  @if($loop->last)
+                     {{ ucfirst($key) }}
+                  @else
+                  <a href="{{ url($url) }}">
+                        {{ ucfirst($key) }}
+                  </a>
+                  @endif
+               </li>
+            @endforeach
          </ol>
       </nav>
    </div>

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Maxi032\LaravelAdminPackage\Models\Post;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostRepositoryInterface;
 use \Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
 use Throwable;
 
 class PostRepository implements PostRepositoryInterface
@@ -43,13 +44,7 @@ class PostRepository implements PostRepositoryInterface
                     $i = 0;
                     foreach ($languages as $lang => $language) {
                         $translationsToInsert[$i]['post_id'] = $post->id;
-                        $translationsToInsert[$i]['title'] = $translationsData['title'][$language['code']];
-                        $translationsToInsert[$i]['slug'] = $translationsData['slug'][$language['code']];
-                        $translationsToInsert[$i]['excerpt'] = $translationsData['excerpt'][$language['code']];
-                        $translationsToInsert[$i]['content'] = $translationsData['content'][$language['code']];
-                        $translationsToInsert[$i]['meta_title'] = $translationsData['meta_title'][$language['code']] ?? $translationsToInsert[$i]['title'];
-                        $translationsToInsert[$i]['meta_keywords'] = $translationsData['meta_keywords'][$language['code']];
-                        $translationsToInsert[$i]['meta_description'] = $translationsData['meta_description'][$language['code']];
+                        $translationsToInsert[$i][$field] = ($field == 'slug') ? Str::of($fieldValues[$language['code']])->slug('-') :$fieldValues[$language['code']];
                         $translationsToInsert[$i]['language'] = $language['code'];
                         $translationsToInsert[$i]['created_at'] = Carbon::now();
                         $i++;
@@ -81,19 +76,19 @@ class PostRepository implements PostRepositoryInterface
                 $translationsData = $dataArr['translations'];
 
                 //prepare the translations array to be updated
-                $translationsToInsert = [];
+                $translationsToUpdate = [];
                 foreach ($translationsData as $field => $fieldValues) {
                     $i = 0;
                     foreach ($languages as $lang => $language) {
-                        $translationsToInsert[$i]['post_id'] = $post->id;
-                        $translationsToInsert[$i][$field] = $fieldValues[$language['code']];
-                        $translationsToInsert[$i]['language'] = $language['code'];
+                        $translationsToUpdate[$i]['post_id'] = $post->id;
+                        $translationsToUpdate[$i][$field] = ($field == 'slug') ? Str::of($fieldValues[$language['code']])->slug('-') :$fieldValues[$language['code']];
+                        $translationsToUpdate[$i]['language'] = $language['code'];
                         $i++;
                     }
                 }
 
                 // find the corresponding translation by language and update it
-                foreach ($translationsToInsert as $k => $translation) {
+                foreach ($translationsToUpdate as $k => $translation) {
                     $post->translations->where('language', $translation['language'])->first()->update($translation);
                 }
                 $post->push();

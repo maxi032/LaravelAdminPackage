@@ -1,20 +1,29 @@
 @extends($laravelAdminPackage.'::layouts.admin_layout')
 
 @section('content')
-    <div class="container-xxl">
-        <h3 class="mb-4">{{ str_replace('_',' ',$postType) }}</h3>
+    <div class="container-3xl">
+        <div class="row">
+            <div class="col-md-10">
+                <h3 class="mb-4">{{ str_replace('_',' ',$postType) }}</h3>
+            </div>
+            <div class="col-md-2">
+                <a type="button" class="btn btn-primary float-end" href="{{ route('admin:posts.create') }}">
+                    {{ __('Add') }}
+                </a>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
-                <table id="posts" class="display nowrap table table-striped" style="width:100%">
+                <table id="posts" class="display nowrap table table-striped w-100">
                     <thead>
                     <tr>
-                        <th>Id</th>
-                        <th>Title</th>
-                        <th>Slug</th>
-                        <th>Excerpt</th>
-                        <th>Status</th>
-                        <th>Created at</th>
-                        <th>Actions</th>
+                        <th>{{ __('Id') }}</th>
+                        <th>{{ __('Title') }}</th>
+                        <th>{{ __('Slug') }}</th>
+                        <th>{{ __('Excerpt') }}</th>
+                        <th>{{ __('Status') }}</th>
+                        <th>{{ __('Created at') }}</th>
+                        <th>{{ __('Actions') }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -26,9 +35,9 @@
                         @endphp
                         <tr>
                             <td>{{$post->id}}</td>
-                            <td>{!! $post->translations->where('language',app()->getLocale())->first()->title !!}</td>
-                            <td>{!! $post->translations->where('language',app()->getLocale())->first()->slug !!}</td>
-                            <td>{!! $excerpt !!}</td>
+                            <td class="title">{!! $post->translations->where('language',app()->getLocale())->first()->title !!}</td>
+                            <td class="slug">{!! $post->translations->where('language',app()->getLocale())->first()->slug !!}</td>
+                            <td class="excerpt">{!! $excerpt !!}</td>
                             @if(in_array($post->status,[$inactiveStatus, $activeStatus]))
                                 <td></td>
                             @else
@@ -44,7 +53,7 @@
                             <td>
                                 <a role="button" class="btn btn-sm btn-primary" href="{{ route('admin:posts.edit',['post'=>$post]) }}"><span class="cil-notes"></span> Edit</a>
                                 <a role="button" class="btn btn-sm btn-warning" href="#"><span class="cil-trash"></span> Delete</a>
-                                <a role="button" class="btn btn-sm btn-light" href="#"><span class="cil-clone"></span> Duplicate</a>
+                                <a role="button" class="btn btn-sm btn-light" href="{{ route('admin:posts.edit',['post'=>$post]) }}"><span class="cil-clone"></span> Duplicate</a>
                             </td>
                         </tr>
                     @endforeach
@@ -70,6 +79,7 @@
                         url: "{{ route('admin:posts.ajax_change_status') }}",
                         data: {id: postId, status: status},
                         success: function (data) {
+                            console.log(data)
                             if (data.success) {
                                 let toastOptions = {
                                     html: data.success,

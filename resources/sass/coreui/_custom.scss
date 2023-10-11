@@ -1,7 +1,3 @@
-.bogdan{
-  background-color:#ffd206!important;
-}
-
 .free-svg{
   background-image: url("sprites/free.svg")
 }
@@ -35,4 +31,14 @@
   line-height:1;
   margin-top:10px;
   display:inline-block;
+}
+.container-3xl{
+  max-width:1700px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.table-striped > tbody > tr > td.title,
+.table-striped > tbody > tr > td.slug{
+  width:20%;
 }

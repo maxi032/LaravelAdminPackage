@@ -128,7 +128,7 @@ class PostController extends AdminController
         $post->status = $status;
         $post->save();
 
-        return response()->json(['success' => 'Post was ' . ($post->status == 1) ? 'activated' : 'deactivated']);
+        return response()->json(['success' => ($status == 0) ? 'Post was deactivated' : 'Post was activated']);
     }
 
 }

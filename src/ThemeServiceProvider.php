@@ -5,6 +5,7 @@ namespace Maxi032\LaravelAdminPackage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Maxi032\LaravelAdminPackage\Composers\BreadcrumbComposer;
 
 class ThemeServiceProvider extends ServiceProvider
 {
@@ -26,5 +27,6 @@ class ThemeServiceProvider extends ServiceProvider
         View::composer('*', function ($view) {
             $view->with(Str::camel(LaravelAdminPackageServiceProvider::getAdmPackageName()), LaravelAdminPackageServiceProvider::getAdmPackageName());
         });
+        View::composer('*', BreadcrumbComposer::class);
     }
 }
