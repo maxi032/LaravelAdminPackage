@@ -23,19 +23,23 @@ class PostController extends AdminController
     }
 
     /**
-     * Show a list of the resource
-     * @param string $postType
+     * Show a list of the resource of a certain type
+     *
+     * @param PostType $type
      *
      * @return Renderable
      */
-    public function list(string $postType): Renderable
+    public function list(PostType $type): Renderable
     {
-        $posts = Post::with('translations', 'type')->whereHas('type', fn($query) => $query->where('type', $postType)
-            )->get();
+
+        $type->load(['posts.translations']);
+        $posts = $type->posts;
+
+
 
         return view('laravel-admin-package::cms.posts.index', [
             "posts"          => $posts,
-            "postType"       => $postType,
+            "postType"       => $type,
             "inactiveStatus" => PostStatusEnum::DRAFT,
             "activeStatus"   => PostStatusEnum::PENDING
         ]);

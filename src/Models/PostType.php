@@ -7,9 +7,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Post[] $posts
+ */
 class PostType extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public function getRouteKeyName(): string
+    {
+        return 'type';
+    }
 
     protected $fillable = [
         'type_id',
@@ -19,8 +27,8 @@ class PostType extends Model
     /**
      * @return HasMany
      */
-    public function post(): HasMany
+    public function posts(): HasMany
     {
-        return $this->hasMany(Post::class);
+        return $this->hasMany(Post::class, 'type_id');
     }
 }

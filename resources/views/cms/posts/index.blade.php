@@ -5,7 +5,7 @@
         <div class="row">
            @if($posts->count())
             <div class="col-md-10">
-                <h3 class="mb-4">{{ __($postType) }}</h3>
+                <h3 class="mb-4">{{ __($postType->type) }}</h3>
             </div>
             <div class="col-md-2">
                 <a type="button" class="btn btn-primary float-end" href="{{ route('admin:posts.create') }}">
