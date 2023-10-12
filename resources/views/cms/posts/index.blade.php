@@ -3,8 +3,9 @@
 @section('content')
     <div class="container-3xl">
         <div class="row">
+           @if($posts->count())
             <div class="col-md-10">
-                <h3 class="mb-4">{{ str_replace('_',' ',$postType) }}</h3>
+                <h3 class="mb-4">{{ __($postType) }}</h3>
             </div>
             <div class="col-md-2">
                 <a type="button" class="btn btn-primary float-end" href="{{ route('admin:posts.create') }}">
@@ -60,6 +61,11 @@
                     </tbody>
                 </table>
             </div>
+            @else
+                <div class="col-12">
+                    {{ __('No posts of type :type found',['type'=>$postType]) }}
+                </div>
+            @endif
         </div>
     </div>
     @push('footer-scripts')

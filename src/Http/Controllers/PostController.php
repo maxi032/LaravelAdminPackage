@@ -23,14 +23,14 @@ class PostController extends AdminController
     }
 
     /**
-     * Show the application dashboard.
+     * Show a list of the resource
+     * @param string $postType
      *
      * @return Renderable
      */
-    public function list($postType)
+    public function list(string $postType): Renderable
     {
-        $posts = Post::with(['translations', 'type' => fn($query) => $query->where('type', $postType)])
-            ->whereHas('type', fn($query) => $query->where('type', $postType)
+        $posts = Post::with('translations', 'type')->whereHas('type', fn($query) => $query->where('type', $postType)
             )->get();
 
         return view('laravel-admin-package::cms.posts.index', [
@@ -40,20 +40,6 @@ class PostController extends AdminController
             "activeStatus"   => PostStatusEnum::PENDING
         ]);
     }
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return Renderable
-     */
-    public function ajaxList($postType)
-    {
-        $posts = Post::with(['translations', 'type' => fn($query) => $query->where('type', $postType)])
-            ->whereHas('type', fn($query) => $query->where('type', $postType)
-            )->get();
-        return $posts;
-    }
-
 
     /**
      * Show the Posts crud form.
@@ -71,7 +57,7 @@ class PostController extends AdminController
         ]);
     }
 
-    public function edit(Post $post)
+    public function edit(Post $post): View
     {
         $postTypes = $this->postService->getPostTypesForDropdown();
         $categories = $this->postService->getCategoriesForDropdown();
