@@ -31,7 +31,7 @@ class PostController extends AdminController
      */
     public function list(PostType $type): Renderable
     {
-
+        // Route model binding will throw 404 automatically it $type is not found
         $type->load(['posts.translations']);
         $posts = $type->posts;
 
@@ -63,6 +63,7 @@ class PostController extends AdminController
 
     public function edit(Post $post): View
     {
+        // Route model binding will throw 404 automatically if $post is not found
         $postTypes = $this->postService->getPostTypesForDropdown();
         $categories = $this->postService->getCategoriesForDropdown();
 
