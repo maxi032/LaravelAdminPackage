@@ -2,19 +2,17 @@
 
 namespace Maxi032\LaravelAdminPackage\Http\Controllers;
 
-use \Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Maxi032\LaravelAdminPackage\Enums\PostStatusEnum;
 use Maxi032\LaravelAdminPackage\Models\Post;
 use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
-use Maxi032\LaravelAdminPackage\Repositories\PostTypeRepository;
 use Maxi032\LaravelAdminPackage\Requests\PostRequest;
 use Maxi032\LaravelAdminPackage\Services\PostService;
-use \Illuminate\Http\RedirectResponse;
-use \Illuminate\Contracts\Support\Renderable;
-use \Illuminate\Http\JsonResponse;
 
 class PostController extends AdminController
 {
