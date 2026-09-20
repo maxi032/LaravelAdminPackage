@@ -31,7 +31,6 @@
                                        autocomplete="translations['meta_title'][{{$language['code']}}]"
                                        autofocus
                                        name="translations[meta_title][{{$language['code']}}]"
-                                       placeholder="Enter a meta title"
                                        class="form-control @error('translations.meta_title.'.$language['code']) is-invalid @enderror"
                                        id="meta_title_{{$language['code']}}">
                                 <label for="meta_title_{{$language['code']}}">@if(!$errors->has('translations.meta_title.' . $language['code']))
@@ -52,7 +51,6 @@
                                        autocomplete="translations['slug'][{{$language['code']}}]"
                                        autofocus
                                        name="translations[slug][{{$language['code']}}]"
-                                       placeholder="Enter a slug"
                                        class="form-control @error('translations.slug.'.$language['code']) is-invalid @enderror"
                                        id="slug_{{$language['code']}}">
                                 <label for="slug_{{$language['code']}}">@if(!$errors->has('translations.slug.' . $language['code']))
@@ -86,7 +84,7 @@
                             @endphp
                             <div class="form-floating mb-3">
                                                         <textarea name="translations[meta_description][{{$language['code']}}]"
-                                                                  id="meta_descriprion_{{$language['code']}}"
+                                                                  id="meta_description_{{$language['code']}}"
                                                                   class="form-control" cols="7"
                                                                   rows="9">{{ $metaDescription }}</textarea>
                                 <label for="meta_description_{{$language['code']}}">@if(!$errors->has('translations.meta_description.' . $language['code']))

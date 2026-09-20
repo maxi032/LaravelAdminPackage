@@ -31,7 +31,6 @@
                                        autocomplete="translations['title'][{{$language['code']}}]"
                                        autofocus
                                        name="translations[title][{{$language['code']}}]"
-                                       placeholder="Enter a title"
                                        class="form-control @error('translations.title.'.$language['code']) is-invalid @enderror"
                                        id="title_{{$language['code']}}">
                                 <label for="title_{{$language['code']}}">@if(!$errors->has('translations.title.' . $language['code']))
