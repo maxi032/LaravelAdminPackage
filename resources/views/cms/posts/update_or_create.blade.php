@@ -8,11 +8,10 @@
         <div class="row">
             <div class="col-md-12">
                 <form id="updateOrCreateForm" class="validationForm" enctype="multipart/form-data"
-                      action="{{ Str::endsWith(Route::currentRouteName(), '.create') ? route('admin:posts.store') : route('admin:posts.update', request()->segment(4)) }}"
+                      action="{{ Str::endsWith(Route::currentRouteName(), '.create') ? route('admin:posts.store') : route('admin:posts.update', $post) }}"
                       method="POST"
                 >
                     @if(Str::endsWith(Route::currentRouteName(), '.edit'))
-                        <input type="hidden" name="id" value="{{ request()->segment(4) }}">
                         @method('PUT')
                     @endif
                     @csrf

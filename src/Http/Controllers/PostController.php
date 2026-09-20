@@ -86,34 +86,44 @@ class PostController extends AdminController
      */
     public function store(PostRequest $request, PostTypeRepositoryInterface $postTypeRepository): RedirectResponse
     {
-        $savedPost = $this->postService->createPostWithTranslations($request->all());
-        $postType = $postTypeRepository->getPostTypeById($request->get('type_id'));
-        return ($savedPost && json_decode($savedPost->getContent())->type === 'error') ?
-            redirect()->route('admin:posts.create')
-                ->with(['message' => json_decode($savedPost->getContent())->message]) :
-            redirect()->route('admin:posts.type.list', ['type' => $postType->type])
-                ->with(['message' => json_decode($savedPost->getContent())->message]);
+        $data = $request->validated();
+        $result = $this->postService->createPostWithTranslations($data)->getData(true);
+        $routePrefix = config('laravel-admin-package.admin_url').':';
+
+        if ($result['type'] === 'error') {
+            return redirect()->route($routePrefix.'posts.create')
+                ->withInput($data)->withErrors(['post' => $result['message']]);
+        }
+
+        $postType = $postTypeRepository->getPostTypeById($data['type_id']);
+        return redirect()->route($routePrefix.'posts.type.list', ['type' => $postType->type])
+            ->with('message', $result['message']);
     }
 
-    public function update(Post $post, PostTypeRepositoryInterface $postTypeRepository): RedirectResponse
+    public function update(PostRequest $request, Post $post, PostTypeRepositoryInterface $postTypeRepository): RedirectResponse
     {
-        // Manually create an instance of PostRequest
-        $postRequest = app(PostRequest::class);
-        $data = $postRequest->all();
-        $postType = $postTypeRepository->getPostTypeById($postRequest->get('type_id'));
-        $updatedPost = $this->postService->updatePostWithTranslations($data);
-        return ($updatedPost && json_decode($updatedPost->getContent())->type === 'error') ?
-            redirect()->route('admin:posts.edit', $post)
-                ->with(['message' => json_decode($updatedPost->getContent())->message]) :
-            redirect()->route('admin:posts.type.list', ['type' => $postType->type])
-                ->with(['message' => json_decode($updatedPost->getContent())->message]);
+        $data = $request->validated();
+        $result = $this->postService->updatePostWithTranslations($post, $data)->getData(true);
+        $routePrefix = config('laravel-admin-package.admin_url').':';
+
+        if ($result['type'] === 'error') {
+            return redirect()->route($routePrefix.'posts.edit', $post)
+                ->withInput($data)->withErrors(['post' => $result['message']]);
+        }
+
+        $postType = $postTypeRepository->getPostTypeById($data['type_id']);
+        return redirect()->route($routePrefix.'posts.type.list', ['type' => $postType->type])
+            ->with('message', $result['message']);
     }
 
     public function ajaxChangeStatus(Request $request): JsonResponse
     {
-        $id = $request->get('id');
-        $status = $request->get('status');
-        $post = Post::findOrFail($id);
+        $data = $request->validate([
+            'id' => ['required', 'integer'],
+            'status' => ['required', 'boolean'],
+        ]);
+        $status = (int) $data['status'];
+        $post = Post::findOrFail($data['id']);
         $post->status = $status;
         $post->save();
 

@@ -19,6 +19,7 @@ class Post extends Model
         'sort_order',
         'status',
         'type_id',
+        'category_id',
     ];
 
     //protected $appends = ['status_badge'];

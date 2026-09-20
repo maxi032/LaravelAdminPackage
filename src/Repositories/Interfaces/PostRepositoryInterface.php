@@ -2,6 +2,8 @@
 
 namespace Maxi032\LaravelAdminPackage\Repositories\Interfaces;
 
+use Maxi032\LaravelAdminPackage\Models\Post;
+
 interface PostRepositoryInterface
 {
     public function getPostById(int $postId);
@@ -12,7 +14,7 @@ interface PostRepositoryInterface
 
     public function createPostWithTranslations(array $dataArr);
 
-    public function updatePostWithTranslations(array $dataArr);
+    public function updatePostWithTranslations(Post $post, array $dataArr);
 
     public function getActivePosts();
 

@@ -1,6 +1,8 @@
 <?php
 namespace Maxi032\LaravelAdminPackage\Services;
 
+use Maxi032\LaravelAdminPackage\Models\Post;
+
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
@@ -26,9 +28,9 @@ class PostService
         return $this->postRepository->createPostWithTranslations($dataArr);
     }
 
-    public function updatePostWithTranslations(array $dataArr): mixed
+    public function updatePostWithTranslations(Post $post, array $dataArr): mixed
     {
-        return $this->postRepository->updatePostWithTranslations($dataArr);
+        return $this->postRepository->updatePostWithTranslations($post, $dataArr);
     }
 
     /**

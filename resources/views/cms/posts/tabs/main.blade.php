@@ -3,7 +3,7 @@
     <div class="row g-3 pt-4">
         <div class="col-12">
             @php
-                $checked = (old('status') === 'on' || (isset($post->status) && $post->status == 1))
+                $checked = filter_var(old('status', $post?->status == 1), FILTER_VALIDATE_BOOLEAN)
             @endphp
             <div class="form-check form-switch form-switch-xl d-flex align-items-center gap-2 ps-0 mb-0">
                 <label class="form-check-label pt-0" for="status">{{ __('Status') }}</label>
@@ -17,7 +17,7 @@
                     @error('type_id') aria-invalid="true" aria-describedby="type_id_error" @enderror>
                 <option value="">{{ __('Please select') }}</option>
                 @foreach ($postTypes as $postTypeId => $postType)
-                    <option value="{{$postTypeId}}" {{ (old('type_id') == $postTypeId || (isset($post) && $post->type_id == $postTypeId)) ? 'selected' : '' }}>{{ $postType }}</option>
+                    <option value="{{$postTypeId}}" {{ (old('type_id', $post?->type_id) == $postTypeId) ? 'selected' : '' }}>{{ $postType }}</option>
                 @endforeach
             </select>
             @error('type_id')
@@ -33,7 +33,7 @@
                     @error('category_id') aria-invalid="true" aria-describedby="category_id_error" @enderror>
                 <option value="">{{ __('Please select') }}</option>
                 @foreach ($categories as $category)
-                    <option value="{{$category->id}}" {{ (old('category_id') == $category->id || (isset($post) && $post->category_id == $category->id)) ? 'selected' : '' }}>{{ $category->translations->first()->title }}</option>
+                    <option value="{{$category->id}}" {{ (old('category_id', $post?->category_id) == $category->id) ? 'selected' : '' }}>{{ $category->translations->first()->title }}</option>
                 @endforeach
             </select>
             @error('category_id')
