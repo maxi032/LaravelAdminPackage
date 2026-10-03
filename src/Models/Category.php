@@ -4,7 +4,9 @@ namespace Maxi032\LaravelAdminPackage\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use  \Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
@@ -30,9 +32,9 @@ class Category extends Model
         return $this->hasMany(Post::class);
     }
 
-    public function type(): HasMany
+    public function type(): BelongsTo
     {
-        return $this->hasMany(CategoryType::class);
+        return $this->belongsTo(CategoryType::class, 'type_id');
     }
 
     /**
@@ -42,9 +44,14 @@ class Category extends Model
      * @param $type
      * @return mixed
      */
-    public function scopeByType($query, $type): mixed
+    public function scopeByType(Builder $query, string $type): Builder
     {
-        return $query->where('type', $type);
+        return $query->whereHas('type', fn (Builder $query) => $query->where('type', $type));
+    }
+
+    public function scopeByTypeId(Builder $query, int $typeId): Builder
+    {
+        return $query->where('type_id', $typeId);
     }
 
     public function translations(): HasMany

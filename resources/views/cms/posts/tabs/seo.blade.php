@@ -1,4 +1,4 @@
-<div class="tab-pane fade " id="nav-{{$tab}}" role="tabpanel"
+<div class="tab-pane fade {{ ($activeTab ?? 'main') === $tab ? 'show active' : '' }}" id="nav-{{$tab}}" role="tabpanel"
      aria-labelledby="nav-{{$tab}}-tab" tabindex="0">
     {{-- start content  --}}
     <div class="d-flex align-items-start mt-3">

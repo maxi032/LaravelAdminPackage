@@ -48,13 +48,19 @@ class PostController extends AdminController
      *
      * @return Renderable
      */
-    public function create(): Renderable
+    public function create(?string $type = null): Renderable
     {
         $postTypes = $this->postService->getPostTypesForDropdown();
         $categories = $this->postService->getCategoriesForDropdown();
+        $selectedTypeId = null;
+        if ($type !== null) {
+            $selectedTypeId = array_search($type, $postTypes, true);
+            abort_if($selectedTypeId === false, 404);
+        }
         return view('laravel-admin-package::cms/posts.update_or_create', [
             'postTypes'  => $postTypes,
             'post'       => null,
+            'selectedTypeId' => $selectedTypeId,
             'categories' => $categories
         ]);
     }

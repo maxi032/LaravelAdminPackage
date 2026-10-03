@@ -3,13 +3,21 @@
 @section('content')
     @php
         $allowedTabs = ['main','content','seo'];
+        $activeTab = 'main';
+        $firstError = array_key_first($errors->messages());
+        if ($firstError && str_starts_with($firstError, 'translations.')) {
+            $field = explode('.', $firstError)[1];
+            $activeTab = in_array($field, ['slug', 'meta_title', 'meta_keywords', 'meta_description'], true)
+                ? 'seo'
+                : 'content';
+        }
     @endphp
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
                 <form id="updateOrCreateForm" class="validationForm" enctype="multipart/form-data"
                       action="{{ Str::endsWith(Route::currentRouteName(), '.create') ? route('admin:posts.store') : route('admin:posts.update', $post) }}"
-                      method="POST"
+                      method="POST" novalidate
                 >
                     @if(Str::endsWith(Route::currentRouteName(), '.edit'))
                         @method('PUT')
@@ -28,12 +36,12 @@
                                 <nav>
                                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                         @foreach($allowedTabs as $tabk => $tab)
-                                            <button class="custom-tab nav-link @if($loop->index==0) active @endif"
+                                            <button class="custom-tab nav-link @if($tab === $activeTab) active @endif"
                                                     id="nav-{{$tab}}-tab"
                                                     data-coreui-toggle="tab" data-coreui-target="#nav-{{$tab}}"
                                                     type="button"
                                                     role="tab" aria-controls="nav-{{$tab}}"
-                                                    aria-selected="true">{{ ucfirst($tab) }}
+                                                    aria-selected="{{ $tab === $activeTab ? 'true' : 'false' }}">{{ ucfirst($tab) }}
                                             </button>
                                         @endforeach
                                     </div>

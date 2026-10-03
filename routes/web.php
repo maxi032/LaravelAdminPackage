@@ -11,7 +11,8 @@ Route::group([
 ], function () {
     Route::get('/', [AdminController::class, 'index'])
         ->name('dashboard');
-    Route::resource('cms/posts', PostController::class)->except(['show']);
+    Route::get('cms/posts/create/{type?}', [PostController::class, 'create'])->name('posts.create');
+    Route::resource('cms/posts', PostController::class)->except(['show', 'create']);
     Route::post('cms/posts/change_status',[PostController::class,'ajaxChangeStatus'])->name('posts.ajax_change_status')->middleware(['restrict_to_ajax']);
     Route::get('cms/posts/{type}', [PostController::class,'list'])->name('posts.type.list');
 });

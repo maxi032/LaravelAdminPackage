@@ -1,4 +1,4 @@
-<div class="tab-pane fade show active" id="nav-{{$tab}}" role="tabpanel"
+<div class="tab-pane fade {{ ($activeTab ?? 'main') === $tab ? 'show active' : '' }}" id="nav-{{$tab}}" role="tabpanel"
      aria-labelledby="nav-{{$tab}}-tab" tabindex="0">
     <div class="row g-3 pt-4">
         <div class="col-12">
@@ -17,7 +17,7 @@
                     @error('type_id') aria-invalid="true" aria-describedby="type_id_error" @enderror>
                 <option value="">{{ __('Please select') }}</option>
                 @foreach ($postTypes as $postTypeId => $postType)
-                    <option value="{{$postTypeId}}" {{ (old('type_id', $post?->type_id) == $postTypeId) ? 'selected' : '' }}>{{ $postType }}</option>
+                    <option value="{{$postTypeId}}" {{ (old('type_id', $post?->type_id ?? ($selectedTypeId ?? null)) == $postTypeId) ? 'selected' : '' }}>{{ $postType }}</option>
                 @endforeach
             </select>
             @error('type_id')

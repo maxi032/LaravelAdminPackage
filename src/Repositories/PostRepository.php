@@ -116,11 +116,11 @@ class PostRepository implements PostRepositoryInterface
 
     public function getActivePostsOfType($type)
     {
-        return Post::Status(true)->ByCategory($type);
+        return Post::status(true)->byType($type);
     }
 
     public function getPostsOfType($type)
     {
-        return Post::ByCategory($type);
+        return Post::byType($type);
     }
 }

@@ -5,6 +5,7 @@ namespace Maxi032\LaravelAdminPackage\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use \Illuminate\Database\Eloquent\Relations\BelongsTo;
 use \Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -61,12 +62,17 @@ class Post extends Model
      * Get posts by category
      *
      * @param $query
-     * @param $category
+     * @param int $categoryId
      * @return mixed
      */
-    public function scopeByCategory($query, $category): mixed
+    public function scopeByCategory(Builder $query, int $categoryId): Builder
     {
-        return $query->where('type', $category);
+        return $query->where('category_id', $categoryId);
+    }
+
+    public function scopeByType(Builder $query, string $type): Builder
+    {
+        return $query->whereHas('type', fn (Builder $query) => $query->where('type', $type));
     }
 
     /**

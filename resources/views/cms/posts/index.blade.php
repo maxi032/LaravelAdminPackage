@@ -3,18 +3,18 @@
 @section('content')
     <div class="container-3xl">
         <div class="row">
-           @if($posts->count())
             <div class="col-md-10">
                 <h3 class="mb-4">{{ __($postType->type) }}</h3>
             </div>
             <div class="col-md-2">
-                <a type="button" class="btn btn-primary float-end" href="{{ route('admin:posts.create') }}">
+                <a type="button" class="btn btn-primary float-end" href="{{ route('admin:posts.create', ['type' => $postType->type]) }}">
                     {{ __('Add') }}
                 </a>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
+                @if($posts->count())
                 <table id="posts" class="display nowrap table table-striped w-100">
                     <thead>
                     <tr>
@@ -60,12 +60,12 @@
                     @endforeach
                     </tbody>
                 </table>
-            </div>
             @else
                 <div class="col-12">
-                    {{ __('No posts of type :type found',['type'=>$postType]) }}
+                    {{ __('No posts of type :type found',['type'=>$postType->type]) }}
                 </div>
             @endif
+            </div>
         </div>
     </div>
     @push('footer-scripts')
