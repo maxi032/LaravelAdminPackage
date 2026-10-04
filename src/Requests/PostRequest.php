@@ -63,15 +63,15 @@ class PostRequest extends FormRequest
 
     public function createRules(): array
     {
-        return $this->postRules(50);
+        return $this->postRules();
     }
 
     public function updateRules(): array
     {
-        return $this->postRules(50);
+        return $this->postRules();
     }
 
-    private function postRules(int $titleLength): array
+    private function postRules(): array
     {
         $languages = array_column(config('laravel-admin-package.allowed_languages', []), 'code');
         $rules = [
@@ -90,8 +90,8 @@ class PostRequest extends FormRequest
         }
 
         foreach ($languages as $language) {
-            $rules['translations.title.'.$language] = ['required', 'string', 'max:'.$titleLength];
-            $rules['translations.slug.'.$language] = ['required', 'string', 'max:50'];
+            $rules['translations.title.'.$language] = ['required', 'string', 'max:'. 150];
+            $rules['translations.slug.'.$language] = ['required', 'string', 'max:150'];
             $rules['translations.content.'.$language] = ['required', 'string'];
             $rules['translations.excerpt.'.$language] = ['nullable', 'string', 'max:10000'];
             $rules['translations.meta_title.'.$language] = ['nullable', 'string', 'max:150'];
