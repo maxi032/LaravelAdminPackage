@@ -35,7 +35,7 @@ class PostController extends AdminController
 
 
 
-        return $this->packageName('cms.posts.index', [
+        return $this->packageView('cms.posts.index', [
             "posts"          => $posts,
             "postType"       => $type,
             "inactiveStatus" => PostStatusEnum::DRAFT,
@@ -57,7 +57,7 @@ class PostController extends AdminController
             $selectedTypeId = array_search($type, $postTypes, true);
             abort_if($selectedTypeId === false, 404);
         }
-        return $this->packageName('cms.posts.update_or_create', [
+        return $this->packageView('cms.posts.update_or_create', [
             'postTypes'  => $postTypes,
             'post'       => null,
             'selectedTypeId' => $selectedTypeId,
@@ -65,23 +65,30 @@ class PostController extends AdminController
         ]);
     }
 
+    /**
+     * @param Post $post
+     * @return View
+     */
     public function edit(Post $post): View
     {
         // Route model binding will throw 404 automatically if $post is not found
         $postTypes = $this->postService->getPostTypesForDropdown();
         $categories = $this->postService->getCategoriesForDropdown();
 
-        return $this->packageName('cms.posts.update_or_create', [
+        return $this->packageView('cms.posts.update_or_create', [
             'postTypes'  => $postTypes,
             'post'       => $post,
             'categories' => $categories
         ]);
     }
 
+    /**
+     * @return Renderable
+     */
     public function show(): Renderable
     {
         $postTypes = $this->postService->getPostTypesForDropdown();
-        return $this->packageName('cms.posts.update_or_create', compact('postTypes'));
+        return $this->packageView('cms.posts.update_or_create', compact('postTypes'));
     }
 
     /**
@@ -106,6 +113,12 @@ class PostController extends AdminController
             ->with('message', $result['message']);
     }
 
+    /**
+     * @param PostRequest $request
+     * @param Post $post
+     * @param PostTypeRepositoryInterface $postTypeRepository
+     * @return RedirectResponse
+     */
     public function update(PostRequest $request, Post $post, PostTypeRepositoryInterface $postTypeRepository): RedirectResponse
     {
         $data = $request->validated();
@@ -122,6 +135,10 @@ class PostController extends AdminController
             ->with('message', $result['message']);
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function ajaxChangeStatus(Request $request): JsonResponse
     {
         $data = $request->validate([

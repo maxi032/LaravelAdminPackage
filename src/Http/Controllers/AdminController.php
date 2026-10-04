@@ -8,7 +8,7 @@ use Maxi032\LaravelAdminPackage\LaravelAdminPackageServiceProvider;
 
 class AdminController extends Controller
 {
-    protected function packageName(string $view, array $data = []): View
+    protected function packageView(string $view, array $data = []): View
     {
         return view(
             LaravelAdminPackageServiceProvider::getAdmPackageName().'::'.$view,
@@ -23,6 +23,6 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return $this->packageName('dashboard');
+        return $this->packageView('dashboard');
     }
 }
