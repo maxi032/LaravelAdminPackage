@@ -19,6 +19,17 @@ class PostTypeRepository implements PostTypeRepositoryInterface
         });
     }
 
+    /**
+     * @return EloquentCollection<int, PostType>
+     */
+    public function getPostTypesForSidebar(): EloquentCollection
+    {
+        return PostType::query()
+            ->whereNotNull('type')
+            ->orderBy('type')
+            ->get(['id', 'type']);
+    }
+
     public function getPostTypeById($id)
     {
         return PostType::find($id);

@@ -32,6 +32,7 @@ class LaravelAdminPackageServiceProvider extends ServiceProvider
         }
 
         $this->loadTranslationsFrom(__DIR__ . '/../lang', 'maxi032-'.self::getAdmPackageName().'-translations');
+        $this->loadJsonTranslationsFrom(__DIR__ . '/../lang');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         Route::middleware('api')->prefix('api')->group(function () {

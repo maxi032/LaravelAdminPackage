@@ -1,70 +1,66 @@
 @extends($laravelAdminPackage.'::layouts.admin_layout')
 
 @section('content')
-    <div class="container-3xl">
-        <div class="row">
-            <div class="col-md-10">
-                <h3 class="mb-4">{{ __($postType->type) }}</h3>
-            </div>
-            <div class="col-md-2">
-                <a type="button" class="btn btn-primary float-end" href="{{ route('admin:posts.create', ['type' => $postType->type]) }}">
-                    {{ __('Add') }}
-                </a>
-            </div>
+    <div class="container-fluid">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+            <h1 class="h3 mb-0">{{ __($postType->type) }}</h1>
+            <a class="btn btn-primary" href="{{ route('admin:posts.create', ['type' => $postType->type]) }}">
+                {{ __('Add') }}
+            </a>
         </div>
-        <div class="row">
-            <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
                 @if($posts->count())
-                <table id="posts" class="display nowrap table table-striped w-100">
-                    <thead>
-                    <tr>
-                        <th>{{ __('Id') }}</th>
-                        <th>{{ __('Title') }}</th>
-                        <th>{{ __('Slug') }}</th>
-                        <th>{{ __('Excerpt') }}</th>
-                        <th>{{ __('Status') }}</th>
-                        <th>{{ __('Created at') }}</th>
-                        <th>{{ __('Actions') }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($posts as $postk => $post)
-                        @php
-                            $excerpt = strlen($post->translations->where('language',app()->getLocale())->first()->excerpt) > 50 ?
-                            substr($post->translations->where('language',app()->getLocale())->first()->excerpt, 0, 50).'...' :
-                            $post->translations->where('language',app()->getLocale())->first()->excerpt;
-                        @endphp
-                        <tr>
-                            <td>{{$post->id}}</td>
-                            <td class="title">{!! $post->translations->where('language',app()->getLocale())->first()->title !!}</td>
-                            <td class="slug">{!! $post->translations->where('language',app()->getLocale())->first()->slug !!}</td>
-                            <td class="excerpt">{!! $excerpt !!}</td>
-                            @if(in_array($post->status,[$inactiveStatus, $activeStatus]))
-                                <td></td>
-                            @else
-                                <td>
-                                    <div class="form-check form-switch form-switch-lg">
-                                        <input class="form-check-input" type="checkbox" data-id="{{ $post->id }}" id="statusSwitch{{ $post->id }}"
-                                               @if($post->status == 1) checked @endif>
-                                        <label class="form-check-label" for="statusSwitch{{ $post->id }}"></label>
-                                    </div>
-                                </td>
-                            @endif
-                            <td>{{ \Carbon\Carbon::parse($post->created_at)->format('d-m-Y') }}</td>
-                            <td>
-                                <a role="button" class="btn btn-sm btn-primary" href="{{ route('admin:posts.edit',['post'=>$post]) }}"><span class="cil-notes"></span> Edit</a>
-                                <a role="button" class="btn btn-sm btn-warning" href="#"><span class="cil-trash"></span> Delete</a>
-                                <a role="button" class="btn btn-sm btn-light" href="{{ route('admin:posts.edit',['post'=>$post]) }}"><span class="cil-clone"></span> Duplicate</a>
-                            </td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
-            @else
-                <div class="col-12">
-                    {{ __('No posts of type :type found',['type'=>$postType->type]) }}
-                </div>
-            @endif
+                    <div class="table-responsive">
+                        <table id="posts" class="table table-striped align-middle mb-0 w-100">
+                            <thead>
+                            <tr>
+                                <th>{{ __('ID') }}</th>
+                                <th>{{ __('Title') }}</th>
+                                <th>{{ __('Slug') }}</th>
+                                <th>{{ __('Excerpt') }}</th>
+                                <th>{{ __('Status') }}</th>
+                                <th>{{ __('Created at') }}</th>
+                                <th>{{ __('Actions') }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($posts as $postk => $post)
+                                @php
+                                    $excerpt = strlen($post->translations->where('language',app()->getLocale())->first()->excerpt) > 50 ?
+                                    substr($post->translations->where('language',app()->getLocale())->first()->excerpt, 0, 50).'...' :
+                                    $post->translations->where('language',app()->getLocale())->first()->excerpt;
+                                @endphp
+                                <tr>
+                                    <td>{{$post->id}}</td>
+                                    <td class="title">{!! $post->translations->where('language',app()->getLocale())->first()->title !!}</td>
+                                    <td class="slug">{!! $post->translations->where('language',app()->getLocale())->first()->slug !!}</td>
+                                    <td class="excerpt">{!! $excerpt !!}</td>
+                                    @if(in_array($post->status,[$inactiveStatus, $activeStatus]))
+                                        <td></td>
+                                    @else
+                                        <td>
+                                            <div class="form-check form-switch form-switch-lg">
+                                                <input class="form-check-input" type="checkbox" data-id="{{ $post->id }}" id="statusSwitch{{ $post->id }}"
+                                                       @if($post->status == 1) checked @endif>
+                                                <label class="form-check-label" for="statusSwitch{{ $post->id }}"></label>
+                                            </div>
+                                        </td>
+                                    @endif
+                                    <td>{{ \Carbon\Carbon::parse($post->created_at)->format('d-m-Y') }}</td>
+                                    <td>
+                                        <a role="button" class="btn btn-sm btn-primary" href="{{ route('admin:posts.edit',['post'=>$post]) }}"><span class="cil-notes"></span> Edit</a>
+                                        <a role="button" class="btn btn-sm btn-warning" href="#"><span class="cil-trash"></span> Delete</a>
+                                        <a role="button" class="btn btn-sm btn-light" href="{{ route('admin:posts.edit',['post'=>$post]) }}"><span class="cil-clone"></span> Duplicate</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <p class="mb-0">{{ __('No posts of type :type found',['type'=>__($postType->type)]) }}</p>
+                @endif
             </div>
         </div>
     </div>

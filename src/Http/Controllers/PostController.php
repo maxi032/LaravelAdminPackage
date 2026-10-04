@@ -35,7 +35,7 @@ class PostController extends AdminController
 
 
 
-        return view('laravel-admin-package::cms.posts.index', [
+        return $this->packageName('cms.posts.index', [
             "posts"          => $posts,
             "postType"       => $type,
             "inactiveStatus" => PostStatusEnum::DRAFT,
@@ -57,7 +57,7 @@ class PostController extends AdminController
             $selectedTypeId = array_search($type, $postTypes, true);
             abort_if($selectedTypeId === false, 404);
         }
-        return view('laravel-admin-package::cms/posts.update_or_create', [
+        return $this->packageName('cms.posts.update_or_create', [
             'postTypes'  => $postTypes,
             'post'       => null,
             'selectedTypeId' => $selectedTypeId,
@@ -71,7 +71,7 @@ class PostController extends AdminController
         $postTypes = $this->postService->getPostTypesForDropdown();
         $categories = $this->postService->getCategoriesForDropdown();
 
-        return view('laravel-admin-package::cms/posts.update_or_create', [
+        return $this->packageName('cms.posts.update_or_create', [
             'postTypes'  => $postTypes,
             'post'       => $post,
             'categories' => $categories
@@ -81,7 +81,7 @@ class PostController extends AdminController
     public function show(): Renderable
     {
         $postTypes = $this->postService->getPostTypesForDropdown();
-        return view('laravel-admin-package::cms/posts.update_or_create', compact('postTypes'));
+        return $this->packageName('cms.posts.update_or_create', compact('postTypes'));
     }
 
     /**

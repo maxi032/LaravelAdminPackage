@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Maxi032\LaravelAdminPackage\Composers\BreadcrumbComposer;
+use Maxi032\LaravelAdminPackage\Composers\SidebarComposer;
 
 class ThemeServiceProvider extends ServiceProvider
 {
@@ -28,5 +29,6 @@ class ThemeServiceProvider extends ServiceProvider
             $view->with(Str::camel(LaravelAdminPackageServiceProvider::getAdmPackageName()), LaravelAdminPackageServiceProvider::getAdmPackageName());
         });
         View::composer('*', BreadcrumbComposer::class);
+        View::composer(LaravelAdminPackageServiceProvider::getAdmPackageName().'::cms.partials.sidebar', SidebarComposer::class);
     }
 }

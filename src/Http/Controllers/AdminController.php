@@ -2,10 +2,19 @@
 
 namespace Maxi032\LaravelAdminPackage\Http\Controllers;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller;
+use Maxi032\LaravelAdminPackage\LaravelAdminPackageServiceProvider;
 
 class AdminController extends Controller
 {
+    protected function packageName(string $view, array $data = []): View
+    {
+        return view(
+            LaravelAdminPackageServiceProvider::getAdmPackageName().'::'.$view,
+            $data
+        );
+    }
 
     /**
      * Show the application dashboard.
@@ -14,6 +23,6 @@ class AdminController extends Controller
      */
     public function index()
     {
-       return view('laravel-admin-package::dashboard');
+        return $this->packageName('dashboard');
     }
 }
