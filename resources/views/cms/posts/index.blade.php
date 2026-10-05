@@ -33,9 +33,9 @@
                                 @endphp
                                 <tr>
                                     <td>{{$post->id}}</td>
-                                    <td class="title">{!! $post->translations->where('language',app()->getLocale())->first()->title !!}</td>
-                                    <td class="slug">{!! $post->translations->where('language',app()->getLocale())->first()->slug !!}</td>
-                                    <td class="excerpt">{!! $excerpt !!}</td>
+                                    <td class="title">{{ $post->translations->where('language',app()->getLocale())->first()->title }}</td>
+                                    <td class="slug">{{ $post->translations->where('language',app()->getLocale())->first()->slug }}</td>
+                                    <td class="excerpt">{{ $excerpt }}</td>
                                     @if(in_array($post->status,[$inactiveStatus, $activeStatus]))
                                         <td></td>
                                     @else
@@ -49,9 +49,9 @@
                                     @endif
                                     <td>{{ \Carbon\Carbon::parse($post->created_at)->format('d-m-Y') }}</td>
                                     <td>
-                                        <a role="button" class="btn btn-sm btn-primary" href="{{ route('admin:posts.edit',['post'=>$post]) }}"><span class="cil-notes"></span> Edit</a>
-                                        <a role="button" class="btn btn-sm btn-warning" href="#"><span class="cil-trash"></span> Delete</a>
-                                        <a role="button" class="btn btn-sm btn-light" href="{{ route('admin:posts.edit',['post'=>$post]) }}"><span class="cil-clone"></span> Duplicate</a>
+                                        <a role="button" class="btn btn-sm btn-primary" href="{{ route('admin:posts.edit',['post'=>$post]) }}"><span class="cil-notes"></span> {{ __('Edit') }}</a>
+                                        <a role="button" class="btn btn-sm btn-warning" href="#"><span class="cil-trash"></span> {{ __('Delete') }}</a>
+                                        <a role="button" class="btn btn-sm btn-light" href="{{ route('admin:posts.edit',['post'=>$post]) }}"><span class="cil-clone"></span> {{ __('Duplicate') }}</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -100,12 +100,12 @@
                                     'aria-atomic': 'true'
                                 }).append(
                                     $('<div>', {class: 'toast-header bg-success text-white'}).append(
-                                        $('<strong>', {class: 'me-auto', text: 'Success'}),
+                                        $('<strong>', {class: 'me-auto', text: @json(__('Success'))}),
                                         $('<button>', {
                                             type: 'button',
                                             class: 'btn-close',
                                             'data-bs-dismiss': 'toast',
-                                            'aria-label': 'Close'
+                                            'aria-label': @json(__('Close'))
                                         })
                                     ),
                                     $('<div>', {class: 'toast-body', html: data.success})

@@ -41,7 +41,7 @@
                                                     data-coreui-toggle="tab" data-coreui-target="#nav-{{$tab}}"
                                                     type="button"
                                                     role="tab" aria-controls="nav-{{$tab}}"
-                                                    aria-selected="{{ $tab === $activeTab ? 'true' : 'false' }}">{{ ucfirst($tab) }}
+                                                    aria-selected="{{ $tab === $activeTab ? 'true' : 'false' }}">{{ __(ucfirst($tab)) }}
                                             </button>
                                         @endforeach
                                     </div>

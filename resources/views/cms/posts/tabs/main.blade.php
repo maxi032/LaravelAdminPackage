@@ -33,7 +33,7 @@
                     @error('category_id') aria-invalid="true" aria-describedby="category_id_error" @enderror>
                 <option value="">{{ __('Please select') }}</option>
                 @foreach ($categories as $category)
-                    <option value="{{$category->id}}" {{ (old('category_id', $post?->category_id) == $category->id) ? 'selected' : '' }}>{{ $category->translations->first()->title }}</option>
+                    <option value="{{$category->id}}" {{ (old('category_id', $post?->category_id) == $category->id) ? 'selected' : '' }}>{{ $category->translations->first()?->title ?? __('Category with id :id does not have a translation for :language', ['id' => $category->id, 'language' => app()->getLocale()]) }}</option>
                 @endforeach
             </select>
             @error('category_id')
