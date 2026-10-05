@@ -12,9 +12,15 @@ interface PostRepositoryInterface
 
     public function deletePost($postId);
 
-    public function createPostWithTranslations(array $dataArr);
+    /**
+     * @throws \Throwable
+     */
+    public function createPostWithTranslations(array $dataArr): Post;
 
-    public function updatePostWithTranslations(Post $post, array $dataArr);
+    /**
+     * @throws \Throwable
+     */
+    public function updatePostWithTranslations(Post $post, array $dataArr): Post;
 
     public function getActivePosts();
 

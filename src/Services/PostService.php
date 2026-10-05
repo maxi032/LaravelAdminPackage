@@ -21,14 +21,22 @@ class PostService
 
     /**
      * @param array $dataArr
-     * @return mixed
+     * @return Post
+     * @throws \Throwable
      */
-    public function createPostWithTranslations(array $dataArr): mixed
+    public function createPostWithTranslations(array $dataArr): Post
     {
         return $this->postRepository->createPostWithTranslations($dataArr);
     }
 
-    public function updatePostWithTranslations(Post $post, array $dataArr): mixed
+
+    /**
+     * @param Post $post
+     * @param array $dataArr
+     * @return Post
+     * @throws \Throwable
+     */
+    public function updatePostWithTranslations(Post $post, array $dataArr): Post
     {
         return $this->postRepository->updatePostWithTranslations($post, $dataArr);
     }
@@ -42,6 +50,10 @@ class PostService
         return $this->postTypeRepository->getPostTypesForDropdown();
     }
 
+    /**
+     * @param $lang
+     * @return mixed
+     */
     public function getCategoriesForDropdown($lang=null)
     {
         return $this->categoryRepository->getCategoriesForDropdown($lang);

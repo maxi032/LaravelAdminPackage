@@ -7,12 +7,14 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Maxi032\LaravelAdminPackage\Enums\PostStatusEnum;
 use Maxi032\LaravelAdminPackage\Models\Post;
 use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Requests\PostRequest;
 use Maxi032\LaravelAdminPackage\Services\PostService;
+use Throwable;
 
 class PostController extends AdminController
 {
@@ -95,22 +97,27 @@ class PostController extends AdminController
      * Store record on create
      *
      * @param PostRequest $request
+     * @param PostTypeRepositoryInterface $postTypeRepository
      * @return RedirectResponse
      */
     public function store(PostRequest $request, PostTypeRepositoryInterface $postTypeRepository): RedirectResponse
     {
         $data = $request->validated();
-        $result = $this->postService->createPostWithTranslations($data)->getData(true);
         $routePrefix = config('laravel-admin-package.admin_url').':';
 
-        if ($result['type'] === 'error') {
+        try {
+            $this->postService->createPostWithTranslations($data);
+        } catch (Throwable $e) {
+            Log::error('Post creation failed.', ['exception' => $e]);
+
             return redirect()->route($routePrefix.'posts.create')
-                ->withInput($data)->withErrors(['post' => $result['message']]);
+                ->withInput($data)
+                ->withErrors(['post' => __('The post could not be saved. Please try again.')]);
         }
 
         $postType = $postTypeRepository->getPostTypeById($data['type_id']);
         return redirect()->route($routePrefix.'posts.type.list', ['type' => $postType->type])
-            ->with('message', $result['message']);
+            ->with('message', __('Post created successfully!'));
     }
 
     /**
@@ -122,17 +129,21 @@ class PostController extends AdminController
     public function update(PostRequest $request, Post $post, PostTypeRepositoryInterface $postTypeRepository): RedirectResponse
     {
         $data = $request->validated();
-        $result = $this->postService->updatePostWithTranslations($post, $data)->getData(true);
         $routePrefix = config('laravel-admin-package.admin_url').':';
 
-        if ($result['type'] === 'error') {
+        try {
+            $this->postService->updatePostWithTranslations($post, $data);
+        } catch (Throwable $e) {
+            Log::error('Post update failed.', ['exception' => $e]);
+
             return redirect()->route($routePrefix.'posts.edit', $post)
-                ->withInput($data)->withErrors(['post' => $result['message']]);
+                ->withInput($data)
+                ->withErrors(['post' => __('The post could not be saved. Please try again.')]);
         }
 
         $postType = $postTypeRepository->getPostTypeById($data['type_id']);
         return redirect()->route($routePrefix.'posts.type.list', ['type' => $postType->type])
-            ->with('message', $result['message']);
+            ->with('message', __('Post updated successfully!'));
     }
 
     /**

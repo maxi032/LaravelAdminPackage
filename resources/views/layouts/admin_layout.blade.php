@@ -10,6 +10,7 @@
     @vite('resources/sass/maxi032/laravel-admin-package/coreui/admin_app.scss')
 </head>
 <body>
+    @include($laravelAdminPackage.'::cms.partials.notifications')
     @include($laravelAdminPackage.'::cms.partials.sidebar')
 
     <div class="wrapper d-flex flex-column min-vh-100 bg-light">

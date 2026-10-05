@@ -3,11 +3,9 @@
 namespace Maxi032\LaravelAdminPackage\Repositories;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
 use Maxi032\LaravelAdminPackage\Models\Post;
 use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostRepositoryInterface;
-use \Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -23,53 +21,57 @@ class PostRepository implements PostRepositoryInterface
         Post::destroy($postId);
     }
 
-    public function createPostWithTranslations(array $dataArr): JsonResponse
+    /**
+     * @param array $dataArr
+     * @return Post
+     * @throws Throwable
+     */
+    public function createPostWithTranslations(array $dataArr): Post
     {
-        try {
-            DB::transaction(function () use ($dataArr) {
-                $this->lockPostType((int) $dataArr['type_id']);
-                $post = Post::create([
-                    'type_id' => $dataArr['type_id'],
-                    'category_id' => $dataArr['category_id'],
-                    'status' => (int) $dataArr['status'],
-                    'sort_order' => $dataArr['sort_order'] ?? $this->nextSortOrder((int) $dataArr['type_id']),
-                ]);
-                $this->saveTranslations($post, $dataArr['translations']);
-            });
+        return DB::transaction(function () use ($dataArr) {
+            $this->lockPostType((int) $dataArr['type_id']);
 
-            return response()->json(['type' => 'success', 'message' => 'Post created successfully!']);
-        } catch (Throwable $e) {
-            Log::error('Post creation failed.', ['exception' => $e]);
-            return response()->json(['type' => 'error', 'message' => 'The post could not be saved. Please try again.'], 500);
-        }
+            $post = Post::create([
+                'type_id'     => $dataArr['type_id'],
+                'category_id' => $dataArr['category_id'],
+                'status'      => (int) $dataArr['status'],
+                'sort_order'  => $dataArr['sort_order']
+                    ?? $this->nextSortOrder((int) $dataArr['type_id']),
+            ]);
+
+            $this->saveTranslations($post, $dataArr['translations']);
+
+            return $post;
+        });
     }
 
-    public function updatePostWithTranslations(Post $post, array $dataArr): JsonResponse
+    /**
+     * @param Post $post
+     * @param array $dataArr
+     * @return Post
+     * @throws Throwable
+     */
+    public function updatePostWithTranslations(Post $post, array $dataArr): Post
     {
-        try {
-            DB::transaction(function () use ($post, $dataArr) {
-                $typeId = (int) $dataArr['type_id'];
-                $this->lockPostType($typeId);
-                $post = Post::whereKey($post->getKey())->lockForUpdate()->firstOrFail();
-                $sortOrder = $dataArr['sort_order'] ?? (
-                    (int) $post->type_id === $typeId
-                        ? $post->sort_order
-                        : $this->nextSortOrder($typeId)
-                );
-                $post->fill([
-                    'type_id' => $dataArr['type_id'],
-                    'category_id' => $dataArr['category_id'],
-                    'status' => (int) $dataArr['status'],
-                    'sort_order' => $sortOrder,
-                ])->save();
-                $this->saveTranslations($post, $dataArr['translations']);
-            });
+        return DB::transaction(function () use ($post, $dataArr) {
+            $typeId = (int) $dataArr['type_id'];
+            $this->lockPostType($typeId);
+            $post = Post::whereKey($post->getKey())->lockForUpdate()->firstOrFail();
+            $sortOrder = $dataArr['sort_order'] ?? (
+                (int) $post->type_id === $typeId
+                    ? $post->sort_order
+                    : $this->nextSortOrder($typeId)
+            );
+            $post->fill([
+                'type_id' => $dataArr['type_id'],
+                'category_id' => $dataArr['category_id'],
+                'status' => (int) $dataArr['status'],
+                'sort_order' => $sortOrder,
+            ])->save();
+            $this->saveTranslations($post, $dataArr['translations']);
 
-            return response()->json(['type' => 'success', 'message' => 'Post updated successfully!']);
-        } catch (Throwable $e) {
-            Log::error('Post update failed.', ['exception' => $e]);
-            return response()->json(['type' => 'error', 'message' => 'The post could not be saved. Please try again.'], 500);
-        }
+            return $post;
+        });
     }
 
     private function lockPostType(int $typeId): void
