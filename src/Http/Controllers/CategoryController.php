@@ -18,7 +18,6 @@ class CategoryController extends AdminController
         return $this->packageView('cms.categories.index', [
             'postType' => $type,
             'categories' => $categories,
-            'adminRoutePrefix' => config('laravel-admin-package.admin_url').':',
         ]);
     }
 }

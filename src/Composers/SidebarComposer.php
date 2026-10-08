@@ -3,8 +3,8 @@
 namespace Maxi032\LaravelAdminPackage\Composers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Maxi032\LaravelAdminPackage\Models\Post;
 use Maxi032\LaravelAdminPackage\Models\PostType;
@@ -43,6 +43,5 @@ class SidebarComposer
             ]);
 
         $view->with('sidebarPostTypes', $items);
-        $view->with('adminRoutePrefix', config('laravel-admin-package.admin_url').':');
     }
 }

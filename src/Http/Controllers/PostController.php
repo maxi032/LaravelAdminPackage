@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Maxi032\LaravelAdminPackage\Enums\PostStatusEnum;
+use Maxi032\LaravelAdminPackage\LaravelAdminPackageServiceProvider;
 use Maxi032\LaravelAdminPackage\Models\Post;
 use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
@@ -24,10 +25,6 @@ class PostController extends AdminController
 
     /**
      * Show a list of the resource of a certain type
-     *
-     * @param PostType $type
-     *
-     * @return Renderable
      */
     public function list(PostType $type): Renderable
     {
@@ -35,22 +32,18 @@ class PostController extends AdminController
         $type->load(['posts.translations']);
         $posts = $type->posts;
 
-
-
         return $this->packageView('cms.posts.index', [
-            "posts"          => $posts,
-            "postType"       => $type,
-            "inactiveStatus" => PostStatusEnum::DRAFT,
-            "activeStatus"   => PostStatusEnum::PENDING
+            'posts' => $posts,
+            'postType' => $type,
+            'inactiveStatus' => PostStatusEnum::DRAFT,
+            'activeStatus' => PostStatusEnum::PENDING,
         ]);
     }
 
     /**
      * Show the Posts crud form.
-     *
-     * @return Renderable
      */
-    public function create(?string $type = null): Renderable
+    public function create(string $type = null): Renderable
     {
         $postTypes = $this->postService->getPostTypesForDropdown();
         $categories = $this->postService->getCategoriesForDropdown();
@@ -59,18 +52,15 @@ class PostController extends AdminController
             $selectedTypeId = array_search($type, $postTypes, true);
             abort_if($selectedTypeId === false, 404);
         }
+
         return $this->packageView('cms.posts.update_or_create', [
-            'postTypes'  => $postTypes,
-            'post'       => null,
+            'postTypes' => $postTypes,
+            'post' => null,
             'selectedTypeId' => $selectedTypeId,
-            'categories' => $categories
+            'categories' => $categories,
         ]);
     }
 
-    /**
-     * @param Post $post
-     * @return View
-     */
     public function edit(Post $post): View
     {
         // Route model binding will throw 404 automatically if $post is not found
@@ -78,32 +68,26 @@ class PostController extends AdminController
         $categories = $this->postService->getCategoriesForDropdown();
 
         return $this->packageView('cms.posts.update_or_create', [
-            'postTypes'  => $postTypes,
-            'post'       => $post,
-            'categories' => $categories
+            'postTypes' => $postTypes,
+            'post' => $post,
+            'categories' => $categories,
         ]);
     }
 
-    /**
-     * @return Renderable
-     */
     public function show(): Renderable
     {
         $postTypes = $this->postService->getPostTypesForDropdown();
+
         return $this->packageView('cms.posts.update_or_create', compact('postTypes'));
     }
 
     /**
      * Store record on create
-     *
-     * @param PostRequest $request
-     * @param PostTypeRepositoryInterface $postTypeRepository
-     * @return RedirectResponse
      */
     public function store(PostRequest $request, PostTypeRepositoryInterface $postTypeRepository): RedirectResponse
     {
         $data = $request->validated();
-        $routePrefix = config('laravel-admin-package.admin_url').':';
+        $routePrefix = LaravelAdminPackageServiceProvider::adminRoutePrefix();
 
         try {
             $this->postService->createPostWithTranslations($data);
@@ -116,20 +100,15 @@ class PostController extends AdminController
         }
 
         $postType = $postTypeRepository->getPostTypeById($data['type_id']);
+
         return redirect()->route($routePrefix.'posts.type.list', ['type' => $postType->type])
             ->with('message', __('Post created successfully!'));
     }
 
-    /**
-     * @param PostRequest $request
-     * @param Post $post
-     * @param PostTypeRepositoryInterface $postTypeRepository
-     * @return RedirectResponse
-     */
     public function update(PostRequest $request, Post $post, PostTypeRepositoryInterface $postTypeRepository): RedirectResponse
     {
         $data = $request->validated();
-        $routePrefix = config('laravel-admin-package.admin_url').':';
+        $routePrefix = LaravelAdminPackageServiceProvider::adminRoutePrefix();
 
         try {
             $this->postService->updatePostWithTranslations($post, $data);
@@ -142,14 +121,11 @@ class PostController extends AdminController
         }
 
         $postType = $postTypeRepository->getPostTypeById($data['type_id']);
+
         return redirect()->route($routePrefix.'posts.type.list', ['type' => $postType->type])
             ->with('message', __('Post updated successfully!'));
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function ajaxChangeStatus(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -163,5 +139,4 @@ class PostController extends AdminController
 
         return response()->json(['success' => ($status == 0) ? __('Post was deactivated') : __('Post was activated')]);
     }
-
 }

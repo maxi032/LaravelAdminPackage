@@ -6,11 +6,18 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Maxi032\LaravelAdminPackage\Commands\TestNpm;
 use Maxi032\LaravelAdminPackage\Http\Middleware\RestrictToAjax;
+
 class LaravelAdminPackageServiceProvider extends ServiceProvider
 {
-    static string $admPackage = 'laravel-admin-package';
+    public static string $admPackage = 'laravel-admin-package';
+
     public function register(): void
     {
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/laravel-admin-package.php',
+            self::getAdmPackageName()
+        );
+
         // Bind the data to the container using the singleton method
         $this->app->singleton(self::getAdmPackageName(), function ($app) {
             return self::getAdmPackageName();
@@ -31,16 +38,16 @@ class LaravelAdminPackageServiceProvider extends ServiceProvider
             $this->publishResources();
         }
 
-        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'maxi032-'.self::getAdmPackageName().'-translations');
-        $this->loadJsonTranslationsFrom(__DIR__ . '/../lang');
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadTranslationsFrom(__DIR__.'/../lang', 'maxi032-'.self::getAdmPackageName().'-translations');
+        $this->loadJsonTranslationsFrom(__DIR__.'/../lang');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         Route::middleware('api')->prefix('api')->group(function () {
-            $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+            $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
         });
 
         Route::middleware('web')->group(function () {
-            $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
     }
 
@@ -54,15 +61,15 @@ class LaravelAdminPackageServiceProvider extends ServiceProvider
         return self::$admPackage;
     }
 
-    /**
-     * Publish all resources of the package
-     *
-     * @return void
-     */
+    public static function adminRoutePrefix(): string
+    {
+        return config('laravel-admin-package.admin_url').':';
+    }
+
     public function publishResources(): void
     {
         $this->publishes([
-            __DIR__ . '/../resources/lang' => resource_path('lang/vendor/maxi032-'.self::getAdmPackageName().'-translations'),
+            __DIR__.'/../resources/lang' => resource_path('lang/vendor/maxi032-'.self::getAdmPackageName().'-translations'),
         ], self::getAdmPackageName().'-translations');
 
         // Publish migrations
@@ -75,7 +82,6 @@ class LaravelAdminPackageServiceProvider extends ServiceProvider
             __DIR__.'/../database/seeders' => database_path('seeders'),
         ], 'maxi032-'.self::getAdmPackageName().'-seeders');
 
-
         // Publish the configuration file
         $this->publishes([
             __DIR__.'/../config/'.self::getAdmPackageName().'.php' => config_path(self::getAdmPackageName().'.php'),
@@ -84,22 +90,22 @@ class LaravelAdminPackageServiceProvider extends ServiceProvider
         // Publish the views files
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/maxi032/'.self::getAdmPackageName()),
-        ],'maxi032-'.self::getAdmPackageName().'-views');
+        ], 'maxi032-'.self::getAdmPackageName().'-views');
 
         // publish coreui-css
         $this->publishes([
             __DIR__.'/../resources/sass' => resource_path('sass/maxi032/'.self::getAdmPackageName()),
-        ],'maxi032-'.self::getAdmPackageName().'-coreui');
+        ], 'maxi032-'.self::getAdmPackageName().'-coreui');
 
         // publish images
         $this->publishes([
             __DIR__.'/../resources/img' => resource_path('sass/maxi032/'.self::getAdmPackageName().'/coreui/img'),
-        ],'maxi032-'.self::getAdmPackageName().'-coreui_img');
+        ], 'maxi032-'.self::getAdmPackageName().'-coreui_img');
 
         // publish js (bootstrap) for coreui
         $this->publishes([
             __DIR__.'/../resources/js' => resource_path('js/maxi032/'.self::getAdmPackageName()),
-        ],'maxi032-'.self::getAdmPackageName().'-coreui_bootstrap');
+        ], 'maxi032-'.self::getAdmPackageName().'-coreui_bootstrap');
 
     }
 }

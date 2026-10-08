@@ -16,7 +16,7 @@
         <div class="row">
             <div class="col-md-12">
                 <form id="updateOrCreateForm" class="validationForm" enctype="multipart/form-data"
-                      action="{{ Str::endsWith(Route::currentRouteName(), '.create') ? route('admin:posts.store') : route('admin:posts.update', $post) }}"
+                      action="{{ Str::endsWith(Route::currentRouteName(), '.create') ? route($adminRoutePrefix.'posts.store') : route($adminRoutePrefix.'posts.update', $post) }}"
                       method="POST" novalidate
                 >
                     @if(Str::endsWith(Route::currentRouteName(), '.edit'))
