@@ -12,6 +12,10 @@ interface PostRepositoryInterface
 
     public function deletePost($postId);
 
+    public function recoverPost(int $postId): void;
+
+    public function forceDeletePost(int $postId): void;
+
     /**
      * @throws \Throwable
      */

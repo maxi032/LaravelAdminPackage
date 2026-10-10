@@ -41,6 +41,21 @@ class PostService
         return $this->postRepository->updatePostWithTranslations($post, $dataArr);
     }
 
+    public function deletePost(int $postId): void
+    {
+        $this->postRepository->deletePost($postId);
+    }
+
+    public function recoverPost(int $postId): void
+    {
+        $this->postRepository->recoverPost($postId);
+    }
+
+    public function forceDeletePost(int $postId): void
+    {
+        $this->postRepository->forceDeletePost($postId);
+    }
+
     /**
      * Get all post types
      * @return mixed

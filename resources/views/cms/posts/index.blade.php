@@ -4,9 +4,14 @@
     <div class="container-fluid">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
             <h1 class="h3 mb-0">{{ __($postType->type) }}</h1>
-            <a class="btn btn-primary" href="{{ route($adminRoutePrefix.'posts.create', ['type' => $postType->type]) }}">
-                {{ __('Add') }}
-            </a>
+            <div class="d-flex gap-2">
+                <a class="btn btn-outline-secondary" href="{{ route($adminRoutePrefix.'posts.trash', ['type' => $postType->type]) }}">
+                    {{ __('Trash') }}
+                </a>
+                <a class="btn btn-primary" href="{{ route($adminRoutePrefix.'posts.create', ['type' => $postType->type]) }}">
+                    {{ __('Add') }}
+                </a>
+            </div>
         </div>
         <div class="card">
             <div class="card-body">
@@ -50,7 +55,7 @@
                                     <td>{{ \Carbon\Carbon::parse($post->created_at)->format('d-m-Y') }}</td>
                                     <td>
                                         <a role="button" class="btn btn-sm btn-primary" href="{{ route($adminRoutePrefix.'posts.edit',['post'=>$post]) }}"><span class="cil-notes"></span> {{ __('Edit') }}</a>
-                                        <a role="button" class="btn btn-sm btn-warning" href="#"><span class="cil-trash"></span> {{ __('Delete') }}</a>
+                                        <button type="button" class="btn btn-sm btn-warning" data-coreui-toggle="modal" data-coreui-target="#delete-post-{{ $post->id }}"><span class="cil-trash"></span> {{ __('Delete') }}</button>
                                         <a role="button" class="btn btn-sm btn-light" href="{{ route($adminRoutePrefix.'posts.edit',['post'=>$post]) }}"><span class="cil-clone"></span> {{ __('Duplicate') }}</a>
                                     </td>
                                 </tr>
@@ -64,6 +69,9 @@
             </div>
         </div>
     </div>
+    @foreach($posts as $post)
+        @include($laravelAdminPackage.'::cms.posts.partials.delete_confirmation', ['post' => $post])
+    @endforeach
     @push('footer-scripts')
         <script type="module">
             $.ajaxSetup({

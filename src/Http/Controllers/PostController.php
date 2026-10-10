@@ -40,6 +40,51 @@ class PostController extends AdminController
         ]);
     }
 
+    public function trash(PostType $type): Renderable
+    {
+        $posts = $type->posts()->onlyTrashed()
+            ->with(['translations' => fn ($query) => $query->withTrashed()])
+            ->orderByDesc('deleted_at')->orderByDesc('id')->get();
+
+        return $this->packageView('cms.posts.trash', ['posts' => $posts, 'postType' => $type]);
+    }
+
+    public function recover(Post $post): RedirectResponse
+    {
+        abort_unless($post->trashed(), 404);
+        $redirect = $this->trashRedirect($post);
+        try {
+            $this->postService->recoverPost((int) $post->getKey());
+        } catch (Throwable $e) {
+            Log::error('Post recovery failed.', ['exception' => $e]);
+            return $redirect->withErrors(['post' => __('The post could not be recovered. Please try again.')]);
+        }
+
+        return $redirect->with('message', __('Post recovered successfully!'));
+    }
+
+    public function forceDelete(Post $post): RedirectResponse
+    {
+        abort_unless($post->trashed(), 404);
+        $redirect = $this->trashRedirect($post);
+        try {
+            $this->postService->forceDeletePost((int) $post->getKey());
+        } catch (Throwable $e) {
+            Log::error('Post destruction failed.', ['exception' => $e]);
+            return $redirect->withErrors(['post' => __('The post could not be destroyed. Please try again.')]);
+        }
+
+        return $redirect->with('message', __('Post destroyed successfully!'));
+    }
+
+    private function trashRedirect(Post $post): RedirectResponse
+    {
+        $type = $post->type;
+        return $type
+            ? redirect()->route(LaravelAdminPackageServiceProvider::adminRoutePrefix().'posts.trash', ['type' => $type->type])
+            : redirect()->route(LaravelAdminPackageServiceProvider::adminRoutePrefix().'dashboard');
+    }
+
     /**
      * Show the Posts crud form.
      */
@@ -124,6 +169,25 @@ class PostController extends AdminController
 
         return redirect()->route($routePrefix.'posts.type.list', ['type' => $postType->type])
             ->with('message', __('Post updated successfully!'));
+    }
+
+    public function destroy(Post $post): RedirectResponse
+    {
+        // Binding uses the numeric ID and excludes posts that are already soft deleted.
+        $type = $post->type;
+        $redirect = $type
+            ? redirect()->route(LaravelAdminPackageServiceProvider::adminRoutePrefix().'posts.type.list', ['type' => $type->type])
+            : redirect()->route(LaravelAdminPackageServiceProvider::adminRoutePrefix().'dashboard');
+
+        try {
+            $this->postService->deletePost((int) $post->getKey());
+        } catch (Throwable $e) {
+            Log::error('Post deletion failed.', ['exception' => $e]);
+
+            return $redirect->withErrors(['post' => __('The post could not be deleted. Please try again.')]);
+        }
+
+        return $redirect->with('message', __('Post deleted successfully!'));
     }
 
     public function ajaxChangeStatus(Request $request): JsonResponse

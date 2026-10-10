@@ -18,7 +18,51 @@ class PostRepository implements PostRepositoryInterface
 
     public function deletePost($postId): void
     {
-        Post::destroy($postId);
+        DB::transaction(function () use ($postId) {
+            $post = Post::whereKey($postId)->lockForUpdate()->firstOrFail();
+
+            // Keep the post and its translations recoverable and hide both from normal queries.
+            foreach ($post->translations()->get() as $translation) {
+                if ($translation->delete() === false) {
+                    throw new \RuntimeException(__('Post translation deletion was cancelled.'));
+                }
+            }
+
+            if ($post->delete() === false) {
+                throw new \RuntimeException(__('Post deletion was cancelled.'));
+            }
+        });
+    }
+
+    public function recoverPost(int $postId): void
+    {
+        DB::transaction(function () use ($postId) {
+            $post = Post::onlyTrashed()->whereKey($postId)->lockForUpdate()->firstOrFail();
+            foreach ($post->translations()->onlyTrashed()->get() as $translation) {
+                if ($translation->restore() === false) {
+                    throw new \RuntimeException(__('Post translation recovery was cancelled.'));
+                }
+            }
+            if ($post->restore() === false) {
+                throw new \RuntimeException(__('Post recovery was cancelled.'));
+            }
+        });
+    }
+
+    public function forceDeletePost(int $postId): void
+    {
+        DB::transaction(function () use ($postId) {
+            $post = Post::onlyTrashed()->whereKey($postId)->lockForUpdate()->firstOrFail();
+            foreach ($post->translations()->withTrashed()->get() as $translation) {
+                if ($translation->forceDelete() === false) {
+                    throw new \RuntimeException(__('Post translation destruction was cancelled.'));
+                }
+            }
+            // The database also cascades deletion to child posts and their translations.
+            if ($post->forceDelete() === false) {
+                throw new \RuntimeException(__('Post destruction was cancelled.'));
+            }
+        });
     }
 
     /**
@@ -84,7 +128,7 @@ class PostRepository implements PostRepositoryInterface
     {
         $maximum = (int) Post::where('type_id', $typeId)->max('sort_order');
         if ($maximum >= 4294967295) {
-            throw new \OverflowException('No sort positions remain for this post type.');
+            throw new \OverflowException(__('No sort positions remain for this post type.'));
         }
 
         return $maximum + 1;
