@@ -1,0 +1,36 @@
+.crud-busy:not(tr) {
+    position: relative;
+}
+.crud-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, .85);
+    border-radius: inherit;
+    cursor: wait;
+    // Keep blocking pointer interactions before the visible overlay appears.
+    color: transparent;
+    background: transparent;
+    .crud-status { visibility: hidden; }
+}
+.crud-busy-revealed > .crud-overlay {
+    color: var(--cui-body-color, #212529);
+    background: rgba(255, 255, 255, .85);
+    .crud-status { visibility: visible; }
+}
+tr.crud-busy > td {
+    position: relative;
+    pointer-events: none;
+}
+tr.crud-busy-revealed > td::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, .3);
+    pointer-events: none;
+}
+.crud-status { font-size: .875rem; }
+.form-check > .crud-status { margin-inline-start: .5rem; }

@@ -2,10 +2,6 @@
   background-image: url("sprites/free.svg")
 }
 
-.toast{
-  position: absolute; top: 0; right: 0;
-  margin:20px;
-}
 
 [id^="excerpt_"] {
   height:7.5rem!important;
@@ -41,4 +37,17 @@
 .table-striped > tbody > tr > td.title,
 .table-striped > tbody > tr > td.slug{
   width:20%;
+}
+// Keep flash and AJAX notifications in one viewport-sized stack.
+.crud-notifications {
+  width: min(382px, 100%);
+  max-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 1090;
+
+  > .toast {
+    width: 100%;
+    overflow-wrap: anywhere;
+  }
 }
