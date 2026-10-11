@@ -10,7 +10,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">{{ __('Cancel') }}</button>
-                <form method="POST" action="{{ route($adminRoutePrefix.'posts.destroy', ['post' => $post]) }}">
+                <form data-crud-form data-loading-region=".modal-content" data-loading-text="{{ __('Deleting…') }}" method="POST" action="{{ route($adminRoutePrefix.'posts.destroy', ['post' => $post]) }}">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-success">{{ __('Confirm delete') }}</button>

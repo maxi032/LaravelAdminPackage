@@ -4,7 +4,7 @@
 @endphp
 
 @if($successMessage || $notificationErrors->any())
-    <div class="toast-container position-fixed top-0 end-0 p-3" aria-live="polite" aria-atomic="true" style="z-index: 1090;">
+    <div data-crud-notifications class="toast-container crud-notifications position-fixed top-0 end-0 p-3" aria-live="polite" aria-atomic="true" style="z-index: 1090;">
         @if($successMessage)
             <div class="toast position-static m-0 mb-2 text-white bg-success" role="status" data-save-notification data-coreui-autohide="true" data-coreui-delay="5000">
                 <div class="toast-header text-white bg-success">

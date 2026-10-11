@@ -34,7 +34,7 @@
                                         <td>{{ $category->translations->first()?->title ?? __('Translation unavailable') }}</td>
                                         <td>{{ $category->translations->first()?->slug ?? '—' }}</td>
                                         <td>
-                                            <form method="POST" action="{{ route($adminRoutePrefix.'categories.change_status', $category) }}">
+                                            <form data-crud-form data-loading-region="tr" data-loading-text="{{ __('Updating…') }}" method="POST" action="{{ route($adminRoutePrefix.'categories.change_status', $category) }}">
                                                 @csrf
                                                 <input type="hidden" name="status" value="0">
                                                 <div class="form-check form-switch form-switch-lg">

@@ -128,5 +128,13 @@
     "Translation unavailable": "Translation unavailable",
     "Active": "Active",
     "Inactive": "Inactive",
-    "No categories found for this post type.": "No categories found for this post type."
+    "No categories found for this post type.": "No categories found for this post type.",
+    "Save": "Save",
+    "Save changes": "Save changes",
+    "Saving…": "Saving…",
+    "Updating…": "Updating…",
+    "Deleting…": "Deleting…",
+    "Recovering…": "Recovering…",
+    "Deleting permanently…": "Deleting permanently…",
+    "The status could not be updated. Please try again.": "The status could not be updated. Please try again."
 }

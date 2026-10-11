@@ -128,5 +128,13 @@
     "Translation unavailable": "Vertaling niet beschikbaar",
     "Active": "Actief",
     "Inactive": "Inactief",
-    "No categories found for this post type.": "Geen categorieën gevonden voor dit berichttype."
+    "No categories found for this post type.": "Geen categorieën gevonden voor dit berichttype.",
+    "Save": "Opslaan",
+    "Save changes": "Wijzigingen opslaan",
+    "Saving…": "Opslaan…",
+    "Updating…": "Bijwerken…",
+    "Deleting…": "Verwijderen…",
+    "Recovering…": "Herstellen…",
+    "Deleting permanently…": "Definitief verwijderen…",
+    "The status could not be updated. Please try again.": "De status kon niet worden bijgewerkt. Probeer het opnieuw."
 }

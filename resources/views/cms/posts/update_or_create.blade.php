@@ -18,6 +18,8 @@
                 <form id="updateOrCreateForm" class="validationForm" enctype="multipart/form-data"
                       action="{{ Str::endsWith(Route::currentRouteName(), '.create') ? route($adminRoutePrefix.'posts.store') : route($adminRoutePrefix.'posts.update', $post) }}"
                       method="POST" novalidate
+                      data-crud-form data-loading-region=".card"
+                      data-loading-text="{{ $post ? __('Updating…') : __('Saving…') }}"
                 >
                     @if(Str::endsWith(Route::currentRouteName(), '.edit'))
                         @method('PUT')
@@ -26,7 +28,7 @@
                 <div class="card mb-4">
                     <div class="card-header "><span class="card-header-text-lh">{{ __('Add post') }}</span>
                         <button type="submit" id="saveButton" class="btn btn-primary float-end">
-                            {{ __('Send') }}
+                            {{ $post ? __('Save changes') : __('Save') }}
                         </button>
                     </div>
 
@@ -68,7 +70,7 @@
         for (var i = 0; i < allEditors.length; ++i) {
             ClassicEditor.create(allEditors[i], {
                 removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed'],
-            });
+            }).then(editor => { editor.sourceElement.cmsEditor = editor; });
         }
     </script>
 @endpush

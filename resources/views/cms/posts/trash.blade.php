@@ -29,7 +29,7 @@
                                     <td>{{ $translation?->slug ?? __('Translation unavailable') }}</td>
                                     <td>{{ $post->deleted_at->format('d-m-Y H:i') }}</td>
                                     <td>
-                                        <form class="d-inline" method="POST" action="{{ route($adminRoutePrefix.'posts.recover', ['post' => $post]) }}">
+                                        <form data-crud-form data-loading-region="tr" data-loading-text="{{ __('Recovering…') }}" class="d-inline" method="POST" action="{{ route($adminRoutePrefix.'posts.recover', ['post' => $post]) }}">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-success">{{ __('Recover') }}</button>
                                         </form>
