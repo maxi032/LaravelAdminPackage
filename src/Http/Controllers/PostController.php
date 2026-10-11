@@ -90,13 +90,15 @@ class PostController extends AdminController
      */
     public function create(string $type = null): Renderable
     {
+        $locale = app()->getLocale();
         $postTypes = $this->postService->getPostTypesForDropdown();
-        $categories = $this->postService->getCategoriesForDropdown();
         $selectedTypeId = null;
         if ($type !== null) {
             $selectedTypeId = array_search($type, $postTypes, true);
             abort_if($selectedTypeId === false, 404);
         }
+
+        $categories = $this->postService->getCategoriesForDropdown($locale, $selectedTypeId);
 
         return $this->packageView('cms.posts.update_or_create', [
             'postTypes' => $postTypes,
@@ -108,9 +110,11 @@ class PostController extends AdminController
 
     public function edit(Post $post): View
     {
+        $locale = app()->getLocale();
         // Route model binding will throw 404 automatically if $post is not found
         $postTypes = $this->postService->getPostTypesForDropdown();
-        $categories = $this->postService->getCategoriesForDropdown();
+
+        $categories = $this->postService->getCategoriesForDropdown($locale, $post->type_id);
 
         return $this->packageView('cms.posts.update_or_create', [
             'postTypes' => $postTypes,

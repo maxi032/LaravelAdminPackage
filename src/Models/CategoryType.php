@@ -21,6 +21,11 @@ class CategoryType extends Model
         'status'
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return 'type';
+    }
+
     public function categories(): HasMany
     {
         return $this->hasMany(Category::class, 'type_id');

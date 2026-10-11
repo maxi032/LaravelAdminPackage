@@ -67,10 +67,11 @@ class PostService
 
     /**
      * @param $lang
+     * @param int|null $postTypeId
      * @return mixed
      */
-    public function getCategoriesForDropdown($lang=null)
+    public function getCategoriesForDropdown($lang = null, ?int $postTypeId = null)
     {
-        return $this->categoryRepository->getCategoriesForDropdown($lang);
+        return $this->categoryRepository->getCategoriesForDropdown($lang, $postTypeId);
     }
 }

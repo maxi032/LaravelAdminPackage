@@ -22,7 +22,10 @@ class CategoryTranslation extends Model
         'excerpt',
         'language',
         'slug',
-        'title'
+        'title',
+        'meta_title',
+        'meta_keywords',
+        'meta_description',
     ];
 
     /**

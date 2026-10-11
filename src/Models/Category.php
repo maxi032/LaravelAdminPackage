@@ -21,7 +21,8 @@ class Category extends Model
     protected $fillable = [
         'parent_id',
         'type_id',
-        'status'
+        'status',
+        'sort_order',
     ];
 
     /**

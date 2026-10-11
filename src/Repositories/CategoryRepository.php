@@ -2,8 +2,12 @@
 
 namespace Maxi032\LaravelAdminPackage\Repositories;
 
-use Illuminate\Support\Facades\Cache;
-use JetBrains\PhpStorm\NoReturn;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Maxi032\LaravelAdminPackage\Models\CategoryType;
+use Maxi032\LaravelAdminPackage\Models\PostType;
+use Throwable;
 use Maxi032\LaravelAdminPackage\Models\Category;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
 
@@ -16,7 +20,154 @@ class CategoryRepository implements CategoryRepositoryInterface
 
     public function deleteCategory($categoryId): void
     {
-        Category::destroy($categoryId);
+        DB::transaction(function () use ($categoryId) {
+            $category = Category::whereKey($categoryId)->lockForUpdate()->firstOrFail();
+
+            // Keep the category and its translations recoverable and hide both from normal queries.
+            foreach ($category->translations()->get() as $translation) {
+                if ($translation->delete() === false) {
+                    throw new \RuntimeException(__('Category translation deletion was cancelled.'));
+                }
+            }
+
+            if ($category->delete() === false) {
+                throw new \RuntimeException(__('Category deletion was cancelled.'));
+            }
+        });
+    }
+
+    public function recoverCategory(int $categoryId): void
+    {
+        DB::transaction(function () use ($categoryId) {
+            $category = Category::onlyTrashed()->whereKey($categoryId)->lockForUpdate()->firstOrFail();
+            foreach ($category->translations()->onlyTrashed()->get() as $translation) {
+                if ($translation->restore() === false) {
+                    throw new \RuntimeException(__('Category translation recovery was cancelled.'));
+                }
+            }
+            if ($category->restore() === false) {
+                throw new \RuntimeException(__('Category recovery was cancelled.'));
+            }
+        });
+    }
+
+    public function forceDeleteCategory(int $categoryId): void
+    {
+        DB::transaction(function () use ($categoryId) {
+            $category = Category::onlyTrashed()->whereKey($categoryId)->lockForUpdate()->firstOrFail();
+            if ($category->post()->withTrashed()->exists()) {
+                throw new \DomainException(__('A category with attached posts cannot be destroyed.'));
+            }
+            foreach ($category->translations()->withTrashed()->get() as $translation) {
+                if ($translation->forceDelete() === false) {
+                    throw new \RuntimeException(__('Category translation destruction was cancelled.'));
+                }
+            }
+            // The database also cascades deletion to child categories and their translations.
+            if ($category->forceDelete() === false) {
+                throw new \RuntimeException(__('Category destruction was cancelled.'));
+            }
+        });
+    }
+
+    /**
+     * @param array $dataArr
+     * @return Category
+     * @throws Throwable
+     */
+    public function createCategoryWithTranslations(array $dataArr): Category
+    {
+        return DB::transaction(function () use ($dataArr) {
+            $this->lockCategoryType((int) $dataArr['type_id']);
+
+            $category = Category::create([
+                'type_id'     => $dataArr['type_id'],
+                'status'      => (int) $dataArr['status'],
+                'sort_order'  => $dataArr['sort_order']
+                    ?? $this->nextSortOrder((int) $dataArr['type_id']),
+            ]);
+            if (!$category->exists) {
+                throw new \RuntimeException(__('The category could not be saved. Please try again.'));
+            }
+
+            $this->saveTranslations($category, $dataArr['translations']);
+
+            return $category;
+        });
+    }
+
+    /**
+     * @param Category $category
+     * @param array $dataArr
+     * @return Category
+     * @throws Throwable
+     */
+    public function updateCategoryWithTranslations(Category $category, array $dataArr): Category
+    {
+        return DB::transaction(function () use ($category, $dataArr) {
+            $typeId = (int) $dataArr['type_id'];
+            $this->lockCategoryType($typeId);
+            $category = Category::whereKey($category->getKey())->lockForUpdate()->firstOrFail();
+            $sortOrder = $dataArr['sort_order'] ?? (
+                (int) $category->type_id === $typeId
+                    ? $category->sort_order
+                    : $this->nextSortOrder($typeId)
+            );
+            $saved = $category->fill([
+                'type_id' => $dataArr['type_id'],
+                'status' => (int) $dataArr['status'],
+                'sort_order' => $sortOrder,
+            ])->save();
+            if ($saved === false) {
+                throw new \RuntimeException(__('The category could not be saved. Please try again.'));
+            }
+            $this->saveTranslations($category, $dataArr['translations']);
+
+            return $category;
+        });
+    }
+
+    private function lockCategoryType(int $typeId): void
+    {
+        // Serialize position assignment for this type, including an empty list.
+        CategoryType::whereKey($typeId)->lockForUpdate()->firstOrFail();
+    }
+
+    private function nextSortOrder(int $typeId): int
+    {
+        $maximum = (int) Category::where('type_id', $typeId)->max('sort_order');
+        if ($maximum >= 4294967295) {
+            throw new \OverflowException(__('No sort positions remain for this category type.'));
+        }
+
+        return $maximum + 1;
+    }
+
+    private function saveTranslations(Category $category, array $translations): void
+    {
+        $translations = Arr::only($translations, [
+            'title', 'slug', 'content', 'excerpt',
+            'meta_title', 'meta_keywords', 'meta_description',
+        ]);
+
+        foreach (config('laravel-admin-package.allowed_languages', []) as $language) {
+            $code = $language['code'];
+            $attributes = [];
+            foreach ($translations as $field => $values) {
+                // Preserve omitted fields; an explicit null clears an optional value.
+                if (array_key_exists($code, $values)) {
+                    $attributes[$field] = $values[$code];
+                }
+            }
+
+            $translation = $category->translations()->withTrashed()->firstOrNew(['language' => $code]);
+            if ($translation->fill($attributes)->save() === false) {
+                throw new \RuntimeException(__('The category could not be saved. Please try again.'));
+            }
+            if ($translation->trashed() && $translation->restore() === false) {
+                throw new \RuntimeException(__('Category translation recovery was cancelled.'));
+            }
+        }
     }
 
     public function createCategory(array $categoryAttributes)
@@ -44,16 +195,42 @@ class CategoryRepository implements CategoryRepositoryInterface
         return Category::ByType($categoryType);
     }
 
-    public function getCategoriesForDropdown($lang=null)
+    public function getCategoriesForDropdown($lang = null, ?int $postTypeId = null)
     {
-        return Cache::remember('CategoriesForDropdown', 600, function () use ($lang) {
-            return Category::with(['translations' => function ($query) use ($lang) {
-                if ($lang) {
-                    $query->where('language', $lang);
-                } else {
-                    $query->where('language', app()->getLocale());
-                }
-            }])->get();
+        // Query fresh data so category changes are immediately available to post forms.
+        $query = Category::with(['translations' => fn ($query) => $query->where('language', $lang ?? app()->getLocale())]);
+        if ($postTypeId !== null) {
+            // Post types and category types have independent IDs; match their names.
+            $query->whereHas('type', fn ($types) => $types->whereIn(
+                'type', PostType::whereKey($postTypeId)->select('type')
+            ));
+        }
+
+        return $query->get();
+    }
+
+    public function getCategoryOverview(string $type, bool $trashed = false): LengthAwarePaginator
+    {
+        $query = Category::byType($type);
+        if ($trashed) {
+            $query->onlyTrashed();
+        }
+        return $query->with(['translations' => function ($query) use ($trashed) {
+            if ($trashed) {
+                $query->withTrashed();
+            }
+            $query->where('language', app()->getLocale());
+        }])->orderBy('sort_order')->orderBy('id')->paginate(20);
+    }
+
+    public function changeCategoryStatus(int $categoryId, bool $status): void
+    {
+        DB::transaction(function () use ($categoryId, $status) {
+            $category = Category::whereKey($categoryId)->lockForUpdate()->firstOrFail();
+            $category->status = $status;
+            if ($category->save() === false) {
+                throw new \RuntimeException(__('Category status change was cancelled.'));
+            }
         });
     }
 }

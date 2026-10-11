@@ -2,6 +2,9 @@
 
 namespace Maxi032\LaravelAdminPackage\Repositories\Interfaces;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Maxi032\LaravelAdminPackage\Models\Category;
+
 interface CategoryRepositoryInterface
 {
     public function getCategoryById(int $categoryId);
@@ -18,5 +21,17 @@ interface CategoryRepositoryInterface
 
     public function getActiveCategoriesOfType(string $type);
 
-    public function getCategoriesForDropdown($lang=null);
+    public function getCategoriesForDropdown($lang = null, ?int $postTypeId = null);
+
+    public function getCategoryOverview(string $type, bool $trashed = false): LengthAwarePaginator;
+
+    public function createCategoryWithTranslations(array $data): Category;
+
+    public function updateCategoryWithTranslations(Category $category, array $data): Category;
+
+    public function recoverCategory(int $categoryId): void;
+
+    public function forceDeleteCategory(int $categoryId): void;
+
+    public function changeCategoryStatus(int $categoryId, bool $status): void;
 }

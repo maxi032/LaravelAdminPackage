@@ -8,7 +8,9 @@ use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterf
 use Maxi032\LaravelAdminPackage\Repositories\PostRepository;
 use Maxi032\LaravelAdminPackage\Repositories\PostTypeRepository;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryTypeRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Repositories\CategoryRepository;
+use Maxi032\LaravelAdminPackage\Repositories\CategoryTypeRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -20,6 +22,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(PostRepositoryInterface::class, PostRepository::class);
         $this->app->bind(PostTypeRepositoryInterface::class, PostTypeRepository::class);
         $this->app->bind(CategoryRepositoryInterface::class, CategoryRepository::class);
+        $this->app->bind(CategoryTypeRepositoryInterface::class, CategoryTypeRepository::class);
     }
 
     /**
