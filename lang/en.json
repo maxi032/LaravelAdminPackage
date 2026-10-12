@@ -136,5 +136,8 @@
     "Deleting…": "Deleting…",
     "Recovering…": "Recovering…",
     "Deleting permanently…": "Deleting permanently…",
-    "The status could not be updated. Please try again.": "The status could not be updated. Please try again."
+    "The status could not be updated. Please try again.": "The status could not be updated. Please try again.",
+    "Loading…": "Loading…",
+    "The overview could not be loaded. Please try again.": "The overview could not be loaded. Please try again.",
+    "Retry": "Retry"
 }

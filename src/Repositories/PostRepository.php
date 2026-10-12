@@ -2,6 +2,7 @@
 
 namespace Maxi032\LaravelAdminPackage\Repositories;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Maxi032\LaravelAdminPackage\Models\Post;
 use Maxi032\LaravelAdminPackage\Models\PostType;
@@ -11,6 +12,28 @@ use Throwable;
 
 class PostRepository implements PostRepositoryInterface
 {
+    public function getPostOverview(string $type, bool $trashed = false): LengthAwarePaginator
+    {
+        $query = Post::byType($type);
+        if ($trashed) {
+            $query->onlyTrashed();
+            $query->orderByDesc('deleted_at')->orderByDesc('id');
+        } else {
+            $query->orderBy('sort_order')->orderBy('id');
+        }
+
+        if ($type === 'products' && !$trashed) {
+            $query->with(['category.translations' => fn ($translations) => $translations->where('language', app()->getLocale())]);
+        }
+
+        return $query->with(['translations' => function ($translations) use ($trashed) {
+            if ($trashed) {
+                $translations->withTrashed();
+            }
+            $translations->where('language', app()->getLocale());
+        }])->paginate(20);
+    }
+
     public function getPostById($postId)
     {
         return Post::findOrFail($postId);

@@ -136,5 +136,8 @@
     "Deleting…": "Verwijderen…",
     "Recovering…": "Herstellen…",
     "Deleting permanently…": "Definitief verwijderen…",
-    "The status could not be updated. Please try again.": "De status kon niet worden bijgewerkt. Probeer het opnieuw."
+    "The status could not be updated. Please try again.": "De status kon niet worden bijgewerkt. Probeer het opnieuw.",
+    "Loading…": "Laden…",
+    "The overview could not be loaded. Please try again.": "Het overzicht kon niet worden geladen. Probeer het opnieuw.",
+    "Retry": "Opnieuw proberen"
 }

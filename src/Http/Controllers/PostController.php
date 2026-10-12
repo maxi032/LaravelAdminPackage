@@ -26,27 +26,24 @@ class PostController extends AdminController
     /**
      * Show a list of the resource of a certain type
      */
-    public function list(PostType $type): Renderable
+    public function list(PostType $type): Renderable|JsonResponse
     {
         // Route model binding will throw 404 automatically it $type is not found
-        $type->load(['posts.translations']);
-        $posts = $type->posts;
+        $posts = $this->postService->getPostOverview($type->type);
 
-        return $this->packageView('cms.posts.index', [
+        return $this->overviewView('cms.posts.partials.index', [
             'posts' => $posts,
             'postType' => $type,
             'inactiveStatus' => PostStatusEnum::DRAFT,
             'activeStatus' => PostStatusEnum::PENDING,
-        ]);
+        ], 'posts');
     }
 
-    public function trash(PostType $type): Renderable
+    public function trash(PostType $type): Renderable|JsonResponse
     {
-        $posts = $type->posts()->onlyTrashed()
-            ->with(['translations' => fn ($query) => $query->withTrashed()])
-            ->orderByDesc('deleted_at')->orderByDesc('id')->get();
+        $posts = $this->postService->getPostOverview($type->type, true);
 
-        return $this->packageView('cms.posts.trash', ['posts' => $posts, 'postType' => $type]);
+        return $this->overviewView('cms.posts.partials.trash', ['posts' => $posts, 'postType' => $type], 'posts');
     }
 
     public function recover(Post $post): RedirectResponse

@@ -1,6 +1,7 @@
 <?php
 namespace Maxi032\LaravelAdminPackage\Services;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Maxi032\LaravelAdminPackage\Models\Post;
 
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
@@ -16,6 +17,11 @@ class PostService
     )
     {
 
+    }
+
+    public function getPostOverview(string $type, bool $trashed = false): LengthAwarePaginator
+    {
+        return $this->postRepository->getPostOverview($type, $trashed);
     }
 
 

@@ -80,6 +80,7 @@ class LaravelAdminPackageServiceProvider extends ServiceProvider
         // Publish seeders
         $this->publishes([
             __DIR__.'/../database/seeders' => database_path('seeders'),
+            __DIR__.'/../database/factories' => database_path('factories'),
         ], 'maxi032-'.self::getAdmPackageName().'-seeders');
 
         // Publish the configuration file

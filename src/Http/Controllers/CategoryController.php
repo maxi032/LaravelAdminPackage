@@ -2,6 +2,7 @@
 
 namespace Maxi032\LaravelAdminPackage\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -22,21 +23,21 @@ class CategoryController extends AdminController
     {
     }
 
-    public function list(CategoryType $type): View
+    public function list(CategoryType $type): View|JsonResponse
     {
-        return $this->packageView('cms.categories.index', [
+        return $this->overviewView('cms.categories.partials.index', [
             'categoryType' => $type,
             'categories' => $this->categoryService->getCategoryOverview($type->type),
             'hasPostType' => PostType::where('type', $type->type)->exists(),
-        ]);
+        ], 'categories');
     }
 
-    public function trash(CategoryType $type): View
+    public function trash(CategoryType $type): View|JsonResponse
     {
-        return $this->packageView('cms.categories.trash', [
+        return $this->overviewView('cms.categories.partials.trash', [
             'categoryType' => $type,
             'categories' => $this->categoryService->getCategoryOverview($type->type, true),
-        ]);
+        ], 'categories');
     }
 
     public function recover(Category $category): RedirectResponse

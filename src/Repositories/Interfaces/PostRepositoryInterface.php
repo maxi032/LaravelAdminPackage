@@ -2,10 +2,13 @@
 
 namespace Maxi032\LaravelAdminPackage\Repositories\Interfaces;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Maxi032\LaravelAdminPackage\Models\Post;
 
 interface PostRepositoryInterface
 {
+    public function getPostOverview(string $type, bool $trashed = false): LengthAwarePaginator;
+
     public function getPostById(int $postId);
 
     public function getPostsOfType(string $postType);
