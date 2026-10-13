@@ -31,7 +31,7 @@ class PostRepository implements PostRepositoryInterface
                 $translations->withTrashed();
             }
             $translations->where('language', app()->getLocale());
-        }])->paginate(20);
+        }])->paginate(10);
     }
 
     public function getPostById($postId)
