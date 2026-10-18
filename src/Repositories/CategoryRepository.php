@@ -18,6 +18,16 @@ class CategoryRepository implements CategoryRepositoryInterface
         return Category::findOrFail($categoryId);
     }
 
+    public function categoryMatchesPostType(int $categoryId, int $postTypeId): bool
+    {
+        // The two type tables have independent IDs; their names define compatibility.
+        return Category::whereKey($categoryId)
+            ->whereHas('type', fn ($types) => $types->whereIn(
+                'type', PostType::whereKey($postTypeId)->select('type')
+            ))
+            ->exists();
+    }
+
     public function deleteCategory($categoryId): void
     {
         DB::transaction(function () use ($categoryId) {

@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Rules\CategoryMatchesPostType;
 
 class PostRequest extends FormRequest
 {
@@ -76,7 +78,9 @@ class PostRequest extends FormRequest
         $languages = array_column(config('laravel-admin-package.allowed_languages', []), 'code');
         $rules = [
             'type_id' => ['required', 'integer', Rule::exists('post_types', 'id')->whereNull('deleted_at')],
-            'category_id' => ['required', 'integer', Rule::exists('categories', 'id')->whereNull('deleted_at')],
+            'category_id' => ['bail', 'required', 'integer', new CategoryMatchesPostType(
+                $this->input('type_id'), app(CategoryRepositoryInterface::class)
+            )],
             'status' => ['required', 'boolean'],
             'sort_order' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:4294967295'],
             'translations' => ['required', 'array:'.implode(',', self::TRANSLATION_FIELDS)],

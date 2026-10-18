@@ -9,6 +9,8 @@ interface CategoryRepositoryInterface
 {
     public function getCategoryById(int $categoryId);
 
+    public function categoryMatchesPostType(int $categoryId, int $postTypeId): bool;
+
     public function getCategoryOfType(string $categoryType);
 
     public function deleteCategory($categoryId);
