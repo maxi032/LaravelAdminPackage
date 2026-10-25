@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Log;
 use Maxi032\LaravelAdminPackage\LaravelAdminPackageServiceProvider;
 use Maxi032\LaravelAdminPackage\Models\Category;
 use Maxi032\LaravelAdminPackage\Models\CategoryType;
-use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryTypeRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Requests\CategoryRequest;
 use Maxi032\LaravelAdminPackage\Services\CategoryService;
@@ -28,7 +27,7 @@ class CategoryController extends AdminController
         return $this->overviewView('cms.categories.partials.index', [
             'categoryType' => $type,
             'categories' => $this->categoryService->getCategoryOverview($type->type),
-            'hasPostType' => PostType::where('type', $type->type)->exists(),
+            'hasPostType' => $this->categoryService->hasPostType($type->type),
         ], 'categories');
     }
 

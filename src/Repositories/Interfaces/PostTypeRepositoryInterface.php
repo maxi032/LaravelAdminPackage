@@ -7,6 +7,8 @@ use Maxi032\LaravelAdminPackage\Models\PostType;
 
 interface PostTypeRepositoryInterface
 {
+    public function existsByType(string $type): bool;
+
     public function getPostTypesForDropdown();
 
     /**

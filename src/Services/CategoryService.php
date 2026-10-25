@@ -7,18 +7,29 @@ use Maxi032\LaravelAdminPackage\Models\Category;
 use Maxi032\LaravelAdminPackage\Models\CategoryType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryTypeRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
 
 class CategoryService
 {
     public function __construct(
         private readonly CategoryRepositoryInterface $categoryRepository,
         private readonly CategoryTypeRepositoryInterface $categoryTypeRepository,
+        private readonly PostTypeRepositoryInterface $postTypeRepository,
     ) {
     }
 
     public function getCategoryOverview(string $type, bool $trashed = false): LengthAwarePaginator
     {
         return $this->categoryRepository->getCategoryOverview($type, $trashed);
+    }
+
+    /**
+     * Check whether a non-deleted post type matches the category type's name.
+     * The category overview uses this to decide whether to show "View posts".
+     */
+    public function hasPostType(string $type): bool
+    {
+        return $this->postTypeRepository->existsByType($type);
     }
 
     public function getCategoryTypesForDropdown(): array

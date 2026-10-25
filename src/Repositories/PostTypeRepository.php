@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class PostTypeRepository implements PostTypeRepositoryInterface
 {
+    public function existsByType(string $type): bool
+    {
+        return PostType::where('type', $type)->exists();
+    }
+
     /**
      * @return array
      */
