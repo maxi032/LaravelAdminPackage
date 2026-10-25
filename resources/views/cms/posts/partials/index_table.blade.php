@@ -29,21 +29,20 @@
                                         <td class="category">{{ $post->category ? ($post->category->translations->first()?->title ?? __('Translation unavailable')) : '—' }}</td>
                                     @endif
                                     <td class="excerpt">{{ $excerpt }}</td>
-                                    @if(in_array($post->status,[$inactiveStatus, $activeStatus]))
-                                        <td></td>
-                                    @else
-                                        <td>
-                                            <div class="form-check form-switch form-switch-lg">
-                                                <input class="form-check-input" type="checkbox" data-status-toggle
-                                                       data-status-url="{{ route($adminRoutePrefix.'posts.ajax_change_status') }}"
-                                                       data-loading-text="{{ __('Updating…') }}"
-                                                       data-error-text="{{ __('The status could not be updated. Please try again.') }}"
-                                                       aria-label="{{ __('Status') }}" data-id="{{ $post->id }}" id="statusSwitch{{ $post->id }}"
-                                                       @if($post->status == 1) checked @endif>
-                                                <label class="form-check-label" for="statusSwitch{{ $post->id }}"></label>
-                                            </div>
-                                        </td>
-                                    @endif
+                                    <td>
+                                        @php($statusLabel = __(ucfirst(strtolower(\Maxi032\LaravelAdminPackage\Enums\PostStatusEnum::from((int) $post->status)->name))))
+                                        <div class="form-check form-switch form-switch-lg">
+                                            <input class="form-check-input post-status-toggle" type="checkbox" data-status-toggle
+                                                   data-post-status="{{ $post->status }}"
+                                                   data-active-label="{{ __('Active') }}" data-inactive-label="{{ __('Inactive') }}"
+                                                   data-status-url="{{ route($adminRoutePrefix.'posts.ajax_change_status') }}"
+                                                   data-loading-text="{{ __('Updating…') }}"
+                                                   data-error-text="{{ __('The status could not be updated. Please try again.') }}"
+                                                   aria-label="{{ __('Status') }}: {{ $statusLabel }}" data-id="{{ $post->id }}" id="statusSwitch{{ $post->id }}"
+                                                   @checked((int) $post->status === 1)>
+                                            <label class="form-check-label" for="statusSwitch{{ $post->id }}">{{ $statusLabel }}</label>
+                                        </div>
+                                    </td>
                                     <td>{{ \Carbon\Carbon::parse($post->created_at)->format('d-m-Y') }}</td>
                                     <td>
                                         <a role="button" class="btn btn-sm btn-primary" href="{{ route($adminRoutePrefix.'posts.edit',['post'=>$post]) }}"><span class="cil-notes"></span> {{ __('Edit') }}</a>

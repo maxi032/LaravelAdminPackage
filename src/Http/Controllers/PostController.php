@@ -8,7 +8,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
-use Maxi032\LaravelAdminPackage\Enums\PostStatusEnum;
 use Maxi032\LaravelAdminPackage\LaravelAdminPackageServiceProvider;
 use Maxi032\LaravelAdminPackage\Models\Post;
 use Maxi032\LaravelAdminPackage\Models\PostType;
@@ -35,8 +34,6 @@ class PostController extends AdminController
         return $this->overviewView('cms.posts.partials.index', [
             'posts' => $posts,
             'postType' => $type,
-            'inactiveStatus' => PostStatusEnum::DRAFT,
-            'activeStatus' => PostStatusEnum::PENDING,
         ], 'posts');
     }
 

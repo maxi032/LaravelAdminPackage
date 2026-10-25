@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Maxi032\LaravelAdminPackage\Enums\PostStatusEnum;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Rules\CategoryMatchesPostType;
 
@@ -23,13 +24,7 @@ class PostRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $status = match ($this->input('status', false)) {
-            true, 1, '1', 'on' => true,
-            false, 0, '0' => false,
-            default => $this->input('status'),
-        };
-
-        $data = ['status' => $status];
+        $data = [];
         if ($this->input('sort_order') === '') {
             $data['sort_order'] = null;
         }
@@ -81,7 +76,7 @@ class PostRequest extends FormRequest
             'category_id' => ['bail', 'required', 'integer', new CategoryMatchesPostType(
                 $this->input('type_id'), app(CategoryRepositoryInterface::class)
             )],
-            'status' => ['required', 'boolean'],
+            'status' => ['bail', 'required', 'integer', Rule::enum(PostStatusEnum::class)],
             'sort_order' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:4294967295'],
             'translations' => ['required', 'array:'.implode(',', self::TRANSLATION_FIELDS)],
         ];

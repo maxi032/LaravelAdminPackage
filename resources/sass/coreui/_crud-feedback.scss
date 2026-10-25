@@ -34,3 +34,17 @@ tr.crud-busy-revealed > td::after {
 }
 .crud-status { font-size: .875rem; }
 .form-check > .crud-status { margin-inline-start: .5rem; }
+
+// Keep every post status visible, including when the switch is unchecked.
+.post-status-toggle {
+    &[data-post-status="1"] { --post-status-color: #198754; }
+    &[data-post-status="0"] { --post-status-color: #dc3545; }
+    &[data-post-status="2"] { --post-status-color: #ffc107; }
+    &[data-post-status="3"] { --post-status-color: #0dcaf0; }
+    &[data-post-status="-1"] { --post-status-color: #6c757d; }
+    &, &:checked {
+        background-color: var(--post-status-color);
+        border-color: var(--post-status-color);
+    }
+    &:focus { box-shadow: 0 0 0 .25rem color-mix(in srgb, var(--post-status-color) 25%, transparent); }
+}

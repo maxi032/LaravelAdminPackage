@@ -1,14 +1,18 @@
 <div class="tab-pane fade {{ ($activeTab ?? 'main') === $tab ? 'show active' : '' }}" id="nav-{{$tab}}" role="tabpanel"
      aria-labelledby="nav-{{$tab}}-tab" tabindex="0">
     <div class="row g-3 pt-4">
-        <div class="col-12">
-            @php
-                $checked = filter_var(old('status', $post?->status == 1), FILTER_VALIDATE_BOOLEAN)
-            @endphp
-            <div class="form-check form-switch form-switch-xl d-flex align-items-center gap-2 ps-0 mb-0">
-                <label class="form-check-label pt-0" for="status">{{ __('Status') }}</label>
-                <input class="form-check-input float-none ms-0 mt-0" type="checkbox" name="status" id="status" {{ $checked ? 'checked' : '' }}>
-            </div>
+        <div class="col-6">
+            <label class="form-label" for="status">{{ __('Status') }}</label>
+            <select name="status" id="status" class="w-50 form-select @error('status') is-invalid @enderror" required
+                    @error('status') aria-invalid="true" aria-describedby="status_error" @enderror>
+                <option value="" @selected((string) old('status', $post?->status) === '')>{{ __('Please select') }}</option>
+                @foreach (\Maxi032\LaravelAdminPackage\Enums\PostStatusEnum::cases() as $status)
+                    <option value="{{ $status->value }}" @selected((string) old('status', $post?->status) === (string) $status->value)>{{ __(ucfirst(strtolower($status->name))) }}</option>
+                @endforeach
+            </select>
+            @error('status')
+                <span id="status_error" class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+            @enderror
         </div>
 
         <div class="col-md-6">

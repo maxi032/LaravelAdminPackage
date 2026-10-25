@@ -132,7 +132,15 @@ document.addEventListener('change', event => {
         data: { id: toggle.dataset.id, status: toggle.checked ? 1 : 0 },
         timeout: 30000,
         success(data) {
-            if (typeof data.success === 'string' && data.success) notify(data.success);
+            if (typeof data.success === 'string' && data.success) {
+                if (toggle.hasAttribute('data-post-status')) {
+                    toggle.dataset.postStatus = toggle.checked ? '1' : '0';
+                    const label = toggle.checked ? toggle.dataset.activeLabel : toggle.dataset.inactiveLabel;
+                    toggle.labels.forEach(element => { element.textContent = label; });
+                    toggle.setAttribute('aria-label', label);
+                }
+                notify(data.success);
+            }
             else {
                 toggle.checked = oldValue;
                 notify(toggle.dataset.errorText, true);
