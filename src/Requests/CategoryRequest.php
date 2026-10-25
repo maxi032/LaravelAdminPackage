@@ -3,17 +3,11 @@
 namespace Maxi032\LaravelAdminPackage\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Maxi032\LaravelAdminPackage\Helpers\TranslationInputHelper;
 
 class CategoryRequest extends FormRequest
 {
-    private const TRANSLATION_FIELDS = [
-        'title', 'slug', 'content', 'excerpt',
-        'meta_title', 'meta_keywords', 'meta_description',
-    ];
-
     public function authorize(): bool
     {
         return true;
@@ -34,23 +28,7 @@ class CategoryRequest extends FormRequest
 
         $translations = $this->input('translations');
         if (is_array($translations)) {
-            foreach (['title', 'slug', 'excerpt', 'meta_title', 'meta_keywords', 'meta_description'] as $field) {
-                if (!isset($translations[$field]) || !is_array($translations[$field])) {
-                    continue;
-                }
-
-                foreach ($translations[$field] as $language => $value) {
-                    if (!is_string($value)) {
-                        continue;
-                    }
-
-                    $value = trim($value);
-                    $translations[$field][$language] = $field === 'slug'
-                        ? Str::slug($value)
-                        : ($value === '' ? null : $value);
-                }
-            }
-            $data['translations'] = $translations;
+            $data['translations'] = TranslationInputHelper::normalize($translations);
         }
 
         $this->merge($data);
@@ -79,42 +57,16 @@ class CategoryRequest extends FormRequest
             'type_id' => ['required', 'integer', $typeRule],
             'status' => ['required', 'boolean'],
             'sort_order' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:4294967295'],
-            'translations' => ['required', 'array:'.implode(',', self::TRANSLATION_FIELDS)],
         ];
 
-        foreach (self::TRANSLATION_FIELDS as $field) {
-            $rules['translations.'.$field] = [
-                in_array($field, ['title', 'slug', 'content'], true) ? 'required' : 'sometimes',
-                'array:'.implode(',', $languages),
-            ];
-        }
-
-        foreach ($languages as $language) {
-            $rules['translations.title.'.$language] = ['required', 'string', 'max:150'];
-            $rules['translations.slug.'.$language] = ['required', 'string', 'max:150'];
-            $rules['translations.content.'.$language] = ['required', 'string'];
-            $rules['translations.excerpt.'.$language] = ['nullable', 'string', 'max:10000'];
-            $rules['translations.meta_title.'.$language] = ['nullable', 'string', 'max:150'];
-            $rules['translations.meta_keywords.'.$language] = ['nullable', 'string', 'max:255'];
-            $rules['translations.meta_description.'.$language] = ['nullable', 'string', 'max:255'];
-        }
-
-        return $rules;
+        return array_merge($rules, TranslationInputHelper::rules($languages));
     }
 
     public function messages(): array
     {
-        $messages = [];
-        foreach (array_column(config('laravel-admin-package.allowed_languages', []), 'code') as $language) {
-            foreach (self::TRANSLATION_FIELDS as $field) {
-                foreach (['required', 'string', 'max'] as $rule) {
-                    $key = $rule === 'max' ? 'validation.max.string' : 'validation.'.$rule;
-                    $messages['translations.'.$field.'.'.$language.'.'.$rule] = ucfirst($language).': '.Lang::get($key);
-                }
-            }
-        }
-
-        return $messages;
+        return TranslationInputHelper::messages(
+            array_column(config('laravel-admin-package.allowed_languages', []), 'code')
+        );
     }
 
     public function attributes(): array
@@ -124,7 +76,7 @@ class CategoryRequest extends FormRequest
             $attributes[$field] = __($label);
         }
         $labels = ['meta_title' => 'Meta Title', 'meta_keywords' => 'Meta keywords', 'meta_description' => 'Meta description'];
-        foreach (self::TRANSLATION_FIELDS as $field) {
+        foreach (TranslationInputHelper::FIELDS as $field) {
             $attributes['translations.'.$field] = __($labels[$field] ?? ucfirst($field));
             foreach (array_column(config('laravel-admin-package.allowed_languages', []), 'code') as $language) {
                 $attributes['translations.'.$field.'.'.$language] = __($labels[$field] ?? ucfirst($field));

@@ -3,15 +3,19 @@
 namespace Maxi032\LaravelAdminPackage\Repositories;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Arr;
 use Maxi032\LaravelAdminPackage\Models\Post;
 use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Helpers\TranslationSynchronizerHelper;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class PostRepository implements PostRepositoryInterface
 {
+    public function __construct(private readonly TranslationSynchronizerHelper $translationSynchronizer)
+    {
+    }
+
     public function getPostOverview(string $type, bool $trashed = false): LengthAwarePaginator
     {
         $query = Post::byType($type);
@@ -117,8 +121,17 @@ class PostRepository implements PostRepositoryInterface
                 'sort_order'  => $dataArr['sort_order']
                     ?? $this->nextSortOrder((int) $dataArr['type_id']),
             ]);
+            if (!$post->exists) {
+                throw new \RuntimeException(__('The post could not be saved. Please try again.'));
+            }
 
-            $this->saveTranslations($post, $dataArr['translations']);
+            $this->translationSynchronizer->sync(
+                $post->translations(),
+                $dataArr['translations'],
+                array_column(config('laravel-admin-package.allowed_languages', []), 'code'),
+                __('The post could not be saved. Please try again.'),
+                __('Post translation recovery was cancelled.'),
+            );
 
             return $post;
         });
@@ -141,13 +154,22 @@ class PostRepository implements PostRepositoryInterface
                     ? $post->sort_order
                     : $this->nextSortOrder($typeId)
             );
-            $post->fill([
+            $saved = $post->fill([
                 'type_id' => $dataArr['type_id'],
                 'category_id' => $dataArr['category_id'],
                 'status' => (int) $dataArr['status'],
                 'sort_order' => $sortOrder,
             ])->save();
-            $this->saveTranslations($post, $dataArr['translations']);
+            if ($saved === false) {
+                throw new \RuntimeException(__('The post could not be saved. Please try again.'));
+            }
+            $this->translationSynchronizer->sync(
+                $post->translations(),
+                $dataArr['translations'],
+                array_column(config('laravel-admin-package.allowed_languages', []), 'code'),
+                __('The post could not be saved. Please try again.'),
+                __('Post translation recovery was cancelled.'),
+            );
 
             return $post;
         });
@@ -167,27 +189,6 @@ class PostRepository implements PostRepositoryInterface
         }
 
         return $maximum + 1;
-    }
-
-    private function saveTranslations(Post $post, array $translations): void
-    {
-        $translations = Arr::only($translations, [
-            'title', 'slug', 'content', 'excerpt',
-            'meta_title', 'meta_keywords', 'meta_description',
-        ]);
-
-        foreach (config('laravel-admin-package.allowed_languages', []) as $language) {
-            $code = $language['code'];
-            $attributes = [];
-            foreach ($translations as $field => $values) {
-                // Preserve omitted fields; an explicit null clears an optional value.
-                if (array_key_exists($code, $values)) {
-                    $attributes[$field] = $values[$code];
-                }
-            }
-
-            $post->translations()->updateOrCreate(['language' => $code], $attributes);
-        }
     }
 
     public function getActivePosts()

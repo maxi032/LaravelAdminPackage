@@ -3,16 +3,20 @@
 namespace Maxi032\LaravelAdminPackage\Repositories;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Maxi032\LaravelAdminPackage\Models\CategoryType;
 use Maxi032\LaravelAdminPackage\Models\PostType;
 use Throwable;
 use Maxi032\LaravelAdminPackage\Models\Category;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Helpers\TranslationSynchronizerHelper;
 
 class CategoryRepository implements CategoryRepositoryInterface
 {
+    public function __construct(private readonly TranslationSynchronizerHelper $translationSynchronizer)
+    {
+    }
+
     public function getCategoryById($categoryId)
     {
         return Category::findOrFail($categoryId);
@@ -100,7 +104,13 @@ class CategoryRepository implements CategoryRepositoryInterface
                 throw new \RuntimeException(__('The category could not be saved. Please try again.'));
             }
 
-            $this->saveTranslations($category, $dataArr['translations']);
+            $this->translationSynchronizer->sync(
+                $category->translations(),
+                $dataArr['translations'],
+                array_column(config('laravel-admin-package.allowed_languages', []), 'code'),
+                __('The category could not be saved. Please try again.'),
+                __('Category translation recovery was cancelled.'),
+            );
 
             return $category;
         });
@@ -131,7 +141,13 @@ class CategoryRepository implements CategoryRepositoryInterface
             if ($saved === false) {
                 throw new \RuntimeException(__('The category could not be saved. Please try again.'));
             }
-            $this->saveTranslations($category, $dataArr['translations']);
+            $this->translationSynchronizer->sync(
+                $category->translations(),
+                $dataArr['translations'],
+                array_column(config('laravel-admin-package.allowed_languages', []), 'code'),
+                __('The category could not be saved. Please try again.'),
+                __('Category translation recovery was cancelled.'),
+            );
 
             return $category;
         });
@@ -151,33 +167,6 @@ class CategoryRepository implements CategoryRepositoryInterface
         }
 
         return $maximum + 1;
-    }
-
-    private function saveTranslations(Category $category, array $translations): void
-    {
-        $translations = Arr::only($translations, [
-            'title', 'slug', 'content', 'excerpt',
-            'meta_title', 'meta_keywords', 'meta_description',
-        ]);
-
-        foreach (config('laravel-admin-package.allowed_languages', []) as $language) {
-            $code = $language['code'];
-            $attributes = [];
-            foreach ($translations as $field => $values) {
-                // Preserve omitted fields; an explicit null clears an optional value.
-                if (array_key_exists($code, $values)) {
-                    $attributes[$field] = $values[$code];
-                }
-            }
-
-            $translation = $category->translations()->withTrashed()->firstOrNew(['language' => $code]);
-            if ($translation->fill($attributes)->save() === false) {
-                throw new \RuntimeException(__('The category could not be saved. Please try again.'));
-            }
-            if ($translation->trashed() && $translation->restore() === false) {
-                throw new \RuntimeException(__('Category translation recovery was cancelled.'));
-            }
-        }
     }
 
     public function createCategory(array $categoryAttributes)
