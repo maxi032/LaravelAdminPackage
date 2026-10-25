@@ -26,7 +26,7 @@ class PostType extends Model
     }
 
     protected $fillable = [
-        'type_id',
+        'type',
         'status'
     ];
 
