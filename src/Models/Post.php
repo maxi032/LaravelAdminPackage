@@ -25,9 +25,9 @@ class Post extends Model
 
     //protected $appends = ['status_badge'];
 
-    public function statusbadge():Attribute
+    public function statusbadge(): Attribute
     {
-        return Attribute::make(get:fn()=>PostStatusEnum::badgeClass($this->status));
+        return Attribute::make(get: fn() => PostStatusEnum::badgeClass($this->status));
     }
 
     /**
@@ -72,7 +72,7 @@ class Post extends Model
 
     public function scopeByType(Builder $query, string $type): Builder
     {
-        return $query->whereHas('type', fn (Builder $query) => $query->where('type', $type));
+        return $query->whereHas('type', fn(Builder $query) => $query->where('type', $type));
     }
 
     /**
@@ -86,15 +86,12 @@ class Post extends Model
     }
 
     /**
-     * Get translations by language
-     *
-     * @param $query
-     * @param $language
-     * @return mixed
+     * Filter posts that have a non-deleted translation in the given language.
      */
-    public function scopeByLanguage($query, $language): mixed
+    public function scopeByLanguage(Builder $query, string $language): Builder
     {
-        return $query->where('language', $language);
+        return $query->whereHas('translations',
+            fn(Builder $translations) => $translations->where('language', $language));
     }
 
 }

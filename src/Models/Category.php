@@ -61,14 +61,11 @@ class Category extends Model
     }
 
     /**
-     * Get translations by language
-     *
-     * @param $query
-     * @param $language
-     * @return mixed
+     * Filter categories that have a non-deleted translation in the given language.
      */
-    public function scopeByLanguage($query, $language): mixed
+    public function scopeByLanguage(Builder $query, string $language): Builder
     {
-        return $query->where('language', $language);
+        return $query->whereHas('translations',
+            fn (Builder $translations) => $translations->where('language', $language));
     }
 }
