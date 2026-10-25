@@ -39,6 +39,18 @@ class PostRepository implements PostRepositoryInterface
         return Post::findOrFail($postId);
     }
 
+    public function changePostStatus(int $postId, bool $status): void
+    {
+        DB::transaction(function () use ($postId, $status) {
+            $post = Post::whereKey($postId)->lockForUpdate()->firstOrFail();
+            $post->status = (int) $status;
+
+            if ($post->save() === false) {
+                throw new \RuntimeException(__('The status could not be updated. Please try again.'));
+            }
+        });
+    }
+
     public function deletePost($postId): void
     {
         DB::transaction(function () use ($postId) {

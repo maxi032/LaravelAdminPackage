@@ -69,6 +69,11 @@ class PostService
         $this->postRepository->deletePost($postId);
     }
 
+    public function changePostStatus(int $postId, bool $status): void
+    {
+        $this->postRepository->changePostStatus($postId, $status);
+    }
+
     public function recoverPost(int $postId): void
     {
         $this->postRepository->recoverPost($postId);

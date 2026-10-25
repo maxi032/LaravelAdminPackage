@@ -15,6 +15,8 @@ interface PostRepositoryInterface
 
     public function deletePost($postId);
 
+    public function changePostStatus(int $postId, bool $status): void;
+
     public function recoverPost(int $postId): void;
 
     public function forceDeletePost(int $postId): void;

@@ -6,7 +6,7 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Maxi032\LaravelAdminPackage\Enums\PostStatusEnum;
 use Maxi032\LaravelAdminPackage\LaravelAdminPackageServiceProvider;
@@ -14,6 +14,7 @@ use Maxi032\LaravelAdminPackage\Models\Post;
 use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Requests\PostRequest;
+use Maxi032\LaravelAdminPackage\Requests\PostStatusRequest;
 use Maxi032\LaravelAdminPackage\Services\PostService;
 use Throwable;
 
@@ -191,16 +192,20 @@ class PostController extends AdminController
         return $redirect->with('message', __('Post deleted successfully!'));
     }
 
-    public function ajaxChangeStatus(Request $request): JsonResponse
+    public function ajaxChangeStatus(PostStatusRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'id' => ['required', 'integer'],
-            'status' => ['required', 'boolean'],
-        ]);
+        $data = $request->validated();
         $status = (int) $data['status'];
-        $post = Post::findOrFail($data['id']);
-        $post->status = $status;
-        $post->save();
+
+        try {
+            $this->postService->changePostStatus((int) $data['id'], (bool) $status);
+        } catch (ModelNotFoundException $e) {
+            throw $e;
+        } catch (Throwable $e) {
+            Log::error('Post status change failed.', ['exception' => $e]);
+
+            return response()->json(['error' => __('The status could not be updated. Please try again.')], 500);
+        }
 
         return response()->json(['success' => ($status == 0) ? __('Post was deactivated') : __('Post was activated')]);
     }
