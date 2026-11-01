@@ -1,9 +1,13 @@
 <header class="header header-sticky mb-4">
    <div class="container-fluid">
-      <button class="header-toggler px-md-0 me-md-3" type="button" aria-label="{{ __('Toggle sidebar') }}" aria-controls="sidebar" onclick="coreui.Sidebar.getOrCreateInstance(document.querySelector('#sidebar')).toggle()">
-         <svg class="icon icon-lg">
+      <button class="header-toggler px-md-0 me-md-3" type="button" data-sidebar-toggle
+              aria-controls="sidebar" aria-expanded="true" aria-label="{{ __('Collapse sidebar') }}"
+              data-label-expand="{{ __('Expand sidebar') }}" data-label-collapse="{{ __('Collapse sidebar') }}"
+              data-label-show="{{ __('Show sidebar') }}" data-label-hide="{{ __('Hide sidebar') }}">
+         <svg class="icon icon-lg sidebar-toggle-icon" aria-hidden="true" focusable="false">
             <use xlink:href="{{ Vite::asset('resources/sass/maxi032/'.$laravelAdminPackage.'/coreui/sprites/free.svg') }}#cil-menu"></use>
          </svg>
+         <svg class="icon icon-lg sidebar-toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="m14 6-6 6 6 6" /></svg>
       </button>
       {{ config('app.name','Laravel') }}
       <ul class="header-nav d-none d-md-flex">

@@ -1,0 +1,94 @@
+// Match CoreUI's width animation with the content offset animation.
+.wrapper {
+  min-width: 0;
+  @include transition(padding .15s);
+}
+
+#sidebar {
+  .sidebar-brand {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .sidebar-link-label,
+  .sidebar-brand-label {
+    min-width: 0;
+    flex-shrink: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    @include transition(opacity .15s);
+  }
+
+  .post-type-nav {
+    position: relative;
+    min-width: 0;
+
+    > a {
+      min-width: 0;
+    }
+  }
+
+  .nav-link:focus-visible,
+  .sidebar-toggler:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+  }
+}
+
+.sidebar-toggle-chevron {
+  display: none;
+  fill: none;
+  @include transition(transform .15s);
+}
+
+@include media-breakpoint-up(md) {
+  .sidebar-toggle-icon {
+    display: none;
+  }
+
+  .sidebar-toggle-chevron {
+    display: inline-block;
+  }
+
+  .sidebar-is-collapsed .sidebar-toggle-chevron {
+    transform: rotate(180deg);
+  }
+
+  #sidebar.sidebar-narrow {
+    .sidebar-link-label,
+    .sidebar-brand-label {
+      opacity: 0;
+    }
+
+    // CoreUI's narrow mode hides native groups; these menus use Collapse instead.
+    .post-type-nav + ul {
+      display: none;
+    }
+
+    .post-type-nav > button {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 1rem;
+      padding: 0 !important;
+      background: transparent;
+    }
+
+    .nav-link {
+      padding-left: 0;
+      padding-right: 0;
+      overflow: hidden;
+    }
+
+    .nav-icon:first-child {
+      margin-left: 0;
+    }
+
+    .nav-group-toggle::after {
+      position: absolute;
+      right: 0;
+      width: 12px;
+    }
+  }
+}

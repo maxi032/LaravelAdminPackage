@@ -1,6 +1,7 @@
 <aside class="sidebar sidebar-dark sidebar-fixed" id="sidebar" aria-label="{{ __('Admin navigation') }}">
+    @include($laravelAdminPackage.'::cms.partials.sidebar-state')
     <a class="sidebar-brand d-none d-md-flex text-decoration-none" href="{{ route($adminRoutePrefix.'dashboard') }}">
-        {{ config('app.name', 'Laravel') }}
+        <span class="sidebar-brand-label">{{ config('app.name', 'Laravel') }}</span>
     </a>
     <ul class="sidebar-nav" id="post-type-navigation">
         <li class="nav-item">
@@ -8,7 +9,7 @@
                href="{{ route($adminRoutePrefix.'dashboard') }}"
                @if(request()->routeIs($adminRoutePrefix.'dashboard')) aria-current="page" @endif>
                 <span class="nav-icon cil-speedometer" aria-hidden="true"></span>
-                {{ __('Dashboard') }}
+                <span class="sidebar-link-label">{{ __('Dashboard') }}</span>
             </a>
         </li>
         <li class="nav-title">{{ __('Content') }}</li>
@@ -19,7 +20,7 @@
                        href="{{ route($adminRoutePrefix.'posts.type.list', ['type' => $item['type']]) }}"
                        @if($item['active'] && request()->routeIs($adminRoutePrefix.'posts.type.list')) aria-current="page" @endif>
                         <span class="nav-icon {{ $item['icon'] }}" aria-hidden="true"></span>
-                        {{ $item['label'] }}
+                        <span class="sidebar-link-label">{{ $item['label'] }}</span>
                     </a>
                     <button class="nav-link border-0 px-3 {{ $item['active'] ? 'active' : '' }}" type="button"
                             data-coreui-toggle="collapse" data-coreui-target="#{{ $item['menuId'] }}"
@@ -34,19 +35,19 @@
                 <ul class="list-unstyled collapse {{ $item['active'] ? 'show' : '' }}" id="{{ $item['menuId'] }}" data-coreui-parent="#post-type-navigation">
                     <li class="nav-item">
                         <a class="nav-link ps-5" href="{{ route($adminRoutePrefix.'posts.type.list', ['type' => $item['type']]) }}">
-                            <span class="nav-icon cil-list" aria-hidden="true"></span>{{ \Illuminate\Support\Facades\Lang::has($item['type'].'.all') ? __($item['type'].'.all') : __('All :type', ['type' => $item['label']]) }}
+                            <span class="nav-icon cil-list" aria-hidden="true"></span><span class="sidebar-link-label">{{ \Illuminate\Support\Facades\Lang::has($item['type'].'.all') ? __($item['type'].'.all') : __('All :type', ['type' => $item['label']]) }}</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link ps-5 {{ $item['active'] && request()->routeIs($adminRoutePrefix.'posts.create') ? 'active' : '' }}"
                            href="{{ route($adminRoutePrefix.'posts.create', ['type' => $item['type']]) }}">
-                            <span class="nav-icon cil-plus" aria-hidden="true"></span>{{ __('Add :type', ['type' => $item['singularLabel']]) }}
+                            <span class="nav-icon cil-plus" aria-hidden="true"></span><span class="sidebar-link-label">{{ __('Add :type', ['type' => $item['singularLabel']]) }}</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link ps-5 {{ $item['active'] && request()->routeIs($adminRoutePrefix.'categories.type.list') ? 'active' : '' }}"
                            href="{{ route($adminRoutePrefix.'categories.type.list', ['type' => $item['type']]) }}">
-                            <span class="nav-icon cil-folder" aria-hidden="true"></span>{{ __('Categories') }}
+                            <span class="nav-icon cil-folder" aria-hidden="true"></span><span class="sidebar-link-label">{{ __('Categories') }}</span>
                         </a>
                     </li>
                 </ul>
@@ -55,7 +56,7 @@
             <li class="nav-item px-3 py-2">{{ __('No post types available.') }}</li>
         @endforelse
     </ul>
-    <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"
+    <button class="sidebar-toggler" type="button" data-sidebar-toggle aria-expanded="true" data-label-expand="{{ __('Expand sidebar') }}" data-label-collapse="{{ __('Collapse sidebar') }}"
             aria-label="{{ __('Collapse or expand sidebar') }}" aria-controls="sidebar"></button>
 </aside>
 
