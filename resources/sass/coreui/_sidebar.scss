@@ -85,10 +85,10 @@
       margin-left: 0;
     }
 
+    // Keep submenu controls available without adding arrows to icon-only navigation.
+    .post-type-chevron,
     .nav-group-toggle::after {
-      position: absolute;
-      right: 0;
-      width: 12px;
+      display: none;
     }
   }
 }
