@@ -8,12 +8,15 @@ use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Helpers\TranslationSynchronizerHelper;
 use Illuminate\Support\Facades\DB;
+use Maxi032\LaravelAdminPackage\Services\PostOptionValues;
 use Throwable;
 
 class PostRepository implements PostRepositoryInterface
 {
-    public function __construct(private readonly TranslationSynchronizerHelper $translationSynchronizer)
-    {
+    public function __construct(
+        private readonly TranslationSynchronizerHelper $translationSynchronizer,
+        private readonly PostOptionValues $postOptionValues = new PostOptionValues(),
+    ) {
     }
 
     public function getPostOverview(string $type, bool $trashed = false): LengthAwarePaginator
@@ -133,6 +136,8 @@ class PostRepository implements PostRepositoryInterface
                 __('Post translation recovery was cancelled.'),
             );
 
+            $this->postOptionValues->sync($post, $dataArr['options'] ?? []);
+
             return $post;
         });
     }
@@ -170,6 +175,8 @@ class PostRepository implements PostRepositoryInterface
                 __('The post could not be saved. Please try again.'),
                 __('Post translation recovery was cancelled.'),
             );
+
+            $this->postOptionValues->sync($post, $dataArr['options'] ?? []);
 
             return $post;
         });

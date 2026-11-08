@@ -55,6 +55,7 @@
         @empty
             <li class="nav-item px-3 py-2">{{ __('No post types available.') }}</li>
         @endforelse
+        @include($laravelAdminPackage.'::cms.partials.post-option-navigation')
     </ul>
     <button class="sidebar-toggler" type="button" data-sidebar-toggle aria-expanded="true" data-label-expand="{{ __('Expand sidebar') }}" data-label-collapse="{{ __('Collapse sidebar') }}"
             aria-label="{{ __('Collapse or expand sidebar') }}" aria-controls="sidebar"></button>

@@ -2,7 +2,7 @@
 
 @section('content')
     @php
-        $allowedTabs = ['main','content','seo'];
+        $allowedTabs = ['main','content','seo','options'];
         $activeTab = 'main';
         $firstError = array_key_first($errors->messages());
         if ($firstError && str_starts_with($firstError, 'translations.')) {
@@ -10,6 +10,8 @@
             $activeTab = in_array($field, ['slug', 'meta_title', 'meta_keywords', 'meta_description'], true)
                 ? 'seo'
                 : 'content';
+        } elseif ($firstError === 'options' || str_starts_with($firstError ?? '', 'options.')) {
+            $activeTab = 'options';
         }
     @endphp
     <div class="container-fluid">

@@ -6,7 +6,7 @@
                 <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="{{ __('Close') }}"></button>
             </div>
             <div class="modal-body" id="destroy-post-message">
-                <p>{{ __('Are you sure that you want to permanently destroy this record? Its translations and child posts will also be deleted. This cannot be undone.') }}</p>
+                <p>{{ $destroyMessage ?? __('Are you sure that you want to permanently destroy this record? Its translations and child posts will also be deleted. This cannot be undone.') }}</p>
                 <p class="fw-semibold mb-0" data-post-delete-title></p>
             </div>
             <div class="modal-footer">

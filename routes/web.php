@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Maxi032\LaravelAdminPackage\Http\Controllers\AdminController;
 use Maxi032\LaravelAdminPackage\Http\Controllers\CategoryController;
 use Maxi032\LaravelAdminPackage\Http\Controllers\PostController;
+use Maxi032\LaravelAdminPackage\Http\Controllers\PostOptionController;
 use Maxi032\LaravelAdminPackage\LaravelAdminPackageServiceProvider;
 
 Route::group([
@@ -13,6 +14,18 @@ Route::group([
 ], function () {
     Route::get('/', [AdminController::class, 'index'])
         ->name('dashboard');
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('post-options/trash', [PostOptionController::class, 'trash'])->name('post-options.trash');
+        Route::post('post-options/{option}/recover', [PostOptionController::class, 'recover'])
+            ->withTrashed()->name('post-options.recover');
+        Route::delete('post-options/{option}/force-delete', [PostOptionController::class, 'forceDelete'])
+            ->withTrashed()->name('post-options.force_delete');
+        Route::post('post-options/{option}/change-status', [PostOptionController::class, 'changeStatus'])
+            ->name('post-options.change-status');
+        Route::resource('post-options', PostOptionController::class)
+            ->parameters(['post-options' => 'option'])
+            ->except(['show']);
+    });
     Route::get('cms/posts/create/{type?}', [PostController::class, 'create'])->name('posts.create');
     Route::get('cms/posts/trash/{type}', [PostController::class, 'trash'])->name('posts.trash');
     Route::post('cms/posts/{post}/recover', [PostController::class, 'recover'])->withTrashed()->name('posts.recover');

@@ -8,12 +8,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Maxi032\LaravelAdminPackage\LaravelAdminPackageServiceProvider;
 use Maxi032\LaravelAdminPackage\Models\Post;
 use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Requests\PostRequest;
 use Maxi032\LaravelAdminPackage\Requests\PostStatusRequest;
+use Maxi032\LaravelAdminPackage\Services\PostOptionService;
 use Maxi032\LaravelAdminPackage\Services\PostService;
 use Throwable;
 
@@ -83,7 +85,7 @@ class PostController extends AdminController
     /**
      * Show the Posts crud form.
      */
-    public function create(string $type = null): Renderable
+    public function create(PostOptionService $postOptionService, ?string $type = null): Renderable
     {
         $locale = app()->getLocale();
         $postTypes = $this->postService->getPostTypesForDropdown();
@@ -100,10 +102,11 @@ class PostController extends AdminController
             'post' => null,
             'selectedTypeId' => $selectedTypeId,
             'categories' => $categories,
+            'postOptions' => $postOptionService->getEditablePostOptions(),
         ]);
     }
 
-    public function edit(Post $post): View
+    public function edit(Post $post, PostOptionService $postOptionService): View
     {
         $locale = app()->getLocale();
         // Route model binding will throw 404 automatically if $post is not found
@@ -113,8 +116,9 @@ class PostController extends AdminController
 
         return $this->packageView('cms.posts.update_or_create', [
             'postTypes' => $postTypes,
-            'post' => $post,
+            'post' => $post->load('optionValues'),
             'categories' => $categories,
+            'postOptions' => $postOptionService->getEditablePostOptions(),
         ]);
     }
 
@@ -135,6 +139,8 @@ class PostController extends AdminController
 
         try {
             $this->postService->createPostWithTranslations($data);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Throwable $e) {
             Log::error('Post creation failed.', ['exception' => $e]);
 
@@ -156,6 +162,8 @@ class PostController extends AdminController
 
         try {
             $this->postService->updatePostWithTranslations($post, $data);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Throwable $e) {
             Log::error('Post update failed.', ['exception' => $e]);
 

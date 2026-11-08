@@ -5,9 +5,11 @@ namespace Maxi032\LaravelAdminPackage\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Maxi032\LaravelAdminPackage\Enums\PostStatusEnum;
-use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
-use Maxi032\LaravelAdminPackage\Rules\CategoryMatchesPostType;
 use Maxi032\LaravelAdminPackage\Helpers\TranslationInputHelper;
+use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostOptionRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Rules\CategoryMatchesPostType;
+use Maxi032\LaravelAdminPackage\Rules\ValidPostOptionValues;
 
 class PostRequest extends FormRequest
 {
@@ -58,7 +60,13 @@ class PostRequest extends FormRequest
             'sort_order' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:4294967295'],
         ];
 
-        return array_merge($rules, TranslationInputHelper::rules($languages));
+        $rules = array_merge($rules, TranslationInputHelper::rules($languages));
+        if ($this->has('options')) {
+            $definitions = app(PostOptionRepositoryInterface::class)->getEditablePostOptions();
+            $rules['options'] = ['sometimes', new ValidPostOptionValues($definitions)];
+        }
+
+        return $rules;
     }
 
     public function messages(): array
