@@ -18,6 +18,7 @@ class PostTypesTableSeeder extends Seeder
             'type'   => 'downloads',
             'status' => false,
         ], [
+            'icon' => 'cil-cloud-download',
             'created_at' => Carbon::now()
         ]);
 
@@ -25,6 +26,7 @@ class PostTypesTableSeeder extends Seeder
             'type'   => 'blog_articles',
             'status' => false,
         ], [
+            'icon' => 'cil-newspaper',
             'created_at' => Carbon::now()
         ]);
 
@@ -32,6 +34,7 @@ class PostTypesTableSeeder extends Seeder
             'type'   => 'products',
             'status' => false,
         ], [
+            'icon' => 'cil-basket',
             'created_at' => Carbon::now()
         ]);
 
@@ -39,6 +42,7 @@ class PostTypesTableSeeder extends Seeder
             'type'   => 'faq',
             'status' => false,
         ], [
+            'icon' => 'cil-speech',
             'created_at' => Carbon::now()
         ]);
     }

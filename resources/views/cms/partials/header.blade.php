@@ -83,12 +83,17 @@
                @if(is_numeric($key))
                   @continue
                @endif
+               @php
+                  $type = request()->route('type');
+                  $label = $type instanceof \Maxi032\LaravelAdminPackage\Models\PostType && $key === $type->type
+                      ? $type->displayName() : __(ucfirst($key));
+               @endphp
                <li class="breadcrumb-item {{ $loop->last ? 'is-active' : '' }}">
                   @if($loop->last)
-                     {{ __(ucfirst($key)) }}
+                     {{ $label }}
                   @else
                   <a href="{{ url($url) }}">
-                        {{ __(ucfirst($key)) }}
+                        {{ $label }}
                   </a>
                   @endif
                </li>

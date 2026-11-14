@@ -1,6 +1,8 @@
 <?php
 namespace Maxi032\LaravelAdminPackage\Services;
 
+use Illuminate\Database\Eloquent\Collection;
+
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -91,6 +93,11 @@ class PostService
     public function getPostTypesForDropdown(): mixed
     {
         return $this->postTypeRepository->getPostTypesForDropdown();
+    }
+
+    public function getPostTypes(): Collection
+    {
+        return $this->postTypeRepository->getPostTypesForSidebar();
     }
 
     /**

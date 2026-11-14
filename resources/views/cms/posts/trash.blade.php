@@ -3,7 +3,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
-            <h1 class="h3 mb-0">{{ __(':type trash', ['type' => __($postType->type)]) }}</h1>
+            <h1 class="h3 mb-0">{{ __(':type trash', ['type' => $postType->displayName()]) }}</h1>
             <a class="btn btn-outline-secondary" href="{{ route($adminRoutePrefix.'posts.type.list', ['type' => $postType->type]) }}">{{ __('View posts') }}</a>
         </div>
         <div data-overview data-overview-url="{{ request()->fullUrl() }}"

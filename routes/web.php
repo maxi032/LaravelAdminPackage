@@ -5,6 +5,7 @@ use Maxi032\LaravelAdminPackage\Http\Controllers\AdminController;
 use Maxi032\LaravelAdminPackage\Http\Controllers\CategoryController;
 use Maxi032\LaravelAdminPackage\Http\Controllers\PostController;
 use Maxi032\LaravelAdminPackage\Http\Controllers\PostOptionController;
+use Maxi032\LaravelAdminPackage\Http\Controllers\PostTypeController;
 use Maxi032\LaravelAdminPackage\LaravelAdminPackageServiceProvider;
 
 Route::group([
@@ -15,6 +16,18 @@ Route::group([
     Route::get('/', [AdminController::class, 'index'])
         ->name('dashboard');
     Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('post-types/trash', [PostTypeController::class, 'trash'])->name('post-types.trash');
+        Route::post('post-types/{postType:id}/recover', [PostTypeController::class, 'recover'])
+            ->whereNumber('postType')->withTrashed()->name('post-types.recover');
+        Route::delete('post-types/{postType:id}/force-delete', [PostTypeController::class, 'forceDelete'])
+            ->whereNumber('postType')->withTrashed()->name('post-types.force_delete');
+        Route::post('post-types/{postType:id}/change-status', [PostTypeController::class, 'changeStatus'])
+            ->whereNumber('postType')->name('post-types.change-status');
+        Route::resource('post-types', PostTypeController::class)
+            ->parameters(['post-types' => 'postType'])
+            ->scoped(['postType' => 'id'])
+            ->whereNumber('postType')
+            ->except(['show']);
         Route::get('post-options/trash', [PostOptionController::class, 'trash'])->name('post-options.trash');
         Route::post('post-options/{option}/recover', [PostOptionController::class, 'recover'])
             ->withTrashed()->name('post-options.recover');

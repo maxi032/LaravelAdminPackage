@@ -29,21 +29,18 @@ class SidebarComposer
         if ($category instanceof Category) {
             $typeName = $category->type?->type;
         }
-        $icons = [
-            'faq' => 'cil-speech',
-            'products' => 'cil-basket',
-            'downloads' => 'cil-cloud-download',
-            'blog_articles' => 'cil-newspaper',
-        ];
-
         $items = $this->postTypeRepository->getPostTypesForSidebar()
+            ->where('status', true)
             ->map(fn (PostType $item) => [
                 'type' => $item->type,
-                'label' => Lang::has($item->type.'.plural')
-                    ? __($item->type.'.plural') : Str::headline($item->type),
-                'singularLabel' => Lang::has($item->type.'.singular')
-                    ? __($item->type.'.singular') : Str::headline(Str::singular($item->type)),
-                'icon' => $icons[$item->type] ?? 'cil-description',
+                'label' => Str::ucfirst(Str::lower($item->displayName())),
+                'addLabel' => __('Add :type', [
+                    'type' => Lang::has($item->type.'.singular')
+                        ? __($item->type.'.singular') : Str::headline(Str::singular($item->type)),
+                ]),
+                'allLabel' => Lang::has($item->type.'.all')
+                    ? __($item->type.'.all') : __('All :type', ['type' => $item->displayName()]),
+                'icon' => $item->icon,
                 'active' => $typeName === $item->type || ($post instanceof Post && (int) $post->type_id === (int) $item->id),
                 'menuId' => 'post-type-menu-'.$item->id,
             ]);

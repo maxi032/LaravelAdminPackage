@@ -20,11 +20,11 @@
             <select name="type_id" id="type_id" class="w-50 form-select @error('type_id') is-invalid @enderror" required
                     @error('type_id') aria-invalid="true" aria-describedby="type_id_error" @enderror>
                 <option value="">{{ __('Please select') }}</option>
-                @foreach ($postTypes as $postTypeId => $postType)
-                    @continue($postType === null || $postType === '')
-                    <option value="{{ $postTypeId }}"
+                @foreach ($postTypes as $postType)
+                    @continue($postType->type === '')
+                    <option value="{{ $postType->id }}"
                             data-fields-url="{{ route($adminRoutePrefix.'posts.type-fields', ['type' => $postType, 'post' => $post]) }}"
-                            @selected(($selectedTypeId ?? null) === $postTypeId)>{{ $postType }}</option>
+                            @selected(($selectedTypeId ?? null) === $postType->id)>{{ $postType->displayName() }}</option>
                 @endforeach
             </select>
             @error('type_id')

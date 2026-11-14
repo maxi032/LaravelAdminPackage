@@ -25,6 +25,16 @@
 
     > a {
       min-width: 0;
+      overflow: hidden;
+
+      .sidebar-link-label {
+        flex-shrink: 1;
+        text-overflow: ellipsis;
+      }
+    }
+
+    > button {
+      flex: 0 0 auto;
     }
   }
 

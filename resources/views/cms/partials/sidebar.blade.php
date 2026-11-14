@@ -35,13 +35,13 @@
                 <ul class="list-unstyled collapse {{ $item['active'] ? 'show' : '' }}" id="{{ $item['menuId'] }}" data-coreui-parent="#post-type-navigation">
                     <li class="nav-item">
                         <a class="nav-link ps-5" href="{{ route($adminRoutePrefix.'posts.type.list', ['type' => $item['type']]) }}">
-                            <span class="nav-icon cil-list" aria-hidden="true"></span><span class="sidebar-link-label">{{ \Illuminate\Support\Facades\Lang::has($item['type'].'.all') ? __($item['type'].'.all') : __('All :type', ['type' => $item['label']]) }}</span>
+                            <span class="nav-icon cil-list" aria-hidden="true"></span><span class="sidebar-link-label">{{ $item['allLabel'] }}</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link ps-5 {{ $item['active'] && request()->routeIs($adminRoutePrefix.'posts.create') ? 'active' : '' }}"
                            href="{{ route($adminRoutePrefix.'posts.create', ['type' => $item['type']]) }}">
-                            <span class="nav-icon cil-plus" aria-hidden="true"></span><span class="sidebar-link-label">{{ __('Add :type', ['type' => $item['singularLabel']]) }}</span>
+                            <span class="nav-icon cil-plus" aria-hidden="true"></span><span class="sidebar-link-label">{{ $item['addLabel'] }}</span>
                         </a>
                     </li>
                     <li class="nav-item">

@@ -61,7 +61,7 @@
                                 <input class="form-check-input @if($postTypeError) is-invalid @endif" type="checkbox"
                                        id="post-option-post-type-{{ $postType->id }}" name="post_type_ids[]" value="{{ $postType->id }}"
                                        @checked(in_array($postType->id, $selectedPostTypeIds, true) || in_array((string) $postType->id, $selectedPostTypeIds, true))>
-                                <label class="form-check-label" for="post-option-post-type-{{ $postType->id }}">{{ __($postType->type) }}</label>
+                                <label class="form-check-label" for="post-option-post-type-{{ $postType->id }}">{{ $postType->displayName() }}</label>
                             </div>
                         @endforeach
                         @if($postTypeError)

@@ -33,7 +33,18 @@ tr.crud-busy-revealed > td::after {
     pointer-events: none;
 }
 .crud-status { font-size: .875rem; }
-.form-check > .crud-status { margin-inline-start: .5rem; }
+.form-check:not(.post-type-status-switch) > .crud-status { @include visually-hidden(); }
+.post-type-status-switch {
+    min-inline-size: 10rem;
+
+    > .crud-status {
+        position: absolute;
+        inset-inline-start: $form-switch-padding-start;
+        inset-block-start: 50%;
+        transform: translateY(-50%);
+        white-space: nowrap;
+    }
+}
 
 // Keep every post status visible, including when the switch is unchecked.
 .post-status-toggle {

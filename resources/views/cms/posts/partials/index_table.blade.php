@@ -57,7 +57,7 @@
                         </table>
                     </div>
                 @else
-                    <p class="mb-0">{{ __('No posts of type :type found',['type'=>__($postType->type)]) }}</p>
+                    <p class="mb-0">{{ __('No posts of type :type found', ['type' => $postType->displayName()]) }}</p>
                 @endif
             </div>
             @if($posts->hasPages())
