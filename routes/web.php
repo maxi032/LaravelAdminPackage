@@ -17,6 +17,8 @@ Route::group([
         ->name('dashboard');
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('post-types/trash', [PostTypeController::class, 'trash'])->name('post-types.trash');
+        Route::get('post-types/{postType:id}/posts', [PostTypeController::class, 'posts'])
+            ->whereNumber('postType')->name('post-types.posts');
         Route::post('post-types/{postType:id}/recover', [PostTypeController::class, 'recover'])
             ->whereNumber('postType')->withTrashed()->name('post-types.recover');
         Route::delete('post-types/{postType:id}/force-delete', [PostTypeController::class, 'forceDelete'])
@@ -29,6 +31,7 @@ Route::group([
             ->whereNumber('postType')
             ->except(['show']);
         Route::get('post-options/trash', [PostOptionController::class, 'trash'])->name('post-options.trash');
+        Route::get('post-options/{option}/posts', [PostOptionController::class, 'posts'])->name('post-options.posts');
         Route::post('post-options/{option}/recover', [PostOptionController::class, 'recover'])
             ->withTrashed()->name('post-options.recover');
         Route::delete('post-options/{option}/force-delete', [PostOptionController::class, 'forceDelete'])

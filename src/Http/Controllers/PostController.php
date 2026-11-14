@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -39,9 +40,10 @@ class PostController extends AdminController
         ], 'posts');
     }
 
-    public function trash(PostType $type): Renderable|JsonResponse
+    public function trash(PostType $type, Request $request): Renderable|JsonResponse
     {
-        $posts = $this->postService->getPostOverview($type->type, true);
+        $postId = filter_var($request->query('post_id'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+        $posts = $this->postService->getPostOverview($type->type, true, $postId ?: null);
 
         return $this->overviewView('cms.posts.partials.trash', ['posts' => $posts, 'postType' => $type], 'posts');
     }

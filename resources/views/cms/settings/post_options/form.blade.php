@@ -33,8 +33,8 @@
                         <label for="post-option-key" class="form-label">{{ __('Key') }}</label>
                         <input id="post-option-key" class="w-50 form-control @error('key') is-invalid @enderror"
                                value="{{ $option->exists ? $option->key : $oldText('key') }}" maxlength="64"
-                               @if($option->exists) readonly @else name="key" pattern="[a-z][a-z0-9_]*" required @endif>
-                        <div class="form-text w-50">{{ __('Use lowercase letters, numbers and underscores. The key starts with a letter and is fixed after creation.') }}</div>
+                               @if($option->exists) readonly @else name="key" pattern="[a-z][a-z0-9_ ]*" required @endif>
+                        <div class="form-text w-50">{{ __('Use lowercase letters, numbers, underscores or spaces. Spaces become underscores. The key starts with a letter and is fixed after creation.') }}</div>
                         @error('key') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 

@@ -24,9 +24,9 @@ class PostService
 
     }
 
-    public function getPostOverview(string $type, bool $trashed = false): LengthAwarePaginator
+    public function getPostOverview(string $type, bool $trashed = false, ?int $postId = null): LengthAwarePaginator
     {
-        return $this->postRepository->getPostOverview($type, $trashed);
+        return $this->postRepository->getPostOverview($type, $trashed, $postId);
     }
 
 

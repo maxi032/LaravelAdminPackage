@@ -15,6 +15,11 @@ class PostOptionRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $key = $this->input('key');
+        if ($this->route('option') === null && is_string($key)) {
+            $this->merge(['key' => str_replace(' ', '_', $key)]);
+        }
+
         if ($this->has('post_types_present') && !$this->has('post_type_ids')) {
             $this->merge(['post_type_ids' => []]);
         }

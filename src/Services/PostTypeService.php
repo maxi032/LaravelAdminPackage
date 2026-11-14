@@ -3,6 +3,7 @@
 namespace Maxi032\LaravelAdminPackage\Services;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
 
@@ -15,6 +16,11 @@ class PostTypeService
     public function getPostTypeOverview(bool $trashed = false): LengthAwarePaginator
     {
         return $this->postTypeRepository->getPostTypeOverview($trashed);
+    }
+
+    public function getPosts(PostType $postType): Collection
+    {
+        return $this->postTypeRepository->getPosts($postType);
     }
 
     public function savePostType(PostType $postType, array $data): void

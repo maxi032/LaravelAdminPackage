@@ -24,6 +24,7 @@
                             <button type="submit" class="btn btn-sm btn-success">{{ __('Recover') }}</button>
                         </form>
                         <button type="button" class="btn btn-sm btn-danger"
+                                @disabled($option->posts_count > 0)
                                 data-coreui-toggle="modal" data-coreui-target="#destroy-post" data-post-delete
                                 data-delete-url="{{ route($adminRoutePrefix.'settings.post-options.force_delete', $option) }}"
                                 data-post-title="{{ $option->label }}">

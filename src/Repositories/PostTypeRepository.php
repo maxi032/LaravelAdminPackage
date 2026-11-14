@@ -51,6 +51,11 @@ class PostTypeRepository implements PostTypeRepositoryInterface
                 ->orderBy('type')->orderBy('id')->paginate(10);
     }
 
+    public function getPosts(PostType $postType): EloquentCollection
+    {
+        return $postType->posts()->withTrashed()->withTypeAndLocalizedTitles()->orderBy('id')->get();
+    }
+
     public function savePostType(PostType $postType, array $data): void
     {
         try {

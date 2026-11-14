@@ -1,3 +1,5 @@
+@include($laravelAdminPackage.'::cms.posts.partials.post_count_scripts')
+
 <div class="card-body table-responsive">
     <table class="table table-striped align-middle mb-0 w-100">
         <thead>
@@ -14,7 +16,13 @@
                 <tr>
                     <td>{{ $postType->id }}</td>
                     <th scope="row"><code>{{ $postType->type }}</code></th>
-                    <td>{{ $postType->posts_count }}</td>
+                    <td>
+                        @include($laravelAdminPackage.'::cms.posts.partials.post_count', [
+                            'count' => $postType->posts_count,
+                            'popoverId' => 'type-posts-'.$postType->id,
+                            'postsUrl' => route($adminRoutePrefix.'settings.post-types.posts', $postType),
+                        ])
+                    </td>
                     <td>
                         <div class="form-check form-switch post-type-status-switch mb-0">
                             <input class="form-check-input" type="checkbox" role="switch"

@@ -35,6 +35,13 @@ class PostTypeController extends AdminController
         ], 'postTypes');
     }
 
+    public function posts(PostType $postType): View
+    {
+        return $this->packageView('cms.posts.partials.post_links', [
+            'posts' => $this->postTypeService->getPosts($postType),
+        ]);
+    }
+
     public function create(): View
     {
         return $this->edit(new PostType);

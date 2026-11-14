@@ -21,6 +21,8 @@ interface PostTypeRepositoryInterface
 
     public function getPostTypeOverview(bool $trashed = false): LengthAwarePaginator;
 
+    public function getPosts(PostType $postType): EloquentCollection;
+
     public function savePostType(PostType $postType, array $data): void;
 
     public function changePostTypeStatus(PostType $postType, bool $status): void;

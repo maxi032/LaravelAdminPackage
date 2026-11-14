@@ -56,13 +56,23 @@ class PostTypeCrudTest extends PostOptionsTestCase
     public function test_overview_counts_active_and_trashed_posts_and_disables_delete(): void
     {
         $post = Post::create(['type_id' => 1, 'category_id' => 1, 'status' => 1]);
-        Post::create(['type_id' => 1, 'category_id' => 1, 'status' => 1])->delete();
+        $post->translations()->create(['language' => 'en', 'title' => 'Example post', 'slug' => 'example', 'content' => 'Text']);
+        $trashed = Post::create(['type_id' => 1, 'category_id' => 1, 'status' => 1]);
+        $trashed->delete();
         $emptyType = PostType::create(['type' => 'empty']);
         $response = $this->get(route('admin:settings.post-types.index'))->assertOk();
 
         $types = $response->viewData('postTypes')->keyBy('id');
         self::assertSame(2, $types[$post->type_id]->posts_count);
         self::assertSame(0, $types[$emptyType->id]->posts_count);
+        $postsUrl = route('admin:settings.post-types.posts', $post->type_id);
+        $response->assertSee('popovertarget="type-posts-1"', false)->assertSee($postsUrl)
+            ->assertDontSee('popovertarget="type-posts-'.$emptyType->id.'"', false);
+        $this->get($postsUrl)->assertOk()->assertSeeInOrder([
+            'aria-label="Search posts"', 'data-post-search-item', '<strong>Blog</strong>', 'Example post',
+            'Post ID', route('admin:posts.edit', $post),
+            route('admin:posts.trash', ['type' => 'blog', 'post_id' => $trashed->id]),
+        ], false);
         $html = new \DOMDocument;
         @$html->loadHTML($response->getContent());
         $xpath = new \DOMXPath($html);

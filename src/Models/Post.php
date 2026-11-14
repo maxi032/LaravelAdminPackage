@@ -81,6 +81,16 @@ class Post extends Model
         return $this->hasMany(PostOptionValue::class);
     }
 
+    public function scopeWithTypeAndLocalizedTitles(Builder $query): Builder
+    {
+        return $query->with([
+            'type' => fn ($type) => $type->withTrashed(),
+            'translations' => fn ($translations) => $translations->withTrashed()->whereIn('language', [
+                app()->getLocale(), config('app.fallback_locale'),
+            ]),
+        ]);
+    }
+
     /** Resolve an enabled option by key using its saved value, locale fallback, or default. */
     public function option(string $key, ?string $locale = null): bool|int|string|null
     {

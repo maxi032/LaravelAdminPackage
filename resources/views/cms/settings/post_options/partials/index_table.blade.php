@@ -1,3 +1,5 @@
+@include($laravelAdminPackage.'::cms.posts.partials.post_count_scripts')
+
 <div class="card-body table-responsive">
     <table class="table table-striped align-middle mb-0 w-100">
         <thead>
@@ -7,6 +9,7 @@
                 <th scope="col">{{ __('Key') }}</th>
                 <th scope="col">{{ __('Type') }}</th>
                 <th scope="col">{{ __('Languages') }}</th>
+                <th scope="col">{{ __('Posts') }}</th>
                 <th scope="col">{{ __('Sort order') }}</th>
                 <th scope="col">{{ __('Status') }}</th>
                 <th scope="col">{{ __('Actions') }}</th>
@@ -20,16 +23,27 @@
                     <td><code>{{ $option->key }}</code></td>
                     <td>{{ __(ucfirst($option->type)) }}</td>
                     <td>{{ $option->is_translatable ? __('Per language') : __('Shared') }}</td>
+                    <td>
+                        @include($laravelAdminPackage.'::cms.posts.partials.post_count', [
+                            'count' => $option->posts_count,
+                            'popoverId' => 'option-posts-'.$option->id,
+                            'postsUrl' => route($adminRoutePrefix.'settings.post-options.posts', $option),
+                        ])
+                    </td>
                     <td>{{ $option->sort_order }}</td>
                     <td>
                         <div class="form-check form-switch mb-0">
                             <input class="form-check-input" type="checkbox" role="switch"
                                    aria-label="{{ __('Status for :option', ['option' => $option->label]) }}"
                                    @checked($option->enabled)
-                                   data-status-toggle data-id="{{ $option->id }}"
-                                   data-status-url="{{ route($adminRoutePrefix.'settings.post-options.change-status', $option) }}"
-                                   data-loading-text="{{ __('Updating…') }}"
-                                   data-error-text="{{ __('The post option status could not be updated. Please try again.') }}">
+                                   @if($option->posts_count > 0)
+                                       disabled title="{{ __('The status of a post option with saved values cannot be changed from the overview.') }}"
+                                   @else
+                                       data-status-toggle data-id="{{ $option->id }}"
+                                       data-status-url="{{ route($adminRoutePrefix.'settings.post-options.change-status', $option) }}"
+                                       data-loading-text="{{ __('Updating…') }}"
+                                       data-error-text="{{ __('The post option status could not be updated. Please try again.') }}"
+                                   @endif>
                         </div>
                     </td>
                     <td>
@@ -38,6 +52,7 @@
                             <span class="cil-notes" aria-hidden="true"></span> {{ __('Edit') }}
                         </a>
                         <button type="button" class="btn btn-sm btn-warning"
+                                @disabled($option->posts_count > 0)
                                 data-coreui-toggle="modal" data-coreui-target="#delete-post" data-post-delete
                                 data-delete-url="{{ route($adminRoutePrefix.'settings.post-options.destroy', $option) }}"
                                 data-post-title="{{ $option->label }}">
@@ -46,7 +61,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="8">{{ __('No post options found.') }}</td></tr>
+                <tr><td colspan="9">{{ __('No post options found.') }}</td></tr>
             @endforelse
         </tbody>
     </table>

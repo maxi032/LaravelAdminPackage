@@ -181,8 +181,10 @@
     "The post options could not be saved.": "The post options could not be saved.",
     "The type and translation setting are locked while this option has saved values.": "The type and translation setting are locked while this option has saved values.",
     "This option already has values. Its type and translation setting are locked.": "This option already has values. Its type and translation setting are locked.",
+    "The status of a post option with saved values cannot be changed from the overview.": "The status of a post option with saved values cannot be changed from the overview.",
+    "A post option with saved values cannot be deleted.": "A post option with saved values cannot be deleted.",
     "Turn on for true. Leave off for false.": "Turn on for true. Leave off for false.",
-    "Use lowercase letters, numbers and underscores. The key starts with a letter and is fixed after creation.": "Use lowercase letters, numbers and underscores. The key starts with a letter and is fixed after creation.",
+    "Use lowercase letters, numbers, underscores or spaces. Spaces become underscores. The key starts with a letter and is fixed after creation.": "Use lowercase letters, numbers, underscores or spaces. Spaces become underscores. The key starts with a letter and is fixed after creation.",
     "View post options": "View post options",
     "Visible in post": "Visible in post"
 }

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Maxi032\LaravelAdminPackage\LaravelAdminPackageServiceProvider;
 use Maxi032\LaravelAdminPackage\Models\PostOption;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
@@ -35,6 +36,13 @@ class PostOptionController extends AdminController
         return $this->overviewView('cms.settings.post_options.partials.trash', [
             'options' => $this->postOptionService->getPostOptionOverview(trashed: true),
         ], 'options');
+    }
+
+    public function posts(PostOption $option): View
+    {
+        return $this->packageView('cms.posts.partials.post_links', [
+            'posts' => $this->postOptionService->getPostsWithSavedValues($option),
+        ]);
     }
 
     public function create(): View
@@ -108,6 +116,8 @@ class PostOptionController extends AdminController
 
         try {
             $change();
+        } catch (ValidationException $exception) {
+            return $redirect->withErrors($exception->errors());
         } catch (ModelNotFoundException $exception) {
             throw $exception;
         } catch (Throwable $exception) {

@@ -18,6 +18,11 @@ class PostOptionService
         return $this->postOptionRepository->getPostOptionOverview($trashed);
     }
 
+    public function getPostsWithSavedValues(PostOption $option): Collection
+    {
+        return $this->postOptionRepository->getPostsWithSavedValues($option);
+    }
+
     /** @return Collection<int, PostOption> */
     public function getEditablePostOptions(?int $postTypeId): Collection
     {

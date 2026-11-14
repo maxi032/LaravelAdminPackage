@@ -64,29 +64,30 @@ class PostOptionsTest extends PostOptionsTestCase
             ->assertSee('for="post-option-eager-loading"', false);
 
         $data = [
-            'key' => 'byline', 'label' => 'Byline', 'type' => 'text',
+            'key' => 'by line', 'label' => 'Byline', 'type' => 'text',
             'post_type_ids' => [1],
             'is_translatable' => '0', 'enabled' => '1', 'sort_order' => '50', 'visible_in_post' => '1',
             'is_eager_loaded' => '1',
         ];
         $this->post($index, $data)->assertSessionHasNoErrors()->assertRedirect($index);
-        $option = PostOption::where('key', 'byline')->firstOrFail();
+        $option = PostOption::where('key', 'by_line')->firstOrFail();
+        $this->postJson($index, array_replace($data, ['key' => 'by_line']))->assertUnprocessable()->assertJsonValidationErrors('key');
         self::assertTrue($option->is_eager_loaded);
         $this->get(route('admin:settings.post-options.edit', $option))->assertOk()->assertSee('Byline')
             ->assertSee('id="post-option-eager-loading" name="is_eager_loaded"', false);
 
-        $this->post(route('admin:posts.store'), $this->postData(['byline' => 'Editorial team']))
+        $this->post(route('admin:posts.store'), $this->postData(['by_line' => 'Editorial team']))
             ->assertSessionHasNoErrors();
         $post = Post::firstOrFail();
         $update = route('admin:settings.post-options.update', $option);
         $this->put($update, array_replace($data, ['type' => 'integer']))->assertSessionHasErrors('type');
         self::assertSame('text', $option->fresh()->type);
         $this->put($update, array_replace($data, ['enabled' => '0']))->assertSessionHasNoErrors();
-        $this->get(route('admin:posts.edit', $post))->assertOk()->assertDontSee('options[byline]');
-        self::assertNull($post->option('byline'));
+        $this->get(route('admin:posts.edit', $post))->assertOk()->assertDontSee('options[by_line]');
+        self::assertNull($post->option('by_line'));
         $this->put($update, array_replace($data, ['is_eager_loaded' => '0']))->assertSessionHasNoErrors();
         self::assertFalse($option->fresh()->is_eager_loaded);
-        self::assertSame('Editorial team', $post->option('byline'));
+        self::assertSame('Editorial team', $post->option('by_line'));
     }
 
     public function test_invalid_options_and_failed_option_saves_do_not_change_the_post(): void
@@ -250,6 +251,23 @@ class PostOptionsTest extends PostOptionsTestCase
         $this->post(route('admin:posts.store'), $this->postData(['byline' => 'Editorial team']))
             ->assertSessionHasNoErrors();
         $post = Post::firstOrFail();
+        $status = route('admin:settings.post-options.change-status', $option);
+        $this->postJson($status, ['status' => 0])->assertUnprocessable()->assertJsonValidationErrors('status');
+        self::assertTrue($option->fresh()->enabled);
+        $this->delete($delete)->assertRedirect($settings)->assertSessionHasErrors('option');
+        $this->assertNotSoftDeleted($option);
+
+        // Simulate an option moved to Trash under the old rules.
+        $option->delete();
+        $trashHtml = new \DOMDocument();
+        @$trashHtml->loadHTML($this->get($trash)->assertOk()->getContent());
+        self::assertSame(1, (new \DOMXPath($trashHtml))->query('//button[@data-delete-url and @disabled]')->length);
+        $this->delete($forceDelete)->assertRedirect($trash)->assertSessionHasErrors('option');
+        self::assertSame(1, $option->values()->count());
+        $this->post($recover)->assertRedirect($trash)->assertSessionHasNoErrors();
+        self::assertSame('Editorial team', $post->option('byline'));
+        $option->values()->delete();
+
         $this->delete($delete)->assertRedirect($settings)->assertSessionHasNoErrors();
         $this->assertSoftDeleted($option);
         $this->get($settings)->assertOk()->assertDontSee($option->label);
@@ -258,17 +276,14 @@ class PostOptionsTest extends PostOptionsTestCase
         $this->get(route('admin:posts.edit', $post))->assertOk()->assertDontSee('options[byline]');
         $this->post($settings, $data)->assertSessionHasErrors('key');
         self::assertNull($post->option('byline'));
-        self::assertSame(1, $option->values()->count());
 
         $this->post($recover)->assertRedirect($trash)->assertSessionHasNoErrors();
-        self::assertSame('Editorial team', $post->option('byline'));
         $this->delete($delete)->assertSessionHasNoErrors();
 
         PostOption::forceDeleting(static fn () => false);
         try {
             $this->delete($forceDelete)->assertRedirect($trash)->assertSessionHasErrors('option');
             $this->assertSoftDeleted($option);
-            self::assertSame(1, $option->values()->count());
         } finally {
             PostOption::flushEventListeners();
         }
@@ -310,6 +325,47 @@ class PostOptionsTest extends PostOptionsTestCase
             self::assertStringContainsString($secondPage, $response->json('html'));
             self::assertStringNotContainsString($firstPage, $response->json('html'));
         }
+    }
+
+    public function test_overview_counts_each_post_with_a_saved_option_value_once(): void
+    {
+        $this->createSampleOptions();
+        $subtitle = PostOption::where('key', 'subtitle')->firstOrFail();
+        $post = Post::create(['type_id' => 1, 'category_id' => 1, 'status' => 1]);
+        $post->translations()->create(['language' => 'en', 'title' => 'An <example>', 'slug' => 'example', 'content' => 'Text']);
+        $post->optionValues()->createMany([
+            ['post_option_id' => $subtitle->id, 'locale' => 'en', 'text_value' => 'Subtitle'],
+            ['post_option_id' => $subtitle->id, 'locale' => 'nl', 'text_value' => 'Ondertitel'],
+        ]);
+        $trashed = Post::create(['type_id' => 1, 'category_id' => 1, 'status' => 1]);
+        $trashed->optionValues()->create(['post_option_id' => $subtitle->id, 'locale' => 'en', 'text_value' => 'Archived']);
+        $trashed->delete();
+
+        $response = $this->get(route('admin:settings.post-options.index'))->assertOk()->assertSee('<th scope="col">Posts</th>', false);
+        $counts = $response->viewData('options')->pluck('posts_count', 'key');
+        self::assertSame(2, $counts['subtitle']);
+        self::assertSame(0, $counts['featured']);
+
+        $html = new \DOMDocument();
+        @$html->loadHTML($response->getContent());
+        $xpath = new \DOMXPath($html);
+        $usedRow = '//tr[th[normalize-space()="subtitle"]]';
+        $unusedRow = '//tr[th[normalize-space()="featured"]]';
+        self::assertSame(1, $xpath->query($usedRow.'//input[@role="switch" and @disabled and not(@data-status-toggle)]')->length);
+        self::assertSame(1, $xpath->query($usedRow.'//button[@data-delete-url and @disabled]')->length);
+        self::assertSame(1, $xpath->query($unusedRow.'//input[@data-status-toggle and not(@disabled)]')->length);
+        self::assertSame(1, $xpath->query($unusedRow.'//button[@data-delete-url and not(@disabled)]')->length);
+
+        $listUrl = route('admin:settings.post-options.posts', $subtitle);
+        $response->assertSee('popovertarget="option-posts-'.$subtitle->id.'"', false)->assertSee($listUrl);
+        $editUrl = route('admin:posts.edit', $post);
+        $trashUrl = route('admin:posts.trash', ['type' => 'blog', 'post_id' => $trashed->id]);
+        $list = $this->get($listUrl)->assertOk()->assertSeeInOrder([
+            'aria-label="Search posts"', 'data-post-search-item', '<strong>Blog</strong>', 'An &lt;example&gt;',
+            'Post ID', 'href="'.$editUrl.'"', 'href="'.$trashUrl.'"',
+        ], false);
+        self::assertSame(1, substr_count($list->getContent(), $editUrl));
+        $this->get($trashUrl)->assertOk()->assertViewHas('posts', fn ($posts) => $posts->pluck('id')->all() === [$trashed->id]);
     }
 
     private function createSampleOptions(): void

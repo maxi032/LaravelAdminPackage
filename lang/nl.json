@@ -117,6 +117,11 @@
     "Admin": "Beheer",
     "Cms": "CMS",
     "Posts": "Berichten",
+    "Post ID": "Bericht-ID",
+    "No associated posts found.": "Geen gekoppelde berichten gevonden.",
+    "Search posts": "Berichten zoeken",
+    "No matching posts found.": "Geen overeenkomende berichten gevonden.",
+    "The associated posts could not be loaded.": "De gekoppelde berichten konden niet worden geladen.",
     "Create": "Aanmaken",
     "Toggle sidebar": "Zijbalk in- of uitklappen",
     "Admin navigation": "Beheernavigatie",
@@ -219,8 +224,10 @@
     "The post options could not be saved.": "De berichtopties konden niet worden opgeslagen.",
     "The type and translation setting are locked while this option has saved values.": "Het type en de vertaalinstelling zijn vergrendeld zolang deze optie opgeslagen waarden heeft.",
     "This option already has values. Its type and translation setting are locked.": "Deze optie heeft al opgeslagen waarden. Het type en de vertaalinstelling zijn vergrendeld.",
+    "The status of a post option with saved values cannot be changed from the overview.": "De status van een berichtoptie met opgeslagen waarden kan niet vanuit het overzicht worden gewijzigd.",
+    "A post option with saved values cannot be deleted.": "Een berichtoptie met opgeslagen waarden kan niet worden verwijderd.",
     "Turn on for true. Leave off for false.": "Aan staat voor waar. Uit staat voor onwaar.",
-    "Use lowercase letters, numbers and underscores. The key starts with a letter and is fixed after creation.": "Gebruik kleine letters, cijfers en underscores. De sleutel begint met een letter en staat vast na het aanmaken.",
+    "Use lowercase letters, numbers, underscores or spaces. Spaces become underscores. The key starts with a letter and is fixed after creation.": "Gebruik kleine letters, cijfers, liggende streepjes of spaties. Spaties worden vervangen door liggende streepjes. De sleutel begint met een letter en staat vast na het aanmaken.",
     "View post options": "Berichtopties bekijken",
     "Visible in post": "Zichtbaar in bericht"
 }

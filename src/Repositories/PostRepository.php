@@ -19,11 +19,14 @@ class PostRepository implements PostRepositoryInterface
     ) {
     }
 
-    public function getPostOverview(string $type, bool $trashed = false): LengthAwarePaginator
+    public function getPostOverview(string $type, bool $trashed = false, ?int $postId = null): LengthAwarePaginator
     {
         $query = Post::byType($type);
         if ($trashed) {
             $query->onlyTrashed();
+            if ($postId !== null) {
+                $query->whereKey($postId);
+            }
             $query->orderByDesc('deleted_at')->orderByDesc('id');
         } else {
             $query->orderBy('sort_order')->orderBy('id');

@@ -11,6 +11,9 @@ interface PostOptionRepositoryInterface
 {
     public function getPostOptionOverview(bool $trashed = false): LengthAwarePaginator;
 
+    /** @return Collection<int, Post> */
+    public function getPostsWithSavedValues(PostOption $option): Collection;
+
     /** @return Collection<int, PostOption> */
     public function getEditablePostOptions(?int $postTypeId): Collection;
 

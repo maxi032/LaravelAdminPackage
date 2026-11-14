@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Maxi032\LaravelAdminPackage\Models\Post;
 use Maxi032\LaravelAdminPackage\Models\PostOption;
+use Maxi032\LaravelAdminPackage\Models\PostOptionValue;
 use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostOptionRepositoryInterface;
 use RuntimeException;
@@ -23,7 +24,17 @@ class PostOptionRepository implements PostOptionRepositoryInterface
             ? PostOption::onlyTrashed()->latest('deleted_at')->orderByDesc('id')
             : PostOption::inDisplayOrder();
 
-        return $query->paginate(10);
+        return $query->addSelect([
+            'posts_count' => PostOptionValue::selectRaw('count(distinct post_id)')
+                ->whereColumn('post_option_id', 'post_option.id'),
+        ])->paginate(10);
+    }
+
+    public function getPostsWithSavedValues(PostOption $option): Collection
+    {
+        return Post::withTrashed()
+            ->whereIn('id', $option->values()->select('post_id'))
+            ->withTypeAndLocalizedTitles()->orderBy('type_id')->orderBy('id')->get();
     }
 
     /** List enabled options visible in the post editor, in display order. */
@@ -127,16 +138,21 @@ class PostOptionRepository implements PostOptionRepositoryInterface
     {
         DB::transaction(function () use ($optionId, $enabled) {
             $option = $this->findForUpdate($optionId);
+            if ($option->enabled !== $enabled && $this->hasSavedValues($option)) {
+                throw ValidationException::withMessages(['status' => __('The status of a post option with saved values cannot be changed from the overview.')]);
+            }
             $option->enabled = $enabled;
             $this->save($option);
         });
     }
 
-    /** Move the option to Trash and retain its saved values. */
+    /** Move an unused option to Trash. */
     public function deletePostOption(int $optionId): void
     {
         DB::transaction(function () use ($optionId) {
-            if (!$this->findForUpdate($optionId)->delete()) {
+            $option = $this->findForUpdate($optionId);
+            $this->ensureUnused($option);
+            if (!$option->delete()) {
                 throw new RuntimeException(__('The post option could not be deleted.'));
             }
         });
@@ -152,12 +168,12 @@ class PostOptionRepository implements PostOptionRepositoryInterface
         });
     }
 
-    /** Permanently delete a trashed option and its saved values in one transaction. */
+    /** Permanently delete an unused option from Trash. */
     public function forceDeletePostOption(int $optionId): void
     {
         DB::transaction(function () use ($optionId) {
             $option = $this->findForUpdate($optionId, trashed: true);
-            $option->values()->delete();
+            $this->ensureUnused($option);
 
             if (!$option->forceDelete()) {
                 throw new RuntimeException(__('The post option could not be permanently deleted.'));
@@ -166,6 +182,13 @@ class PostOptionRepository implements PostOptionRepositoryInterface
     }
 
     /** Find and lock a current or trashed option for a write transaction. */
+    private function ensureUnused(PostOption $option): void
+    {
+        if ($this->hasSavedValues($option)) {
+            throw ValidationException::withMessages(['option' => __('A post option with saved values cannot be deleted.')]);
+        }
+    }
+
     private function findForUpdate(int $optionId, bool $trashed = false): PostOption
     {
         $query = $trashed ? PostOption::onlyTrashed() : PostOption::query();
