@@ -3,6 +3,7 @@
 namespace Maxi032\LaravelAdminPackage\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Relations\HasMany;
@@ -36,5 +37,10 @@ class PostType extends Model
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class, 'type_id');
+    }
+
+    public function postOptions(): BelongsToMany
+    {
+        return $this->belongsToMany(PostOption::class, 'post_type_options');
     }
 }

@@ -12,7 +12,7 @@ interface PostOptionRepositoryInterface
     public function getPostOptionOverview(bool $trashed = false): LengthAwarePaginator;
 
     /** @return Collection<int, PostOption> */
-    public function getEditablePostOptions(): Collection;
+    public function getEditablePostOptions(?int $postTypeId): Collection;
 
     /**
      * Load editable options by key under a shared lock in the caller’s transaction.
@@ -20,7 +20,7 @@ interface PostOptionRepositoryInterface
      * @param list<int|string> $keys
      * @return Collection<string, PostOption>
      */
-    public function lockEditablePostOptionsByKey(array $keys): Collection;
+    public function lockEditablePostOptionsByKey(int $postTypeId, array $keys): Collection;
 
     public function hasSavedValues(PostOption $option): bool;
 

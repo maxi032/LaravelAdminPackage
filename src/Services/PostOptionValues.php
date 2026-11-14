@@ -22,7 +22,7 @@ final class PostOptionValues
             return;
         }
 
-        $definitions = $this->postOptionRepository->lockEditablePostOptionsByKey(array_keys($input));
+        $definitions = $this->postOptionRepository->lockEditablePostOptionsByKey((int) $post->type_id, array_keys($input));
 
         $blankToNull = static fn (mixed $value) => is_string($value) && trim($value) === '' ? null : $value;
         $input = array_map(

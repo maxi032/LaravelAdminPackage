@@ -19,9 +19,9 @@ class PostOptionService
     }
 
     /** @return Collection<int, PostOption> */
-    public function getEditablePostOptions(): Collection
+    public function getEditablePostOptions(?int $postTypeId): Collection
     {
-        return $this->postOptionRepository->getEditablePostOptions();
+        return $this->postOptionRepository->getEditablePostOptions($postTypeId);
     }
 
     public function newPostOption(): PostOption

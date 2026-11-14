@@ -10,14 +10,17 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Maxi032\LaravelAdminPackage\LaravelAdminPackageServiceProvider;
 use Maxi032\LaravelAdminPackage\Models\PostOption;
+use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Requests\PostOptionRequest;
 use Maxi032\LaravelAdminPackage\Services\PostOptionService;
 use Throwable;
 
 class PostOptionController extends AdminController
 {
-    public function __construct(private readonly PostOptionService $postOptionService)
-    {
+    public function __construct(
+        private readonly PostOptionService $postOptionService,
+        private readonly PostTypeRepositoryInterface $postTypeRepository,
+    ) {
     }
 
     public function index(): View|JsonResponse
@@ -121,6 +124,8 @@ class PostOptionController extends AdminController
         return $this->packageView('cms.settings.post_options.form', [
             'option' => $option,
             'schemaLocked' => $this->postOptionService->hasSavedValues($option),
+            'postTypes' => $this->postTypeRepository->getPostTypesForSidebar(),
+            'selectedPostTypeIds' => $option->exists ? $option->postTypes()->allRelatedIds()->all() : [],
         ]);
     }
 

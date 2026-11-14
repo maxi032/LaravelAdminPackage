@@ -21,7 +21,10 @@
                     @error('type_id') aria-invalid="true" aria-describedby="type_id_error" @enderror>
                 <option value="">{{ __('Please select') }}</option>
                 @foreach ($postTypes as $postTypeId => $postType)
-                    <option value="{{$postTypeId}}" {{ (old('type_id', $post?->type_id ?? ($selectedTypeId ?? null)) == $postTypeId) ? 'selected' : '' }}>{{ $postType }}</option>
+                    @continue($postType === null || $postType === '')
+                    <option value="{{ $postTypeId }}"
+                            data-fields-url="{{ route($adminRoutePrefix.'posts.type-fields', ['type' => $postType, 'post' => $post]) }}"
+                            @selected(($selectedTypeId ?? null) === $postTypeId)>{{ $postType }}</option>
                 @endforeach
             </select>
             @error('type_id')
@@ -29,16 +32,16 @@
                     <strong>{{ $message }}</strong>
                 </span>
             @enderror
+            <div id="post-type-fields-error" class="text-danger" role="alert" hidden>
+                {{ __('The fields for this post type could not be loaded. Please try again.') }}
+            </div>
         </div>
 
         <div class="col-md-6">
             <label class="form-label" for="category_id">{{ __('Category') }}</label>
             <select name="category_id" id="category_id" class="w-50 form-select @error('category_id') is-invalid @enderror" required
                     @error('category_id') aria-invalid="true" aria-describedby="category_id_error" @enderror>
-                <option value="">{{ __('Please select') }}</option>
-                @foreach ($categories as $category)
-                    <option value="{{$category->id}}" {{ (old('category_id', $post?->category_id) == $category->id) ? 'selected' : '' }}>{{ $category->translations->first()?->title ?? __('Category with id :id does not have a translation for :language', ['id' => $category->id, 'language' => app()->getLocale()]) }}</option>
-                @endforeach
+                @include($laravelAdminPackage.'::cms.posts.partials.category_choices')
             </select>
             @error('category_id')
                 <span id="category_id_error" class="invalid-feedback" role="alert">

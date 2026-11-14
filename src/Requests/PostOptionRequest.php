@@ -13,6 +13,13 @@ class PostOptionRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('post_types_present') && !$this->has('post_type_ids')) {
+            $this->merge(['post_type_ids' => []]);
+        }
+    }
+
     public function rules(): array
     {
         $rules = [
@@ -21,6 +28,8 @@ class PostOptionRequest extends FormRequest
             'boolean_default' => ['sometimes', 'boolean'],
             'visible_in_post' => ['sometimes', 'boolean'],
             'is_eager_loaded' => ['sometimes', 'boolean'],
+            'post_type_ids' => [$this->route('option') ? 'sometimes' : 'required', 'array'],
+            'post_type_ids.*' => ['bail', 'required', 'integer', 'distinct', Rule::exists('post_types', 'id')->whereNull('deleted_at')],
         ];
 
         $option = $this->route('option');
@@ -34,5 +43,10 @@ class PostOptionRequest extends FormRequest
         $rules['is_translatable'] = [$presence, 'boolean'];
 
         return $rules;
+    }
+
+    public function messages(): array
+    {
+        return ['post_type_ids.required' => __('Select at least one post type.')];
     }
 }

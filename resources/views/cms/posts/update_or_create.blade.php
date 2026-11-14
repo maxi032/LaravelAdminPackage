@@ -66,6 +66,62 @@
 
 @endsection
 @push('footer-scripts')
+    <script type="module">
+        const type = document.getElementById('type_id');
+        const category = document.getElementById('category_id');
+        const options = document.getElementById('post-option-fields');
+        const save = document.getElementById('saveButton');
+        const error = document.getElementById('post-type-fields-error');
+        const emptyOptions = @json(__('No post options are enabled.'));
+        let loadedType = type.value;
+        let request;
+
+        type.addEventListener('change', async () => {
+            request?.abort();
+            request = new AbortController();
+            const { signal } = request;
+            const url = type.selectedOptions[0]?.dataset.fieldsUrl;
+            error.hidden = true;
+            save.disabled = true;
+
+            try {
+                if (url) {
+                    const response = await fetch(url, { signal, headers: { Accept: 'application/json' } });
+                    if (!response.ok) throw new Error();
+                    const fields = await response.json();
+                    if (signal.aborted) return;
+
+                    const selectedCategory = category.value;
+                    category.innerHTML = fields.categories;
+                    if ([...category.options].some(option => option.value === selectedCategory)) {
+                        category.value = selectedCategory;
+                    }
+
+                    const previous = new Map([...options.querySelectorAll('textarea, input:not([type=hidden])')]
+                        .map(field => [field.name, field]));
+                    options.innerHTML = fields.options;
+                    options.querySelectorAll('textarea, input:not([type=hidden])').forEach(field => {
+                        const old = previous.get(field.name);
+                        if (old) {
+                            if (field.type === 'checkbox') field.checked = old.checked;
+                            else field.value = old.value;
+                        }
+                    });
+                } else {
+                    category.value = '';
+                    options.textContent = emptyOptions;
+                }
+                loadedType = type.value;
+            } catch (failure) {
+                if (!signal.aborted) {
+                    type.value = loadedType;
+                    error.hidden = false;
+                }
+            } finally {
+                if (!signal.aborted) save.disabled = false;
+            }
+        });
+    </script>
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
     <script>
         var allEditors = document.querySelectorAll('.editor');

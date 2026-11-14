@@ -3,11 +3,14 @@
 namespace Maxi032\LaravelAdminPackage\Repositories;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Maxi032\LaravelAdminPackage\Models\Post;
 use Maxi032\LaravelAdminPackage\Models\PostOption;
+use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostOptionRepositoryInterface;
 use RuntimeException;
 
@@ -24,16 +27,24 @@ class PostOptionRepository implements PostOptionRepositoryInterface
     }
 
     /** List enabled options visible in the post editor, in display order. */
-    public function getEditablePostOptions(): Collection
+    public function getEditablePostOptions(?int $postTypeId): Collection
     {
-        return PostOption::editableOnPosts()->inDisplayOrder()->get();
+        return $postTypeId === null ? new Collection() : PostOption::editableOnPosts()
+            ->whereHas('postTypes', fn (Builder $types) => $types->whereKey($postTypeId))
+            ->inDisplayOrder()->get();
     }
 
     /** Lock submitted editable definitions for synchronization and return them keyed by option key. */
-    public function lockEditablePostOptionsByKey(array $keys): Collection
+    public function lockEditablePostOptionsByKey(int $postTypeId, array $keys): Collection
     {
-        return PostOption::editableOnPosts()->whereIn('key', $keys)
-            ->orderBy('id')->sharedLock()->get()->keyBy('key');
+        $definitions = PostOption::editableOnPosts()->whereIn('key', $keys)
+            ->orderBy('id')->sharedLock()->get();
+
+        // Read the current pivot rows after locking definitions against association changes.
+        $availableIds = DB::table('post_type_options')->where('post_type_id', $postTypeId)
+            ->whereIn('post_option_id', $definitions->modelKeys())->sharedLock()->pluck('post_option_id');
+
+        return $definitions->whereIn('id', $availableIds)->keyBy('key');
     }
 
     /** Check whether any post has a saved value for the option. */
@@ -61,17 +72,26 @@ class PostOptionRepository implements PostOptionRepositoryInterface
     /** Create and save a post option definition. */
     public function createPostOption(array $data): PostOption
     {
-        $option = new PostOption($data);
-        $this->save($option);
+        if (empty($data['post_type_ids'])) {
+            throw ValidationException::withMessages(['post_type_ids' => __('Select at least one post type.')]);
+        }
 
-        return $option;
+        return DB::transaction(function () use ($data) {
+            $this->lockPostTypes($data['post_type_ids']);
+            $option = new PostOption(Arr::except($data, ['post_type_ids']));
+            $this->save($option);
+            $option->postTypes()->sync($data['post_type_ids']);
+
+            return $option;
+        });
     }
 
     /** Update the definition while protecting its type and translation setting if values exist. */
     public function updatePostOption(int $optionId, array $data): PostOption
     {
         return DB::transaction(function () use ($optionId, $data) {
-            $option = $this->findForUpdate($optionId)->fill($data);
+            $this->lockPostTypes($data['post_type_ids'] ?? []);
+            $option = $this->findForUpdate($optionId)->fill(Arr::except($data, ['post_type_ids']));
 
             // Post value writes hold a shared lock on the same definition.
             if ($option->isDirty(['type', 'is_translatable']) && $this->hasSavedValues($option)) {
@@ -81,9 +101,25 @@ class PostOptionRepository implements PostOptionRepositoryInterface
             }
 
             $this->save($option);
+            if (array_key_exists('post_type_ids', $data)) {
+                $option->postTypes()->sync($data['post_type_ids']);
+            }
 
             return $option;
         });
+    }
+
+    private function lockPostTypes(array $ids): void
+    {
+        if ($ids === []) {
+            return;
+        }
+
+        // Post saves also lock the type before locking option definitions.
+        $types = PostType::whereKey($ids)->orderBy('id')->sharedLock()->get(['id']);
+        if ($types->count() !== count($ids)) {
+            throw ValidationException::withMessages(['post_type_ids' => __('Select valid post types.')]);
+        }
     }
 
     /** Enable or disable a post option. */

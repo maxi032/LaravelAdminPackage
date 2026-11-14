@@ -84,7 +84,8 @@ class Post extends Model
     /** Resolve an enabled option by key using its saved value, locale fallback, or default. */
     public function option(string $key, ?string $locale = null): bool|int|string|null
     {
-        $definition = PostOption::enabled()->where('key', $key)->first();
+        $definition = PostOption::enabled()->where('key', $key)
+            ->whereHas('postTypes', fn (Builder $types) => $types->whereKey($this->type_id))->first();
         if ($definition === null) {
             return null;
         }
@@ -131,6 +132,7 @@ class Post extends Model
             ->where('locale', '');
 
         return PostOption::enabled()->where('key', $key)->where('type', 'boolean')->where('is_translatable', false)
+            ->whereHas('postTypes', fn (Builder $types) => $types->whereColumn('post_types.id', $this->qualifyColumn('type_id')))
             ->selectRaw('COALESCE(('.$value->toSql().'), boolean_default)', $value->getBindings());
     }
 

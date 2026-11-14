@@ -4,6 +4,7 @@ namespace Maxi032\LaravelAdminPackage\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -59,6 +60,11 @@ class PostOption extends Model
     public function values(): HasMany
     {
         return $this->hasMany(PostOptionValue::class);
+    }
+
+    public function postTypes(): BelongsToMany
+    {
+        return $this->belongsToMany(PostType::class, 'post_type_options');
     }
 
     /** Get the storage column for this option’s value type. */

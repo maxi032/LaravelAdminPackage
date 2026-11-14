@@ -62,7 +62,8 @@ class PostRequest extends FormRequest
 
         $rules = array_merge($rules, TranslationInputHelper::rules($languages));
         if ($this->has('options')) {
-            $definitions = app(PostOptionRepositoryInterface::class)->getEditablePostOptions();
+            $typeId = filter_var($this->input('type_id'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+            $definitions = app(PostOptionRepositoryInterface::class)->getEditablePostOptions($typeId ?: null);
             $rules['options'] = ['sometimes', new ValidPostOptionValues($definitions)];
         }
 

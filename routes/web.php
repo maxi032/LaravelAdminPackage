@@ -27,6 +27,7 @@ Route::group([
             ->except(['show']);
     });
     Route::get('cms/posts/create/{type?}', [PostController::class, 'create'])->name('posts.create');
+    Route::get('cms/posts/type-fields/{type}/{post?}', [PostController::class, 'typeFields'])->name('posts.type-fields');
     Route::get('cms/posts/trash/{type}', [PostController::class, 'trash'])->name('posts.trash');
     Route::post('cms/posts/{post}/recover', [PostController::class, 'recover'])->withTrashed()->name('posts.recover');
     Route::delete('cms/posts/{post}/force-delete', [PostController::class, 'forceDelete'])->withTrashed()->name('posts.force_delete');

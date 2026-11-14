@@ -24,6 +24,9 @@ class PostOptionValue extends Model
     {
         return $query->where('locale', '')
             ->where('boolean_value', true)
-            ->whereHas('definition', fn (Builder $definition) => $definition->editableOnPosts()->where('key', $key));
+            ->whereHas('definition', fn (Builder $definition) => $definition->editableOnPosts()->where('key', $key)
+                ->whereHas('postTypes', fn (Builder $types) => $types->whereIn('post_types.id',
+                    Post::withTrashed()->select('type_id')->whereColumn('posts.id', 'post_option_values.post_id')
+                )));
     }
 }

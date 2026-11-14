@@ -6,6 +6,8 @@
     @php
         $selectedType = $schemaLocked ? $option->type : old('type', $option->type);
         $showBooleanDefault = $selectedType === 'boolean';
+        $selectedPostTypeIds = (array) old('post_type_ids', old('post_types_present') ? [] : $selectedPostTypeIds);
+        $postTypeError = $errors->first('post_type_ids') ?: $errors->first('post_type_ids.*');
         $oldText = static function (string $key, mixed $fallback = null): string {
             $value = old($key, $fallback);
 
@@ -50,6 +52,22 @@
                                value="{{ $oldText('sort_order', $option->sort_order) }}" required>
                         @error('sort_order') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
+
+                    <input type="hidden" name="post_types_present" value="1">
+                    <fieldset class="mb-3" @if($postTypeError) aria-describedby="post-option-post-types-error" @endif>
+                        <legend class="form-label fs-6">{{ __('Post types') }}</legend>
+                        @foreach($postTypes as $postType)
+                            <div class="form-check">
+                                <input class="form-check-input @if($postTypeError) is-invalid @endif" type="checkbox"
+                                       id="post-option-post-type-{{ $postType->id }}" name="post_type_ids[]" value="{{ $postType->id }}"
+                                       @checked(in_array($postType->id, $selectedPostTypeIds, true) || in_array((string) $postType->id, $selectedPostTypeIds, true))>
+                                <label class="form-check-label" for="post-option-post-type-{{ $postType->id }}">{{ __($postType->type) }}</label>
+                            </div>
+                        @endforeach
+                        @if($postTypeError)
+                            <div class="invalid-feedback d-block" id="post-option-post-types-error">{{ $postTypeError }}</div>
+                        @endif
+                    </fieldset>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">

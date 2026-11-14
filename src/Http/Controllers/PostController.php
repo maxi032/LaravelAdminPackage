@@ -95,6 +95,7 @@ class PostController extends AdminController
             abort_if($selectedTypeId === false, 404);
         }
 
+        $selectedTypeId = $this->formTypeId($selectedTypeId);
         $categories = $this->postService->getCategoriesForDropdown($locale, $selectedTypeId);
 
         return $this->packageView('cms.posts.update_or_create', [
@@ -102,7 +103,7 @@ class PostController extends AdminController
             'post' => null,
             'selectedTypeId' => $selectedTypeId,
             'categories' => $categories,
-            'postOptions' => $postOptionService->getEditablePostOptions(),
+            'postOptions' => $postOptionService->getEditablePostOptions($selectedTypeId),
         ]);
     }
 
@@ -112,13 +113,34 @@ class PostController extends AdminController
         // Route model binding will throw 404 automatically if $post is not found
         $postTypes = $this->postService->getPostTypesForDropdown();
 
-        $categories = $this->postService->getCategoriesForDropdown($locale, $post->type_id);
+        $selectedTypeId = $this->formTypeId($post->type_id);
+        $categories = $this->postService->getCategoriesForDropdown($locale, $selectedTypeId);
 
         return $this->packageView('cms.posts.update_or_create', [
             'postTypes' => $postTypes,
             'post' => $post->load('optionValues'),
+            'selectedTypeId' => $selectedTypeId,
             'categories' => $categories,
-            'postOptions' => $postOptionService->getEditablePostOptions(),
+            'postOptions' => $postOptionService->getEditablePostOptions($selectedTypeId),
+        ]);
+    }
+
+    private function formTypeId(?int $default): ?int
+    {
+        return filter_var(old('type_id', $default), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: null;
+    }
+
+    public function typeFields(PostType $type, PostOptionService $postOptionService, ?Post $post = null): JsonResponse
+    {
+        return response()->json([
+            'options' => $this->packageView('cms.posts.partials.option_fields', [
+                'post' => $post?->load('optionValues'),
+                'postOptions' => $postOptionService->getEditablePostOptions($type->id),
+            ])->render(),
+            'categories' => $this->packageView('cms.posts.partials.category_choices', [
+                'categories' => $this->postService->getCategoriesForDropdown(app()->getLocale(), $type->id),
+                'post' => $post,
+            ])->render(),
         ]);
     }
 
