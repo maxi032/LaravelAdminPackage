@@ -7,6 +7,8 @@ use Maxi032\LaravelAdminPackage\Models\Post;
 
 interface PostRepositoryInterface
 {
+    public function loadForEdit(Post $post): Post;
+
     public function getPostOverview(string $type, bool $trashed = false, ?int $postId = null): LengthAwarePaginator;
 
     public function getPostById(int $postId);

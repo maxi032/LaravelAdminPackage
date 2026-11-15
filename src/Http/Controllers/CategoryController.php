@@ -109,7 +109,7 @@ class CategoryController extends AdminController
 
         return $this->packageView('cms.categories.update_or_create', [
             'categoryTypes' => $categoryTypes,
-            'category' => $category,
+            'category' => $this->categoryService->loadForEdit($category),
         ]);
     }
 

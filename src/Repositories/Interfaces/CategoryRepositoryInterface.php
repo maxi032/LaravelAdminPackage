@@ -25,6 +25,8 @@ interface CategoryRepositoryInterface
 
     public function getCategoriesForDropdown($lang = null, ?int $postTypeId = null);
 
+    public function loadForEdit(Category $category): Category;
+
     public function getCategoryOverview(string $type, bool $trashed = false): LengthAwarePaginator;
 
     public function createCategoryWithTranslations(array $data): Category;

@@ -24,6 +24,11 @@ class PostService
 
     }
 
+    public function loadForEdit(Post $post): Post
+    {
+        return $this->postRepository->loadForEdit($post);
+    }
+
     public function getPostOverview(string $type, bool $trashed = false, ?int $postId = null): LengthAwarePaginator
     {
         return $this->postRepository->getPostOverview($type, $trashed, $postId);

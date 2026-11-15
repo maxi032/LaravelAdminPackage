@@ -19,6 +19,11 @@ class PostRepository implements PostRepositoryInterface
     ) {
     }
 
+    public function loadForEdit(Post $post): Post
+    {
+        return $post->load(['translations', 'optionValues']);
+    }
+
     public function getPostOverview(string $type, bool $trashed = false, ?int $postId = null): LengthAwarePaginator
     {
         $query = Post::byType($type)

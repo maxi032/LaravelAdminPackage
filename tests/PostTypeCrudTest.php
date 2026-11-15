@@ -53,6 +53,26 @@ class PostTypeCrudTest extends PostOptionsTestCase
         $this->assertNotSoftDeleted($type);
     }
 
+    public function test_post_overviews_show_the_localized_category_for_a_non_product_type(): void
+    {
+        Category::findOrFail(1)->translations()->createMany([
+            ['language' => 'nl', 'title' => 'Lokaal nieuws', 'slug' => 'lokaal-nieuws', 'content' => 'Tekst'],
+            ['language' => 'en', 'title' => 'Local news', 'slug' => 'local-news', 'content' => 'Text'],
+        ]);
+        Post::create(['type_id' => 1, 'category_id' => 1, 'status' => 1]);
+        Post::create(['type_id' => 1, 'category_id' => 1, 'status' => 1])->delete();
+
+        $this->app->setLocale('en');
+        foreach (['admin:posts.type.list', 'admin:posts.trash'] as $route) {
+            $overview = route($route, 'blog');
+            $this->get($overview)->assertOk()
+                ->assertSee('<th>Category</th>', false)
+                ->assertSee('<td class="category">Local news</td>', false);
+            $response = $this->getJson($overview, ['X-Requested-With' => 'XMLHttpRequest'])->assertOk();
+            self::assertStringContainsString('<td class="category">Local news</td>', $response->json('html'));
+        }
+    }
+
     public function test_overview_counts_active_and_trashed_posts_and_disables_delete(): void
     {
         $post = Post::create(['type_id' => 1, 'category_id' => 1, 'status' => 1]);

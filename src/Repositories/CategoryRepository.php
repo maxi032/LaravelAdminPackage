@@ -208,6 +208,11 @@ class CategoryRepository implements CategoryRepositoryInterface
         return $query->get();
     }
 
+    public function loadForEdit(Category $category): Category
+    {
+        return $category->load('translations');
+    }
+
     public function getCategoryOverview(string $type, bool $trashed = false): LengthAwarePaginator
     {
         $query = Category::byType($type);

@@ -18,6 +18,11 @@ class CategoryService
     ) {
     }
 
+    public function loadForEdit(Category $category): Category
+    {
+        return $this->categoryRepository->loadForEdit($category);
+    }
+
     public function getCategoryOverview(string $type, bool $trashed = false): LengthAwarePaginator
     {
         return $this->categoryRepository->getCategoryOverview($type, $trashed);

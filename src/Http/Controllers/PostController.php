@@ -120,7 +120,7 @@ class PostController extends AdminController
 
         return $this->packageView('cms.posts.update_or_create', [
             'postTypes' => $postTypes,
-            'post' => $post->load('optionValues'),
+            'post' => $this->postService->loadForEdit($post),
             'selectedTypeId' => $selectedTypeId,
             'categories' => $categories,
             'postOptions' => $postOptionService->getEditablePostOptions($selectedTypeId),
