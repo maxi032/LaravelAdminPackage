@@ -85,7 +85,7 @@ class PostController extends AdminController
     }
 
     /**
-     * Show the Posts crud form.
+     * Show the Posts create form.
      */
     public function create(PostOptionService $postOptionService, ?string $type = null): Renderable
     {
@@ -109,6 +109,9 @@ class PostController extends AdminController
         ]);
     }
 
+    /**
+     * Load the form when editing a post
+     * */
     public function edit(Post $post, PostOptionService $postOptionService): View
     {
         $locale = app()->getLocale();
@@ -144,13 +147,6 @@ class PostController extends AdminController
                 'post' => $post,
             ])->render(),
         ]);
-    }
-
-    public function show(): Renderable
-    {
-        $postTypes = $this->postService->getPostTypes();
-
-        return $this->packageView('cms.posts.update_or_create', compact('postTypes'));
     }
 
     /**

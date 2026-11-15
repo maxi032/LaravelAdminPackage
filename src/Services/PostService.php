@@ -7,6 +7,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Maxi032\LaravelAdminPackage\Models\Post;
+use Maxi032\LaravelAdminPackage\Repositories\PostRepository;
 use Maxi032\LaravelAdminPackage\Rules\CategoryMatchesPostType;
 
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
@@ -16,6 +17,7 @@ use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterf
 class PostService
 {
     public function __construct(
+        /** @var PostRepository */
         private readonly PostRepositoryInterface $postRepository,
         private readonly PostTypeRepositoryInterface $postTypeRepository,
         private readonly CategoryRepositoryInterface $categoryRepository
