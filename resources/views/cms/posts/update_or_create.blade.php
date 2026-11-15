@@ -2,6 +2,8 @@
 
 @section('content')
     @php
+        $defaultLanguage = config($laravelAdminPackage.'.allowed_languages.0.code');
+        $postTitle = trim((string) $post?->translations->firstWhere('language', $defaultLanguage)?->title);
         $allowedTabs = ['main','content','seo','options'];
         $activeTab = 'main';
         $firstError = array_key_first($errors->messages());
@@ -28,7 +30,10 @@
                     @endif
                     @csrf
                 <div class="card mb-4">
-                    <div class="card-header "><span class="card-header-text-lh">{{ __('Add post') }}</span>
+                    <div class="card-header ">
+                        <span class="card-header-text-lh">{{ $postTitle !== ''
+                            ? __('Edit post :title', ['title' => $postTitle])
+                            : ($post ? __('Edit post') : __('Add post')) }}</span>
                         <button type="submit" id="saveButton" class="btn btn-primary float-end">
                             {{ $post ? __('Save changes') : __('Save') }}
                         </button>

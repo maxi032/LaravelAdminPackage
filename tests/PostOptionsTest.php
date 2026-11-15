@@ -19,7 +19,10 @@ class PostOptionsTest extends PostOptionsTestCase
         self::assertFalse($existing->option('featured'));
         self::assertNull($existing->option('reading_time'));
         $this->get(route('admin:posts.create', ['type' => 'blog']))->assertOk()
+            ->assertSee('<span class="card-header-text-lh">Add post</span>', false)
             ->assertSee('options[featured]')->assertSee('options[subtitle][nl]');
+        $this->get(route('admin:posts.edit', $existing))->assertOk()
+            ->assertSee('<span class="card-header-text-lh">Edit post</span>', false);
 
         $this->post(route('admin:posts.store'), $this->postData([
             'featured' => '1', 'reading_time' => '8', 'sticky_in_category' => '1',
@@ -32,7 +35,9 @@ class PostOptionsTest extends PostOptionsTestCase
         self::assertSame('Nederlandse ondertitel', $post->option('subtitle', 'nl'));
         self::assertSame([$post->id], Post::featured()->pluck('id')->all());
         self::assertSame([$post->id, $existing->id], Post::inCategoryListing(1)->pluck('id')->all());
-        $this->get(route('admin:posts.edit', $post))->assertOk()->assertSee('Nederlandse ondertitel');
+        $this->get(route('admin:posts.edit', $post))->assertOk()
+            ->assertSee('<span class="card-header-text-lh">Edit post Article</span>', false)
+            ->assertSee('Nederlandse ondertitel');
 
         $this->put(route('admin:posts.update', $post), $this->postData([
             'featured' => '0', 'reading_time' => '', 'subtitle' => ['nl' => ''],
