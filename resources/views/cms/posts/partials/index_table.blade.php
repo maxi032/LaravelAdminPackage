@@ -1,3 +1,9 @@
+@php
+    use Carbon\Carbon;
+    use Illuminate\Support\Str;
+    use Maxi032\LaravelAdminPackage\Enums\PostStatusEnum;
+@endphp
+
         <div class="card">
             <div class="card-body">
                 @if($posts->count())
@@ -11,7 +17,7 @@
                                     <th>{{ __('Category') }}</th>
                                 @endif
                                 <th>{{ __('Excerpt') }}</th>
-                                <th>{{ __('Status') }}</th>
+                                <th @if($postType->type === 'products') style="min-width: 10rem" @endif>{{ __('Status') }}</th>
                                 <th>{{ __('Created at') }}</th>
                                 <th>{{ __('Actions') }}</th>
                             </tr>
@@ -20,7 +26,7 @@
                             @foreach($posts as $postk => $post)
                                 @php
                                     $translation = $post->translations->first();
-                                    $excerpt = \Illuminate\Support\Str::limit($translation?->excerpt ?? '', 50);
+                                    $excerpt = Str::limit($translation?->excerpt ?? '', 50);
                                 @endphp
                                 <tr>
                                     <td>{{$post->id}}</td>
@@ -30,7 +36,7 @@
                                     @endif
                                     <td class="excerpt">{{ $excerpt }}</td>
                                     <td>
-                                        @php($statusLabel = __(ucfirst(strtolower(\Maxi032\LaravelAdminPackage\Enums\PostStatusEnum::from((int) $post->status)->name))))
+                                        @php($statusLabel = __(ucfirst(strtolower(PostStatusEnum::from((int) $post->status)->name))))
                                         <div class="form-check form-switch form-switch-lg">
                                             <input class="form-check-input post-status-toggle" type="checkbox" data-status-toggle
                                                    data-post-status="{{ $post->status }}"
@@ -43,7 +49,7 @@
                                             <label class="form-check-label" for="statusSwitch{{ $post->id }}">{{ $statusLabel }}</label>
                                         </div>
                                     </td>
-                                    <td>{{ \Carbon\Carbon::parse($post->created_at)->format('d-m-Y') }}</td>
+                                    <td>{{ Carbon::parse($post->created_at)->format('d-m-Y') }}</td>
                                     <td>
                                         <a role="button" class="btn btn-sm btn-primary" href="{{ route($adminRoutePrefix.'posts.edit',['post'=>$post]) }}"><span class="cil-notes"></span> {{ __('Edit') }}</a>
                                         <button type="button" class="btn btn-sm btn-warning" data-coreui-toggle="modal" data-coreui-target="#delete-post" data-post-delete
