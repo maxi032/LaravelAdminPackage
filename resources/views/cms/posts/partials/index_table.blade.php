@@ -13,11 +13,9 @@
                             <tr>
                                 <th>{{ __('ID') }}</th>
                                 <th>{{ __('Title') }}</th>
-                                @if($postType->type === 'products')
-                                    <th>{{ __('Category') }}</th>
-                                @endif
+                                <th>{{ __('Category') }}</th>
                                 <th>{{ __('Excerpt') }}</th>
-                                <th @if($postType->type === 'products') style="min-width: 10rem" @endif>{{ __('Status') }}</th>
+                                <th>{{ __('Status') }}</th>
                                 <th>{{ __('Created at') }}</th>
                                 <th>{{ __('Actions') }}</th>
                             </tr>
@@ -31,9 +29,7 @@
                                 <tr>
                                     <td>{{$post->id}}</td>
                                     <td class="title">{{ $translation?->title ?? __('Translation unavailable') }}</td>
-                                    @if($postType->type === 'products')
-                                        <td class="category">{{ $post->category ? ($post->category->translations->first()?->title ?? __('Translation unavailable')) : '—' }}</td>
-                                    @endif
+                                    <td class="category">{{ $post->category ? ($post->category->translations->first()?->title ?? __('Translation unavailable')) : '—' }}</td>
                                     <td class="excerpt">{{ $excerpt }}</td>
                                     <td>
                                         @php($statusLabel = __(ucfirst(strtolower(PostStatusEnum::from((int) $post->status)->name))))
