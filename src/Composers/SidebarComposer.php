@@ -11,11 +11,14 @@ use Maxi032\LaravelAdminPackage\Models\Category;
 use Maxi032\LaravelAdminPackage\Models\CategoryType;
 use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Repositories\PostTypeRepository;
 
 class SidebarComposer
 {
     public function __construct(
         private readonly Request $request,
+
+        /** @var PostTypeRepository */
         private readonly PostTypeRepositoryInterface $postTypeRepository,
     ) {
     }

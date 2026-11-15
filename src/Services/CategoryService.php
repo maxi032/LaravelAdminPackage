@@ -6,14 +6,22 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Maxi032\LaravelAdminPackage\Models\Category;
 use Maxi032\LaravelAdminPackage\Models\CategoryType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Repositories\CategoryRepository;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryTypeRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Repositories\CategoryTypeRepository;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Repositories\PostTypeRepository;
 
 class CategoryService
 {
     public function __construct(
+        /** @var CategoryRepository */
         private readonly CategoryRepositoryInterface $categoryRepository,
+
+        /** @var CategoryTypeRepository */
         private readonly CategoryTypeRepositoryInterface $categoryTypeRepository,
+
+        /** @var PostTypeRepository */
         private readonly PostTypeRepositoryInterface $postTypeRepository,
     ) {
     }

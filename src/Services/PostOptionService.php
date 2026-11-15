@@ -6,11 +6,15 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Maxi032\LaravelAdminPackage\Models\PostOption;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostOptionRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Repositories\PostOptionRepository;
 
 class PostOptionService
 {
-    public function __construct(private readonly PostOptionRepositoryInterface $postOptionRepository)
-    {
+    public function __construct(
+
+        /** @var PostOptionRepository */
+        private readonly PostOptionRepositoryInterface $postOptionRepository,
+    ) {
     }
 
     public function getPostOptionOverview(bool $trashed = false): LengthAwarePaginator

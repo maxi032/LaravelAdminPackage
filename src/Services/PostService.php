@@ -11,15 +11,22 @@ use Maxi032\LaravelAdminPackage\Repositories\PostRepository;
 use Maxi032\LaravelAdminPackage\Rules\CategoryMatchesPostType;
 
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Repositories\CategoryRepository;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Repositories\PostTypeRepository;
 
 class PostService
 {
     public function __construct(
+
         /** @var PostRepository */
         private readonly PostRepositoryInterface $postRepository,
+
+        /** @var PostTypeRepository */
         private readonly PostTypeRepositoryInterface $postTypeRepository,
+
+        /** @var CategoryRepository */
         private readonly CategoryRepositoryInterface $categoryRepository
     )
     {

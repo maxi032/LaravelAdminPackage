@@ -6,11 +6,15 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Maxi032\LaravelAdminPackage\Models\PostType;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Repositories\PostTypeRepository;
 
 class PostTypeService
 {
-    public function __construct(private readonly PostTypeRepositoryInterface $postTypeRepository)
-    {
+    public function __construct(
+
+        /** @var PostTypeRepository */
+        private readonly PostTypeRepositoryInterface $postTypeRepository,
+    ) {
     }
 
     public function getPostTypeOverview(bool $trashed = false): LengthAwarePaginator

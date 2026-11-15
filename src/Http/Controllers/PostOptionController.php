@@ -12,6 +12,7 @@ use Illuminate\Validation\ValidationException;
 use Maxi032\LaravelAdminPackage\LaravelAdminPackageServiceProvider;
 use Maxi032\LaravelAdminPackage\Models\PostOption;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostTypeRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Repositories\PostTypeRepository;
 use Maxi032\LaravelAdminPackage\Requests\PostOptionRequest;
 use Maxi032\LaravelAdminPackage\Services\PostOptionService;
 use Throwable;
@@ -20,6 +21,7 @@ class PostOptionController extends AdminController
 {
     public function __construct(
         private readonly PostOptionService $postOptionService,
+        /** @var PostTypeRepository */
         private readonly PostTypeRepositoryInterface $postTypeRepository,
     ) {
     }

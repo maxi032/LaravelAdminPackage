@@ -11,6 +11,8 @@ use Maxi032\LaravelAdminPackage\Rules\ValidPostOptionValues;
 final class PostOptionValues
 {
     public function __construct(
+
+        /** @var PostOptionRepository */
         private readonly PostOptionRepositoryInterface $postOptionRepository = new PostOptionRepository(),
     ) {
     }

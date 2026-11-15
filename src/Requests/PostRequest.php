@@ -8,6 +8,7 @@ use Maxi032\LaravelAdminPackage\Enums\PostStatusEnum;
 use Maxi032\LaravelAdminPackage\Helpers\TranslationInputHelper;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\PostOptionRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Repositories\PostOptionRepository;
 use Maxi032\LaravelAdminPackage\Rules\CategoryMatchesPostType;
 use Maxi032\LaravelAdminPackage\Rules\ValidPostOptionValues;
 
@@ -63,7 +64,11 @@ class PostRequest extends FormRequest
         $rules = array_merge($rules, TranslationInputHelper::rules($languages));
         if ($this->has('options')) {
             $typeId = filter_var($this->input('type_id'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
-            $definitions = app(PostOptionRepositoryInterface::class)->getEditablePostOptions($typeId ?: null);
+
+            /** @var PostOptionRepository $postOptionRepository */
+            $postOptionRepository = app(PostOptionRepositoryInterface::class);
+
+            $definitions = $postOptionRepository->getEditablePostOptions($typeId ?: null);
             $rules['options'] = ['sometimes', new ValidPostOptionValues($definitions)];
         }
 

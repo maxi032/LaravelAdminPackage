@@ -4,11 +4,14 @@ namespace Maxi032\LaravelAdminPackage\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 use Maxi032\LaravelAdminPackage\Repositories\Interfaces\CategoryRepositoryInterface;
+use Maxi032\LaravelAdminPackage\Repositories\CategoryRepository;
 
 class CategoryMatchesPostType implements Rule
 {
     public function __construct(
         private readonly mixed $postTypeId,
+
+        /** @var CategoryRepository */
         private readonly CategoryRepositoryInterface $categoryRepository
     ) {
     }
